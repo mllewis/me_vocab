@@ -31,3 +31,10 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+
+# Temporary python files 
+*.pyc
+
+# Sublime text files
+*.sublime-project
+*.sublime-workspace

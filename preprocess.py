@@ -106,13 +106,17 @@ if __name__ == "__main__":
 	# fn_out_vocab = 'data-flurry/vocab-processed-2-13-17.csv'
 	# fields_vocab = ['SubjectID','Correct','Object_Asked','Correct_Image','Incorrect_Image'] # fields to include in new csv field
 
-	fn_in_fendle = 'data-flurry/fendle-06-12-17.csv'
-	fn_out_fendle = 'data-flurry/fendle-processed-06-12-17.csv'
+	# fn_in_fendle = 'data-flurry/fendle-06-12-17.csv'
+	# fn_out_fendle = 'data-flurry/fendle-processed-06-12-17.csv'
+	# fields_fendle =  ['SubjectID','CorrectFirstTry?','TrialType','StageType','Object','FoxAssistance','StartTime','ResponsiveStartTime','EndTime'] # fields to include in new csv file
+
+	fn_in_fendle = 'data-flurry/fendle-07-12-17.csv'
+	fn_out_fendle = 'data-flurry/fendle-processed-07-12-17.csv'
 	fields_fendle =  ['SubjectID','CorrectFirstTry?','TrialType','StageType','Object','FoxAssistance','StartTime','ResponsiveStartTime','EndTime'] # fields to include in new csv file
 
-	fn_in_vocab = 'data-flurry/vocab-06-12-17.csv'
-	fn_out_vocab = 'data-flurry/vocab-processed-06-12-17.csv'
-	fields_vocab = ['SubjectID','Correct','Object_Asked','Correct_Image','Incorrect_Image'] # fields to include in new csv field
+	# fn_in_vocab = 'data-flurry/vocab-06-12-17.csv'
+	# fn_out_vocab = 'data-flurry/vocab-processed-06-12-17.csv'
+	# fields_vocab = ['SubjectID','Correct','Object_Asked','Correct_Image','Incorrect_Image'] # fields to include in new csv field
 
 	print ""
 	print "Preprocessing raw data from files '" + fn_in_fendle	
@@ -132,7 +136,9 @@ if __name__ == "__main__":
 	# S_vocab = exclude_trials(S_vocab,'Object_Asked','ball')
 	# print ""
 
-	print "Creating CSV files '" + fn_out_fendle + "' and '" + fn_out_vocab +  "'...."
+	print "Creating CSV file '" + fn_out_fendle
 	print ""
 	make_simple_csv(fn_out_fendle,S_fendle,fields_fendle)
+	# print "Creating CSV file '" + fn_out_vocab
+	# print ""
 	# make_simple_csv(fn_out_vocab,S_vocab,fields_vocab)

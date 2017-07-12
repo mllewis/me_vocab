@@ -53,18 +53,23 @@ if __name__ == "__main__":
 	# fn_in_vocab_processed = 'data-flurry/vocab-device-results-2-7-17.csv'
 	# fn_in_ages = 'data-flurry/ages-2-14-17.csv' # list of user names and ages
 
-	fn_in_fendle_processed = 'data-flurry/fendle-processed-06-12-17.csv' # input data from fendle
-	fn_in_vocab_processed = 'data-flurry/vocab-device-results-06-12-17.csv'
-	fn_in_ages = 'data-flurry/ages-06-12-17.csv' # list of user names and ages
+	# fn_in_fendle_processed = 'data-flurry/fendle-processed-06-12-17.csv' # input data from fendle
+	# fn_in_vocab_processed = 'data-flurry/vocab-device-results-06-12-17.csv'
+	# fn_in_ages = 'data-flurry/ages-06-12-17.csv' # list of user names and ages
+
+	fn_in_fendle_processed = 'data-flurry/fendle-processed-07-12-17.csv' # input data from fendle
+	fn_in_vocab_processed = 'data-flurry/vocab-device-results-07-12-17.csv'
+	fn_in_ages = 'data-flurry/ages-07-12-17.csv' # list of user names and ages
 
 	ntrial_fendle = 19 # full number of trials in an experiment
 	ntrial_vocab = 20
 
-	fn_out_summary = 'data-flurry/summary-06-12-17.csv' # output summary of data
+	fn_out_summary = 'data-flurry/summary-07-12-17.csv' # output summary of data
 
 	# exclude_user = ['1191602', '1191605', '1191606', '11161604', '1261606', '1281601'] # from December 2016
  	# exclude_user = ["1191602","1191605","1191606","11161604","1261606","1281601","12131602","01031704","01031705","01051703","01061701","01061702","01061703","01061706","01121705","01121707","01121708","01131703","01171701","01171703","01191701","01191702","01191704","01191706","01271701","01311701","Test"] # from Feb. 2017
- 	exclude_user = ["1191602","1191605","1191606","11161604","1261606","1281601","12131602","01031704","01031705","01051703","01061701","01061702","01061703","01061706","01121705","01121707","01131703","01171701","01171703","01191701","01191702","01191704","01191706","01271701","01311701","02071703","02071705","02071706","02091701","02201708","02201709","02201712","02201713","02281703","03021701","03211701","03301701","04111706","04111707","04111708","04181701","05241702","05241704","06021701","06041701","06041702","06041704","06041705","06041708","06041709","06041713","06091702","Test"]
+ 	# exclude_user = ["1191602","1191605","1191606","11161604","1261606","1281601","12131602","01031704","01031705","01051703","01061701","01061702","01061703","01061706","01121705","01121707","01131703","01171701","01171703","01191701","01191702","01191704","01191706","01271701","01311701","02071703","02071705","02071706","02091701","02201708","02201709","02201712","02201713","02281703","03021701","03211701","03301701","04111706","04111707","04111708","04181701","05241702","05241704","06021701","06041701","06041702","06041704","06041705","06041708","06041709","06041713","06091702","Test"]
+ 	exclude_user = ["1191602","1191605","1191606","11161604","1261606","1281601","12131602","01031704","01031705","01051703","01061701","01061702","01061703","01061706","01121705","01121707","01131703","01171701","01171703","01191701","01191702","01191704","01191706","01271701","01311701","02071703","02071705","02071706","02091701","02201708","02201709","02201712","02201713","02281703","03021701","03211701","03301701","04111706","04111707","04111708","04181701","05241702","05241704","06021701","06041701","06041702","06041704","06041705","06041708","06041709","06041713","06091702","Test",'06191702','06191703','06191704','06201706','06201707','06221701','06221703','06221704','06231701']
 
 	# Main
 	print ""
@@ -82,17 +87,25 @@ if __name__ == "__main__":
 	v_ids = df_age['SubjectID'].as_matrix()
 	v_ages = df_age['Age'].as_matrix()
 	my_ages = {v_ids[i] : v_ages[i] for i in range(len(v_ids)) }
+	
 	# with open(fn_in_ages, 'rb') as csvfile:
 	# 	myreader = csv.reader(csvfile)
 	# 	my_ages = {pairs[0] : float(pairs[1]) for idx,pairs in enumerate(myreader) if idx > 0} # skip header
 
-	print "Find participants that have data in both experiments... "
+	print "Total participants recorded..."
 	print "  N = " + str(len(set(acc_fendle.keys()))) + " for Fendle app"
 	print "  N = " + str(len(set(acc_vocab.keys()))) + " for vocab app"
-	print "  excluding " + str(len(exclude_user)) + " participants"
-	user_with_both = ( set(acc_fendle.keys()) & set(acc_vocab.keys()) ) - set(exclude_user)
+
+	print "Excluding participants that do not have data in both experiments... "
+	user_with_both = ( set(acc_fendle.keys()) & set(acc_vocab.keys()) )
+	N_with_both = len(user_with_both)
+	print "  excluding " + str(len(set(acc_fendle.keys())) + len(set(acc_vocab.keys())) - len(user_with_both)) + " participants"
+	
+	user_with_both = user_with_both - set(exclude_user)
+	print "Excluding participants that are on the exclude list... "
+	print "  excluding " + str(N_with_both - len(user_with_both)) + " more participants"
 	user_with_both = sorted(list(user_with_both))
-	print "  leaving N = " + str(len(user_with_both)) + " total"
+	print "Leaving N = " + str(len(user_with_both)) + " total"
 	print ""
 
 	print "Flagging participants with unusual number of trials... "
@@ -128,6 +141,9 @@ if __name__ == "__main__":
 	(r,p) = stats.pearsonr(v_age,v_acc_vocab)
 	print "  correlation between vocab and age is r = " + str(round(r,3)) + ", p = " + str(round(p,8)) + " (n=" + str(n) + ")"
 	print ""
+
+
+	print "ages (M = " + str(round(np.mean(v_age),3)) + " min = " + str(np.amin(v_age)) + ", max = " + str(np.amax(v_age)) 
 
 	print "Writing summary of data to CSV file '" + str(fn_out_summary) +  "'... "
 	print ""

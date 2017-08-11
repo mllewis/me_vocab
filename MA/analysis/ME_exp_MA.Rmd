@@ -1,0 +1,234 @@
+---
+title: ME vocab analyses with experimental and MA data
+author: Mike Frank, Veronica Cristiano, Brenden Lake, Tammy Kwan, Molly Lewis
+subtitle: 
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    theme: cerulean
+    code_folding: hide
+---
+
+Load packages
+```{r setup, message = FALSE}
+library(tidyverse)
+library(lubridate)
+library(langcog)
+library(skimr) #devtools::install_github("hadley/colformat") #devtools::install_github("ropenscilabs/skimr")
+library(corrr)
+library(knitr)
+library(feather)
+
+opts_chunk$set(echo = T, message = F, warning = F, 
+               error = F, cache = F, tidy = F)
+
+theme_set(theme_minimal())
+```
+
+
+# Experimental data
+Read in participant-wise data.
+
+```{r}
+file_1 <- "../../data-flurry/summary-07-12-17.csv"
+file_2 <- "../../data-flurry/summary-12-9-16.csv"
+# file_3 <- "data-flurry/summary-2-7-17.csv" # this one is missing, but we may want it? (N doesn't match email - but maybe that's including excluded participants?)
+
+mss <- read_csv(file_1) %>%
+          rbind(read_csv(file_2)) %>%
+          rename(sub_id = SubjectID) %>%
+          mutate_at(vars(sub_id), funs(as.factor))
+
+```
+
+Summarize data
+
+```{r}
+skim(mss)
+
+NUM_PARTICIPANTS <-  nrow(mss)
+```
+
+There are `r NUM_PARTICIPANTS` unique participants.
+
+One participant has no data. Remove them.
+
+```{r}
+mss_c <- filter(mss, !is.na(ME_acc))
+```
+
+```{r fig.height=2}
+mss_c %>%
+  gather("measure", "value", 2:4) %>%
+  ggplot(aes(x = value, fill = measure)) +
+  geom_histogram() +
+  facet_wrap(~measure, scales = "free") +
+  theme(legend.position = "none") 
+```
+
+
+## Developmental plots{.tabset}
+
+### Age vs. Vocab
+```{r}
+ggplot(mss_c, aes(x = age, y = vocab_acc)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+### Age vs. ME
+```{r}
+ggplot(mss_c, aes(x = age, y = ME_acc)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+### Vocab vs. ME
+```{r}
+ggplot(mss_c, aes(x = vocab_acc, y = ME_acc)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+## Stats
+
+### Correlations
+```{r}
+mss_c %>%
+  select(age, vocab_acc, ME_acc)  %>%
+  correlate() %>%
+  shave() %>%
+  kable()
+```
+
+### Partial Correlations
+ME and vocab, controlling for age
+```{r}
+ppcor::pcor.test(mss_c$ME_acc, mss_c$vocab_acc, mss_c$age) %>%
+  kable()
+```
+
+Age and vocab, controlling for ME
+```{r}
+ppcor::pcor.test(mss_c$age, mss_c$vocab_acc, mss_c$ME_acc) %>%
+  kable()
+```
+
+# MA data
+
+Read in ME meta-analysis data in Metalab
+```{r}
+ma_raw <- read_feather("../data/mutual_exclusivity_metalab") %>%
+  select(1, 3, 6, 9, 11, 12, 18, 20, 49, 52, 53, 95, 96) %>%
+  mutate_if(is.character, as.factor)
+```
+
+
+Summarize data
+```{r}
+skim(ma_raw)
+```
+
+## Developmental plots{.tabset}
+```{r}
+mean_month <- 365.2425 / 12.0
+
+ma_c <- ma_raw %>%
+  mutate(mean_age = mean_age_1/mean_month)
+```
+
+### Age vs. Vocab
+```{r}
+ma_c %>%
+  filter(!is.na(mean_production_vocab),
+           mean_age < 36) %>%
+  ggplot(aes(x = mean_age, y = mean_production_vocab)) +
+  geom_point(aes(size = n_1)) +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  xlab("Mean age (months)") +
+  ylab("Mean CDI productive vocabulary") +
+  theme(legend.position = "none")
+```
+
+
+### Age vs. ME
+```{r}
+ma_c %>%
+ggplot(aes(x = mean_age, y = d_calc)) +
+  geom_point(aes(size = n_1)) +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  xlab("mean age (months)") +
+  ylab("Estimated effect size (d)") +
+  ggtitle("all MA data - age") +
+  theme(legend.position = "none")
+```
+
+### Age vs. ME subsetted
+```{r}
+ma_c %>%
+  filter(!is.na(mean_production_vocab),
+           mean_age < 36) %>%
+ggplot(aes(x = mean_age, y = d_calc)) +
+  geom_point(aes(size = n_1)) +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  xlab("mean age (months)") +
+  ylab("Estimated effect size (d)") +
+  ggtitle("production MA data - age") +
+  theme(legend.position = "none")
+```
+
+### Vocab vs. ME
+```{r}
+ma_c %>%
+  filter(!is.na(mean_production_vocab),
+           mean_age < 36) %>%
+  ggplot(aes(x = mean_production_vocab, y = d_calc)) +
+  geom_point(aes(size = n_1)) +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  xlab("Mean CDI productive vocabulary") +
+  ylab("Estimated effect size (d)") +
+  ggtitle("production MA data - vocab") +
+  theme(legend.position = "none")
+```
+
+## Stats
+
+### Correlations
+```{r}
+ma_c %>%
+  filter(!is.na(mean_production_vocab),
+           mean_age < 36)  %>%
+  select(mean_age, mean_production_vocab, d_calc)  %>%
+  correlate() %>%
+  shave() %>%
+  kable()
+```
+
+### Partial Correlations
+ME and vocab, controlling for age
+```{r}
+
+ma_sub <- ma_c %>%
+  filter(!is.na(mean_production_vocab),
+           mean_age < 36)
+
+ppcor::pcor.test(ma_sub$d_calc, ma_sub$mean_production_vocab, ma_sub$mean_age) %>%
+  kable()
+```
+
+Age and vocab, controlling for ME
+```{r}
+ppcor::pcor.test(ma_sub$mean_age, ma_sub$mean_production_vocab, ma_sub$d_calc)%>%
+  kable()
+```
+
+TO DO: Get meta-analytics estimates
+
+
+
+
+
+
+
+

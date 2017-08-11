@@ -38,3 +38,5 @@ vignettes/*.pdf
 # Sublime text files
 *.sublime-project
 *.sublime-workspace
+
+*.dcf

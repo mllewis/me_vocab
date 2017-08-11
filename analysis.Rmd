@@ -17,7 +17,7 @@ library(langcog)
 Read in event log. 
 
 ```{r}
-events <- read_csv("data/fendle-12-8-16.csv")
+events <- read_csv("data-flurry/fendle-12-9-16.csv")
 ```
 
 helper.
@@ -93,10 +93,11 @@ summary
 
 ```{r}
 ms <- mss %>%
-  multi_boot_standard(col = "correct", na.rm=TRUE)
+  multi_boot_standard(col = "correct", na.rm = TRUE)
 
 ggplot(ms, aes(x = trial_type, y = mean)) + 
-  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) + 
+  geom_pointrange(aes(ymin = summary_ci_lower, 
+                      ymax = summary_ci_upper)) + 
   geom_hline(yintercept = .5, lty = 2) + 
   ylim(0,1) 
 ```

@@ -12,6 +12,7 @@ output:
 library(tidyverse)
 library(lubridate)
 library(langcog)
+library(stringr)
 ```
 
 Read in event log. 

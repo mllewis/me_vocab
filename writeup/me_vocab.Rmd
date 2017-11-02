@@ -56,7 +56,9 @@ output            : papaja::apa6_pdf
 ---
 
 ```{r load_packages, include = FALSE}
-library("papaja")
+library(papaja)
+library(tidyverse)
+library(langcog)
 ```
 
 ```{r analysis_preferences}
@@ -66,6 +68,21 @@ set.seed(42)
 
 
 # Introduction
+
+A central property of language is that each word in the lexicon maps to a unique concept, and each concept maps to a unique word \cite{clark1987principle}. Like other important regularities in language (e.g. grammatical categories), children cannot directly observe this general property. Instead, they must learn to use language in a way that is consistent with the generalization on the basis of evidence about only specific word-object pairs. 
+
+Even very young children behave in a way that is consistent with this one-to-one regularity in language. Evidence for this claim comes from what is known as the ``disambiguation'' effect. In a typical demonstration of this effect \cite<e.g.>{markman1988}, children are presented with a novel and familiar object (e.g.\ a whisk and a ball), and are asked to identify the referent of a novel word (``Show me the dax''). Children in this task tend to choose the novel object as the referent,  behaving in a way that is consistent with the one-to-one word-concept regularity in language across a wide range of ages and experimental paradigms \cite{mervis1994two,golinkoff1994early,markman2003,halberda2003development,bion2012fast}.
+
+This effect has received much attention in the word learning literature because the ability to identify the meaning of a word in ambiguous contexts is, in essence, the core problem of word learning. That is, given any referential context, the meaning of a word is underdetermined \cite{quine1960}, and the challenge for the world learner is to identify the referent of the word within this ambiguous context. Critically, the ability to infer that a novel word maps to a novel object makes the problem much easier to solve. For example, suppose a child hears the novel word ``kumquat" while in the produce aisle of the grocery store. There are an infinite number of possible meanings of this word given this referential context, but the child's ability to correctly disambiguate would lead her to rule out all meanings for which she already had a name. With this restricted hypothesis space, the child is  more likely to identify the correct referent than if   all objects in the context were considered as possible referents. 
+
+What are the cognitive processes underlying this effect? There are broadly two proposals in the literature. Under one proposal, Markman and colleagues \citeyear{markman1988, markman2003} suggest that children have a constraint on the types of lexicons considered when learning the meaning of a new word --- a ``mutual exclusivity constraint.''  With this constraint, children are biased to consider only those lexicons that have a one-to-one mapping between words and objects. Importantly, this constraint can be overcome in cases where it is incorrect (e.g. property names),  but it nonetheless serves to restrict the set of lexicons initially entertained when learning the meaning of a novel word. Under this view, then, the disambiguation effect emerges from a general constraint on the structure of lexicons.
+
+Under a second proposal, the disambiguation effect is argued to result from  online inferences made within the referential context  \cite{clark1987principle, diesendruck2001}. In particular, Clark suggests that the disambiguation effect is due to two pragmatic assumptions held by speakers. The first assumption is that speakers within the same speech community use the same words to refer to the same objects (``Principle of Conventionality''). The second assumption is that different linguistic forms refer to different meanings (``Principle of Contrast''). In the disambiguation task described above, then, children might reason (implicitly) as follows: You used a word I've never heard before. Since, presumably we both call a ball ``ball'' and if you'd meant the ball you would have  said ``ball,'' this new word must refer to the new object. Thus, under this account, the disambiguation effect emerges not from a higher-order constraint on the structure of lexicons, but instead from in-the-moment inferences using general pragmatic principles.
+
+These two proposals have traditionally been viewed as competing explanations of the disambiguation effect. Research in this area has consequently focused on identifying empirical tests that can distinguish between these two theories. For example, \citeA{diesendruck2001}  compare performance on a disambiguation task when children are told a novel fact about an object relative to a novel referential label. They found that children disambiguated in both conditions and argued on grounds of parsimony that the same pragmatic mechanism was likely to be responsible for both inferences. More recent evidence contradicts this view: tests of children with autism, who are known to have impairments in pragmatic reasoning find comparable performance on the disambiguation task between typically developing children and children with autism \cite{preissler2005role,de2011mutual}. This result provides some evidence for the view that disambiguation is due to a domain-specific lexical constraint.
+
+We suggest this competing-alternatives approach to the disambiguation effect should be reconsidered.  In a disambiguation task, learners may be making use of both general knowledge about how the lexicon is structured as well as information about the pragmatic or inferential structure of the task. Both of these constraints would then support children's inferences. In other words, these two classes of theories may be describing distinct, complimentary mechanisms that each contribute to a single empirical phenomenon with their weights in any given task determined by children's age and language experience, the nature of the pragmatic situation, and other task-specific factors. 
+
 
 ME is important
 
@@ -169,13 +186,23 @@ Re-evaluate
 
 
 ## Methods
+
 We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
 
 ### Participants
 
-### Material
+Children were recruited at the Children’s Discovery Museum of San Jose. Children were asked if they would be willing to play an iPad game with the experimenter and were informed that they could stop playing at any time. Children first completed two tasks adapted to iPad; one probing their vocabulary size and one mutual exclusivity inference task. Included in analyses are 166 children out of a planned sample of 160 participants. We ran 62 additional children, who were excluded from analysis based on planned exclusion criteria of low English language exposure (≤75%), outside the age range of 24-48 month, children who do not give correct answers on > 50% of familiar noun (control) trials, or < 100% of trials completed. Included in our sample were 97 females and 69 males.
+
+### Stimuli
+
+Mutual exclusivity inference task was comprised of 19 trials total; three practice trials of Familiar-Familiar (FF) nouns and 16 experimental trials. Experimental trials consisted of Novel-Familiar (NF), and Novel-Novel (NN) noun pairings. Of the pictures presented in the task, 14 objects were familiar and 24 objects were novel. The task included 8 control trials, equally split between NN noun pairings (C-NN) and NF noun pairings (C-NF) given in random order. Children who did not give correct answers on 50% of control trials were excluded from the final sample. The remaining 8 trials were divided equally between NN and NF trials.
+
+The general format of the vocabulary assessment comprised of a 4 image display and a verbal prompt. Two practice trials were administered, followed by 20 experimental trials. Experimental trials included a fixed set of 20 developmentally appropriate words taken from the Pearson Peabody Vocabulary Test. These words were taken from 9 different domains, including professions, food, outside things, instruments, animals, classroom, shapes, verbs, and household items.
 
 ### Procedure
+
+Sessions took place individually in a small testing room away from the museum ﬂoor. In the ME inference task, the experimenter introduced them to “Mr. Fox,” a cartoon character who wanted to play a guessing game. The experimenter explained that Mr. Fox would tell them the name of the object they had to find, so they had to listen carefully. Children then saw 3 practice trials with two commonly known objects (i.e. cup and cookie). If the participant chose incorrectly for this practice trial, the audio would correct them and allow the participant to choose again. After the practice trials were completed, the task proceeded to run 16 test trials. Reaction times were measured from the onset of the target word. Children could only make one selection. The vocabulary task displayed 4 images randomly selected from the fixed bank of 22 images. Participants were prompted to choose one object. Again, reaction times were measured from the onset of the target word and children could only make one selection.
+
 
 ### Data analysis
 We used `r cite_r("r-references.bib")` for all our analyses.
@@ -191,21 +218,84 @@ but we also get it for NN trials alone
 
 # Experiment 2: ME and Familiarity
 
+```{r}
+e2 <- read_csv("../data-me_exp/7.16.2010 data.csv")
+```
 
 ## Methods
+
 We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
 
 ### Participants
 
-### Material
+We recruited `r sum(e2_subs$n)` children, ages `r min(e2_subs$age.mo)` -- `r max(e2_subs$age.mo)` months, from the floor of the Boston Children's Museum. 
+
+```{r}
+e2_subs <- e2 %>%
+  group_by(sub.num) %>%
+  summarise(age.mo = age.mo[1], 
+            n = n(), 
+            err = sum(err)) %>%
+  mutate(age_group = floor(age.mo/12))
+
+e2_subs %>%
+  group_by(age_group) %>%
+  summarise(mean_age = mean(age.mo), 
+            n = n()) %>%
+  papaja::apa_table(caption = "Demographics of children in Experiment 2.)
+```
+### Materials
+
+Materials were the set of novel objects used in @demarchena2011, consisting of unusual household items (e.g., a yellow plastic drain catcher) or other small, lab-constructed stimuli (e.g., a plastic lid glued to a popsicle stick). Items were distinct in color and shape. 
 
 ### Procedure
 
+Each child completed four trials. Each trial consisted of a training and a test phase in a "novel-novel" disambiguation task [@demarchena2013]. In the training phase, the experimenter presented the child with a novel object, and explicitly labeled the object with a novel label 1, 2, or 3 times ("Look at the *dax*"), and contrasted it with a second novel object ("And this one is cool too") to ensure equal familiarity. In the test phase, the child was asked to point to the object referred to by a second novel label ("Can you show me the *zot*?"). Number of labels used in the training phase was manipulated between subjects. There were eight different novel words and objects. Object presentation side, object, and word were counterbalanced across children. 
+
 ### Data analysis
+
+A small number of trials were coded as having parent or sibling interference or having 
+
 We used `r cite_r("r-references.bib")` for all our analyses.
 
 
 ## Results and Discussion
+
+Responses were coded as correct if participants selected the novel object at test. As predicted, children showed a stronger disambiguation effect as the number of training labels increased, and as noise decreased with age (Figure \ref{fig:sim_3}, right panel).
+
+We analyzed the results using a logit mixed model to predict correct responses with age and number of labels as fixed effects, and participant as a random effect. There was a significant effect of age ($\beta$ = .044, $ p < .001$) such that older children showed a stronger disambiguation bias. There was also a significant effect of number of labels, such that more training labels led to stronger disambiguation  ($\beta$ = .454, $p < .001$). The interaction between age and number of labels was not significant ($\beta$ = .019, $p = .16$).
+
+
+
+```{r}
+mss <- e2 %>%
+  group_by(age_grp, cond, sub.num) %>%
+  summarise(correct = mean(correct)) 
+
+ms <- ms %>%
+  multi_boot_standard(col = 
+  
+
+
+mss <- aggregate(correct ~  cond + age.grp + sub.num,data,mean)
+ms <- aggregate(correct ~  cond + age.grp,mss,mean)
+ms$ci.h <- aggregate(correct ~  cond + age.grp,mss,ci.high)$correct
+ms$ci.l <- aggregate(correct ~  cond + age.grp,mss,ci.low)$correct
+ms$n <- aggregate(sub.num ~  cond + age.grp,mss,n.unique)$sub.num
+
+
+
+```
+
+```{r}
+ggplot(age.grp,correct,group=cond,colour=cond,position=position_dodge(.1),
+      ymin=correct-ci.l,ymax=correct+ci.h,geom=c("pointrange","line"),
+      xlab="Age Group (Years)",ylab="Proportion Correct",ylim=c(0,1),
+      data=ms) + 
+  scale_colour_manual(name="Exposure Condition",
+                      values=c("red","green","blue")) +
+  geom_abline(slope=0,intercept=.5,lty=2) 
+```
 
 
 

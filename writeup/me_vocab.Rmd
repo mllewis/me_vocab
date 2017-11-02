@@ -1,0 +1,226 @@
+---
+title             : "The role of experience in disambiguation during early word learning"
+shorttitle        : "Disambiguation during early word learning"
+
+author: 
+  - name          : "Molly Lewis"
+    affiliation   : "1, 6"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "my@email.com"
+  - name          : "Veronica Cristiano"
+    affiliation   : "2"
+  - name          : "Brenden Lake"
+    affiliation   : "3"
+  - name          : "Tammy Kwan"
+    affiliation   : "4"
+  - name          : "Michael C. Frank"
+    affiliation   : "5"
+  
+affiliation:
+  - id            : "1"
+    institution   : "University of Chicago"
+  - id            : "2"
+    institution   : "Gallaudet University"
+  - id            : "3"
+    institution   : "New York University"
+  - id            : "4"
+    institution   : "Cognitive Toybox, Inc."
+  - id            : "5"
+    institution   : "Stanford University"
+  - id            : "6"
+    institution   : "University of Wisconsin, Madison"
+
+author_note: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  Enter abstract here. Each new line herein must be indented, like this line.
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+
+figsintext        : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : yes
+
+lang              : "english"
+class             : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r load_packages, include = FALSE}
+library("papaja")
+```
+
+```{r analysis_preferences}
+# Seed for random number generation
+set.seed(42)
+```
+
+
+# Introduction
+
+ME is important
+
+ME is controversial 
+
+What do we even call it? 
+
+What's the goal of this paper.
+
+## Theoretical views of "mutual exclusivity"
+
+### Constraint and bias accounts
+
+ME
+
+N3C
+
+
+### Probabilistic accounts
+
+Regier
+
+McMurray
+
+Frank Goodman Tenenbaum
+
+Fazly
+
+
+### Over-hypothesis accounts
+
+
+Lewis & Frank (2013)
+
+
+### Pragmatic accounts
+
+Clark?
+
+In the moment
+
+Learned pragmatics 
+
+## Theory-constraining findings
+
+NN vs. NF
+
+Speaker-change studies
+
+Autism 
+
+Bilingualism
+
+Fast mapping + no retention
+
+Developmental change (halberda)
+
+
+
+## Synthesis
+
+These are definitely features of a successful account:
+Timescales
+- must be one "in the moment" 
+- and one longer-term learned mechanism
+
+Experience
+
+Probabilistic representations
+
+Could be the case also that it's a mixture of pragmatic, etc.
+
+
+## The current study
+
+Gather evidence on strength of finding
+
+Test emergent relationship to vocabulary (E1)
+
+Test causal relationship to representation strength (E2)
+
+Re-evaluate
+
+# Meta-analysis
+
+
+## Methods
+
+
+## Results
+
+
+## Bilingualism
+
+
+## Autism Spectrum Disorders
+
+
+
+# Experiment 1: ME and Vocabulary
+
+
+## Methods
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+### Participants
+
+### Material
+
+### Procedure
+
+### Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+## Results and Discussion
+
+Could be specific strength of particular word in the NF pairing
+
+but we also get it for NN trials alone
+
+
+
+# Experiment 2: ME and Familiarity
+
+
+## Methods
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+### Participants
+
+### Material
+
+### Procedure
+
+### Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+## Results and Discussion
+
+
+
+
+
+
+# General Discussion
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "r-references.bib")
+```
+
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}

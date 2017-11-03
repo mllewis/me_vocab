@@ -41,3 +41,9 @@ vignettes/*.pdf
 
 *.dcf
 .Rproj.user
+
+*_files
+*.ttt
+*.fff
+*_cache
+*.tex

@@ -1,0 +1,77 @@
+---
+title: ME MA for paper
+author: Molly Lewis
+subtitle: 
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    theme: cerulean
+    code_folding: hide
+---
+
+Load packages
+```{r setup, message = FALSE}
+library(tidyverse)
+library(lubridate)
+library(langcog)
+library(skimr) #devtools::install_github("hadley/colformat") #devtools::install_github("ropenscilabs/skimr")
+library(corrr)
+library(knitr)
+library(feather)
+
+opts_chunk$set(echo = T, message = F, warning = F, 
+               error = F, cache = F, tidy = F)
+
+theme_set(theme_minimal())
+```
+
+```{r}
+ma_raw <- read_feather("../data/mutual_exclusivity") %>%
+  select(c(1, 3, 6, 12, 14, 15, 18, 20, 22:24, 
+           29:30, 52,53, 95, 96, 97, 98, 100, 101)) %>%
+  mutate_if(is.character, as.factor)
+```
+
+TO DO ON MAs:
+- systematize paper search, and record
+- save papers
+- check coding
+- are all NNs coded?
+- are all FFNs coded?
+
+### Summary of coded data
+```{r}
+count(ma_raw, infant_type2) %>%
+  kable()
+
+count(ma_raw, ME_trial_type) %>%
+  kable()
+
+N_d_calc <- length(which(!is.na(ma_raw$d_calc)))
+N_d_calc
+```
+
+
+```{r}
+ma_c <- ma_raw %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH) %>%
+  filter(infant_type2 != "adults",
+         study_ID != "sugimura1997")
+```
+### Age vs. ME
+```{r}
+ma_c %>%
+  ggplot(aes(x = mean_age, y = d_calc)) +
+    geom_point(aes(size = n_1,  shape = ME_trial_type, color = infant_type2)) +
+    geom_smooth(method = "lm", formula = y ~ log(x)) +
+    scale_color_discrete(name="Population",
+                       labels=c("ASD", "bilingual", "deaf/heard-of-hearing","late-talkers", "typical")) +
+      scale_shape_discrete(name="Trial type",
+                       labels=c("Familiar-Novel", "Novel-Novel")) +
+    scale_size_continuous(name="Sample size") +
+    xlab("Mean age (months)") +
+    ylab("Estimated effect size (d)") +
+    ggtitle("Meta-analysis") +
+    xlim(0, 65)
+```

@@ -2,22 +2,140 @@
 # SD = SE * sqrt(n)
 # SD = sqrt(var)
 
+### kalashnikova1996a
+# data from page 87 (for noth exps)
+n = 46
+w = (.968-.874)/2
+w = 1.96*s/sqrt(n)
+s = (sqrt(n) * w)/1.96 
+s
+
+####kalashnikova2016 2016 
+# SD_dif = sqrt((var/n) + var/n)) # convert to SEs
+# SD_dif = sqrt(se1^2 + se2^2)
+
+n = 27
+sd1 = .27
+sd2 = .08
+# SD_dif = sqrt((sd1^2/n) + sd2^2/n)) 
+
+
+### Davidson 1997
+# calculate sd based on greek 3-4yo condition
+t = 1.46
+n = 16
+x1 = .6
+x2 = .5
+
+t = (x1-x2)/ (s/sqrt(n))
+1.46 = .4/s 
+s = .4/1.46
+
+s = 0.2739726
+
+
+### Preisler 2005
+# 32/39
+# there are 4 possible ways 7 trials could have been incorrect
+v1 = c(c(1,1,1,1,1,1,1), rep(2, 12), 1) # 1 because one trial missing
+v2 = c(c(1,1,1,1,1,0), rep(2, 13), 1)
+v3 = c(c(1,1,1,0,0), rep(2, 14), 1)
+v4 = c(c(1,0,0,0), rep(2, 15), 1)
+
+estimated_sd <- mean(c(sd(v1), sd(v2), sd(v3), sd(v4)))/2
+mean = 32/39
+mean
+estimated_sd
+
+### Romski 1996
+# table 2, column1
+d <- c(0, .25, 0, .25, 0, .5, .5, .75, 1, 1, 1, 1) #
+sd(d)
+
+### Wall et al 2015
+# table 1
+m3s = c(rep(0,8), rep(.5, 11), rep(1, 7))
+mean(m3s)
+sd(m3s)
+
+m4s = c(rep(0,9), rep(.5, 10), rep(1,11))
+mean(m4s)
+sd(m4s)
+
 ####houston-price2010 (Figure 1; UK)
 # SD_dif = sqrt((var/n) + var/n)) # convert to SEs
 # SD_dif = sqrt(se1^2 + se2^2)
 
 # monolinguals
-y1 = 
-y2 = 
-y1se = 
-y2se = 
+h = 2.93
+H = 35
+y1 = .6
+y2 = 1.33
+y1se = .13
+y2se = .19
+
+y1t = (y1 * H)/h
+y2t = (y2 * H)/h
+
+dift = y2t - y1t 
+
+y1set = (y1se * H)/h
+y2set = (y2se * H)/h
+
+sd_dift = sqrt(y1set^2 + y1set^2)
+
+dift/100
+sd_dift/100
 
 
 # bilinguals
-y1 = 
-y2 =
-y1se = 
-y2se = 
+y1 = .58
+y2 = .49
+y1se = .15
+y2se = .23
+
+y1t = (y1 * H)/h
+y2t = (y2 * H)/h
+
+dift = y2t - y1t 
+
+y1set = (y1se * H)/h
+y2set = (y2se * H)/h
+
+sd_dift = sqrt(y1set^2 + y1set^2)
+
+dift/100
+sd_dift/100
+
+### horst2010
+n = 12
+h = 3.17
+H = 1
+
+Y2 = 2.91
+Y2se = .16
+
+Y3 = 2.3
+Y3se = .19
+Y4 = 2.77
+Y4se = .19
+
+y2t = Y2/h
+y2est = (Y2se/h) * sqrt(n)
+y2t
+y2est
+
+y3t = Y3/h
+y3est = (Y3se/h) * sqrt(n)
+y3t
+y3est
+
+y4t = Y4/h
+y4est = (Y4se/h) * sqrt(n)
+y4t
+y4est
+
+
 
 ####graham2010
 y=4.61

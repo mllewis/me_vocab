@@ -1,6 +1,7 @@
 #This script calculates effect sizes for entries in metalab
 #metalab.stanford.edu
 #for questions please contact team members on metalab website
+# note! This has been modified for the ME MA to use reported d when it's the only thing available, and then calculate d_var_calc
 
 library(dplyr)
 library(purrr)
@@ -144,10 +145,10 @@ compute_es <- function(participant_design, x_1 = NA, x_2 = NA, x_dif = NA,
      
        es_method  <- "r_one"
       
-    } else  if (complete(d, d_var)) {
+    } else  if (complete(d)) {
       #if d and d_var were already reported, use those values
       d_calc <- d
-      d_var_calc <- d_var
+      d_var_calc <- (1 / n_1) + (d_calc ^ 2 / (2 * n_1)) # this models what is done in metafor package, escalc(measure="SMCR"() (Viechtbauer, 2010)
       es_method  <- "d_one"
     }
   }

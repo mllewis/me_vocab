@@ -1,0 +1,211 @@
+
+# Meta-analysis
+
+```{r}
+ma_raw <- read_feather("../../MA/data/mutual_exclusivity") %>%
+  select(c(1, 3, 6, 12, 14, 15, 18, 20, 22:24, 
+           29:30, 52,53, 95, 96, 97, 98, 100, 101)) %>%
+  mutate_if(is.character, as.factor)
+
+AVG_MONTH <- 30.43688
+ma_c <- ma_raw %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH) %>%
+  filter(infant_type2 != "adults",
+         study_ID != "sugimura1997") # no variability
+```
+
+
+## Methods
+
+
+### Search strategy
+We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013). We also identified additional papers that were cited from this initial list. We then narrowed our sample to the subset that used one of two paradigms: (1) the canonical experimental paradigm for testing disambiguation behavior (an experimenter says a novel word in the context of a familiar object and a novel object, and the child guesses the intended referent; "Familiar-Novel"), or (2) a paradigm that exposed children to an an unambigous mapping of a novel label to a novel object, and then introduced a second novel object and asked children to identify the referent of a second novel label ("Novel-Novel"). We included conditions that included more than one familiar object. We then restricted our sample to only those that contained conditions that satisfied the following criteria: (a) participants were children, (b) referents were objects or pictures (not facts or object parts), (c)  no incongruent cues (e.g. eye gaze at familiar object), and (d) peer-reviewed. We included papers that measured responses either through forced-choice pointing or eye-tracking. One paper [@sugimura1996factors] was exscluded because it reported no variability in participants' performance (all children succeeded), and thus we could not compute an effect size. `r length(unique(ma_c$study_ID))` papers satisfied our criteria. 
+
+### Coding
+For each paper, we coded each relevant condition in each experiment separately, leading to  `r nrow(ma_c)` unique conditions in total. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: method (pointing or eyetracking), mean age of infants, participant population type (e.g., monolingual-typically-developing, ASD, etc.), and estimates of vocabulary size from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability, @fenson2007macarthur].
+
+To estimate the effect size in each condition, we coded a number of quantitative variables: sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), and standard deviations for novel object selections, t-statistic, and Cohen's d. For XX conditions, there was data were insufficient data reported in the main text to calculate an effect size (no means and standard deviations, t-statistic, or cohen's ds), but we were able to esimtate the means and standard deviations though measurement of barplots. 
+
+### Statistical approach
+
+We calculated d
+
+For each paper, we coded each condition in each experiment separately with `r nrow(ma_c)` conditions total
+
+For each 
+Of this sample, `r  length(which(!is.na(ma_raw$d_calc)))` did not have 
+
+
+
+ We identified 38 relevant papers and coded each condition in each paper for mean age, effect size (Cohen’s d) and CDI productive vocabulary, where reported. Effect size reflected the bias to select the novel object when presented with a novel label, relative to the familiar object. From the 38 total papers, there were 51 conditions in 20 papers for which statistical reporting was sufficient to calculate effect size. 
+
+## Results
+
+```{r, eval = F}
+# MA STUFF TO DO:
+- get proportion double checked by joan
+- check sub sample
+- check alvaros ones
+- how deal with pointing + eyetracking one
+- check eyetracking vs behavioral coding
+- check for duplicates
+```
+
+
+
+
+```{r, fig.height = 8, fig.pos = 'T!'}
+ma_plotting <- ma_c %>%
+  mutate(es_type = ifelse(infant_type2 != "typical",
+                          "Non-Typical Populations",
+                          ifelse(ME_trial_type == "NN", 
+                                 "Novel-Novel", "Familiar-Novel")),
+         es_type = ifelse(es_type == "Non-Typical Populations" &  infant_type2 %in% c("bilingual", "trilingual"), "Multi-Lingual", 
+                          ifelse(es_type == "Non-Typical Populations", "Non-Typical Populations", es_type)),
+        es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"),
+
+         infant_type2_label = ifelse(infant_type2 == "typical",
+                                     "", as.character(infant_type2)),
+         infant_type2_label = fct_recode(infant_type2_label, 
+                                         LT = "late_talkers", 
+                                         DHH = "deaf/hard-of-hearing", 
+                                         BL = "bilingual", 
+                                         TL = "trilingual",
+                                         MR = "youth with mental retardation"),
+         d_var_calc2 = ifelse(es_type == "Non-Typical Populations", 
+                                d_var_calc, 0),
+         d_calc2 = ifelse(es_type == "Non-Typical Populations", 
+                                d_calc, 0),
+         d_var_calc2 = d_var_calc,
+         d_calc2 = d_calc,
+         effects.cil = d_calc2 -
+               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2),
+         effects.cih = d_calc2 +
+               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2)) %>%
+        filter(mean_age < 75 | es_type == "Non-Typical Populations")
+
+NF_only <- ma_plotting %>%
+  filter(infant_type2 == "typical",
+         ME_trial_type == "FN") %>%
+  select(d_calc, mean_age)
+
+all_FN <- mutate(NF_only, 
+                 es_type = "Familiar-Novel", 
+                 line_group = 1) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Novel-Novel",
+                           line_group = 2)) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Non-Typical Populations",
+                           line_group = 2)) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Multi-Lingual",
+                           line_group = 2)) %>%
+          mutate(es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"))
+
+NN_NT_only <- ma_plotting %>%
+  mutate(d_calc = ifelse(infant_type2 == "typical" & 
+                            ME_trial_type  == "FN", NA, d_calc),
+         mean_age = ifelse(infant_type2 == "typical" & 
+                            ME_trial_type  == "FN", NA, mean_age),
+         es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel")) %>%
+  select(study_ID, d_calc, mean_age, infant_type2, ME_trial_type, es_type) 
+
+ma_plotting %>%
+  ggplot(aes(x = mean_age, y = d_calc)) +
+    facet_wrap( ~ es_type, scale = "free_x", 2) +
+    geom_hline(aes(yintercept = 0)) +
+    geom_linerange(aes(ymin = effects.cil, ymax = effects.cih), 
+                   alpha = .5, size = .3) +
+    geom_point(aes(size = n_1, shape = ME_trial_type), alpha = .5) +
+    geom_smooth(aes(linetype = as.factor(line_group)), 
+                method = "lm", formula = y ~ log(x), color = "#268bd2",
+                data = all_FN, se = FALSE, size = 1.1) +
+    geom_smooth(aes(y = d_calc, x = mean_age, color = es_type), 
+                method = "lm", formula = y ~ log(x), 
+                data = NN_NT_only, se = FALSE, size = 1.1) +
+    scale_color_manual(values= c("#b58900", "#d33682", "#6c71c4"), guide = FALSE) +
+    ggrepel::geom_text_repel(aes(label = infant_type2_label), box.padding = .5) +
+    scale_shape_discrete(name = "Trial Type",
+                         labels = c("Familiar-Novel", "Novel-Novel")) +
+    scale_size_continuous(name="Sample size") +
+    guides(linetype = FALSE,
+           shape = guide_legend(override.aes = list(size = 4))) +
+    xlab("Mean age (months)") +
+    ylab("Effect size (d)") +
+    ggtitle("Disambiguation Development from Meta-Analysis") +
+    theme_few()  +
+    theme(legend.position = "bottom") 
+```
+
+
+## Bilingualism
+
+
+## Autism Spectrum Disorders
+
+
+
+```{r, eval = F}
+funnel.es.data <- synthesis_all_data %>%
+  mutate(dataset = fct_relevel(dataset, 
+                               "Infant directed speech preference","Phonotactic learning", "Vowel discrimination (native)", 
+                               "Vowel discrimination (non-native)","Statistical sound category learning", "Word segmentation",
+                               "Mutual exclusivity", "Sound symbolism", "Label advantage in concept learning","Online word recognition",
+                               "Gaze following",  "Pointing and vocabulary"),
+         dataset = fct_recode(dataset,
+                              "IDS preference" = "Infant directed speech preference",
+                              "Statistical sound learning" = "Statistical sound category learning", 
+                              "Concept-label advantage" = "Label advantage in concept learning",
+                              "Vowel discrimination\n(native)" = "Vowel discrimination (native)",
+                              "Vowel discrimination\n(non-native)" = "Vowel discrimination (non-native)")) %>%
+  group_by(dataset) %>%
+  mutate(se = sqrt(d_var_calc), 
+         es = d_calc, 
+         center = mean(d_calc), 
+         lower_lim = max(se) + .05 * max(se))
+
+
+# separate df for 95 CI funnel shape
+funnel95.data.wide <- funnel.es.data %>%
+  select(center, lower_lim, dataset) %>%
+  group_by(dataset) %>%
+  summarise(x1 = (center-lower_lim * CRIT_95)[1], 
+            x2 = center[1],
+            x3 = center[1] + lower_lim[1] * CRIT_95,
+            y1 = -lower_lim[1],
+            y2 =  0, 
+            y3 = -lower_lim[1]) 
+
+funnel95.data.x <- funnel95.data.wide  %>%
+  select(dataset,  dplyr::contains("x")) %>%
+  gather("coordx", "x", 2:4) %>%
+  arrange(dataset, coordx) %>%
+  select(-coordx)
+
+funnel95.data.y <- funnel95.data.wide  %>%
+  select(dataset, dplyr::contains("y")) %>%
+  gather("coordy", "y", 2:4) %>%
+  arrange(dataset, coordy) %>%
+  select(-coordy)
+
+funnel95.data <- bind_cols(funnel95.data.x, funnel95.data.y)
+
+ggplot(funnel.es.data, aes(x = es, y = -se)) +
+  facet_wrap(~dataset, scales = "free") +
+  xlab("Effect Size")  +
+  ylab("Standard Error\n")  +
+  scale_colour_solarized(name = "") +
+  geom_polygon(aes(x = x, y = y), 
+               data = funnel95.data,
+               fill = "white") +
+  geom_vline(aes(xintercept=x2), 
+             linetype = "dashed", color = "red", size = .8, data = funnel95.data.wide) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey44",  size = .8) +
+  scale_y_continuous(labels = function(x){abs(x)}) +
+  geom_point(size = .5) +
+  theme(panel.grid.major = element_line(colour = "grey", size = 0.2),
+        panel.grid.minor = element_line(colour = "grey", size = 0.5),
+        strip.text.x = element_text(size = 9),
+        strip.background = element_rect(fill="grey")) 
+```

@@ -1,0 +1,30 @@
+# ME in Models of Word Learning
+
+## Basic statistical biases ("explaining away")
+
+@regier2005 model shows ME emergent
+
+as noted by @frank2009, @yu2007 model (IBM machine translation model #1, @cite for that; subsequently adapted by @fazly2012) shows ME as well. 
+
+this is because any conditional probability model will show the same effect
+
+In other words, @markman1988's sense of a basic inductive bias will likely be present in a wide variety of different learning models. 
+
+What is the experience-dependence of ME in these models? In the @frank2009 model, the strength of the ME response scales with the strength of the familiar word's mapping; the same thing is true for the other models presumably. 
+
+Open question whether the actual differerence in a 2-year-olds' and a 4-year-olds' strength of representation of "ball" is what matters here?
+
+
+@frank2009 model shows ME, in fact stronger than basic conditional probability. This is in part due to the use of the intention variable. 
+
+As a side note, the @horst2007 no retention finding is shown in an even more pragmatic model: @smith2013 model shows ME with no retention (though explanation in that model is a little implausible "because the speaker might not be committed to that label and is just using it as a matter of convenience.")
+
+Primary point: No support here for overhypothesis building, which is suggested by 1) the bilingualism results. In order to fit the bilingual data, in general we'd have to assume that strength of individual representations in monolinguals and bilinguals was a driver, and this seems unlikely. 2) no support for E1 vocab findings unless the entire developmental trend is due to strength of the familiar word representations. In general, the strong --- likely false --- claim from all of these models is that the individual representation of the familiar object strength is the only locus for developmental/population-related change.
+
+@mcmurray2012 model has ME emerge from the competition dynamics of a neural network. 
+
+> Thus, the selection of the novel object is dependent on the learning rule, but not because the network needs to learn something about that object/word. Rather, the weights between the known word/objects and the unused lexical units must decay, and the weights between the novel ones must not in order to create a platform upon which real-time competition dynamics can select the right object. A different type of weight decay (for example, if all weights decayed on each epoch) would not preserve the right form of the weight matrix. However, learning is not the whole story: this pattern of connectivity could not be harnessed in situation time without the gradual settling process represented by the inhibition and feedback dynamics. Moreover, the model’s ability to learn from M.E. referent selection may also depend on this competition/feedback cycle. The model must select a single lexical unit and selectively amplify the novel object in order to eventually turn a word-referent link created during M.E. referent selection into a known word by associating the novel object with the novel word over many instances. Thus, while as a real-time process mutual exclusivity is likely to impact learning, it is really more the product of learning than a mechanism of it.
+
+This proposal is complicated but might capture the global and local dynamics in Experiment 1 & 2 better than others. 
+
+@zinserunderreview deal with bilingual data by adding a direct ME-related penalty, not letting it be emergent. 

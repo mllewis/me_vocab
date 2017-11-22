@@ -1,0 +1,101 @@
+
+
+
+# Experiment 2: ME and Familiarity
+
+```{r}
+e2 <- read_csv("../../data-me_exp/experimental_data_cleaned.csv")  %>%
+  mutate(age_group = floor(age_mo/12),
+         err_type = ifelse(is.na(correct), "no choice", err_type), 
+         err = ifelse(is.na(correct), 1, err))
+```
+
+## Methods
+
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+### Participants
+
+```{r}
+e2_subs <- e2 %>%
+  group_by(sub_num, age_group) %>%
+  summarise(age_mo = age_mo[1], 
+            n = n(), 
+            err = sum(err)) 
+
+e2_subs %>%
+  group_by(age_group) %>%
+  summarise(mean_age = mean(age_mo), 
+            n = n()) %>%
+  papaja::apa_table(caption = "Demographics of children in Experiment 2.")
+```
+
+We planned a total sample of 108 children, 12 per between-subjects labeling condition, and 36 total in each one-year age gorup. Our final sample was `r nrow(e2_subs)` children, ages `r min(e2_subs$age.mo)` -- `r max(e2_subs$age.mo)` months, recruited from the floor of the Boston Children's Museum. Children were randomly assigned to the one-label, two-label, or three label condition, with the total number of children in each age group and condition ranging between 10 and 13.  
+
+### Materials
+
+Materials were the set of novel objects used in @de2011mutual, consisting of unusual household items (e.g., a yellow plastic drain catcher) or other small, lab-constructed stimuli (e.g., a plastic lid glued to a popsicle stick). Items were distinct in color and shape. 
+
+### Procedure
+
+Each child completed four trials. Each trial consisted of a training and a test phase in a "novel-novel" disambiguation task [@demarchena2013]. In the training phase, the experimenter presented the child with a novel object, and explicitly labeled the object with a novel label 1, 2, or 3 times ("Look at the *dax*"), and contrasted it with a second novel object ("And this one is cool too") to ensure equal familiarity. In the test phase, the child was asked to point to the object referred to by a second novel label ("Can you show me the *zot*?"). Number of labels used in the training phase was manipulated between subjects. There were eight different novel words and objects. Object presentation side, object, and word were counterbalanced across children. 
+
+### Data analysis
+
+We followed the same analytic approach as we registered in Experiment 1, though data were collected chronologically earlier for Experiment 2. Responses were coded as correct if participants selected the novel object at test. A small number of trials were coded as having parent or sibling interference, experimenter error, or a child who recognized the target object, chose both objects, or did not make a choice. These trials were excluded from further analyses; all trials were removed for two children for whom there was parent or sibling interference on every trial. The analysis we report here is consistent with that used in @lewis2013b, though there are some slight numerical differences due to reclassification of exclusions. 
+
+```{r}
+e2 %>%
+  filter(err == 1) %>%
+  group_by(err_type) %>%
+  summarise(n = n(), 
+            pct = n() / nrow(e2)) %>%
+  apa_table()
+
+e2_clean <- filter(e2, !err)
+```
+
+
+## Results and Discussion
+
+ As predicted, children showed a stronger disambiguation effect as the number of training labels increased, and as noise decreased with age.
+
+```{r}
+mss <- e2_clean %>%
+  group_by(age_group, cond, sub_num) %>%
+  summarise(correct = mean(correct)) 
+
+ms <- mss %>%
+  multi_boot_standard(col = "correct", na.rm=TRUE)
+
+ggplot(ms, aes(x = factor(age_group), y = mean, col = cond)) + 
+  geom_hline(yintercept = .5, lty = 2) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_dodge(width = .1)) + 
+  geom_line(aes(group = cond)) +
+  xlab("Age (years)") + 
+  ylim(0,1) + 
+  ylab("Proportion correct") + 
+  scale_color_solarized(name = "Condition", 
+                        labels=c("1 label", "2 label", "3 label")) + 
+  theme_few()
+```
+
+```{r}
+e2_clean$age_mo_c <- scale(e2_clean$age_mo, 
+                           scale = FALSE, center = TRUE)
+e2_clean$times_labeled_c <- scale(e2_clean$times_labeled, 
+                                  scale = FALSE, center = TRUE)
+
+mod <- glmer(correct ~ age_mo_c * times_labeled_c  + 
+               (times_labeled_c | sub_num), 
+      family = "binomial", 
+      data = e2_clean)
+
+summary(mod)$coefficients %>%
+  apa_table()
+
+
+```
+
+We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects, and participant as a random effect. We centered both age and number of labels for interpretability of coefficients. Model results are shown in Table XYZ. There was a significant effect of age such that older children showed a stronger disambiguation bias and a  significant effect of number of labels, such that more training labels led to stronger disambiguation, but the interaction between age and number of labels was not significant.

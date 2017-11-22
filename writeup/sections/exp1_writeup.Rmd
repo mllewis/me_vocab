@@ -1,0 +1,33 @@
+# Experiment 1: ME and Vocabulary
+
+
+## Methods
+
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+
+### Participants
+
+Children were recruited at the Children’s Discovery Museum of San Jose. Children were asked if they would be willing to play an iPad game with the experimenter and were informed that they could stop playing at any time. Children first completed two tasks adapted to iPad; one probing their vocabulary size and one mutual exclusivity inference task. Included in analyses are 166 children out of a planned sample of 160 participants. We ran 62 additional children, who were excluded from analysis based on planned exclusion criteria of low English language exposure (less than or equal to 75%), outside the age range of 24-48 month, children who do not give correct answers on > 50% of familiar noun (control) trials, or < 100% of trials completed. Included in our sample were 97 females and 69 males.
+
+### Stimuli
+
+Mutual exclusivity inference task was comprised of 19 trials total; three practice trials of Familiar-Familiar (FF) nouns and 16 experimental trials. Experimental trials consisted of Novel-Familiar (NF), and Novel-Novel (NN) noun pairings. Of the pictures presented in the task, 14 objects were familiar and 24 objects were novel. The task included 8 control trials, equally split between NN noun pairings (C-NN) and NF noun pairings (C-NF) given in random order. Children who did not give correct answers on 50% of control trials were excluded from the final sample. The remaining 8 trials were divided equally between NN and NF trials.
+
+The general format of the vocabulary assessment comprised of a 4 image display and a verbal prompt. Two practice trials were administered, followed by 20 experimental trials. Experimental trials included a fixed set of 20 developmentally appropriate words taken from the Pearson Peabody Vocabulary Test. These words were taken from 9 different domains, including professions, food, outside things, instruments, animals, classroom, shapes, verbs, and household items.
+
+### Procedure
+
+Sessions took place individually in a small testing room away from the museum floor. In the ME inference task, the experimenter introduced them to "Mr. Fox," a cartoon character who wanted to play a guessing game. The experimenter explained that Mr. Fox would tell them the name of the object they had to find, so they had to listen carefully. Children then saw 3 practice trials with two commonly known objects (i.e. cup and cookie). If the participant chose incorrectly for this practice trial, the audio would correct them and allow the participant to choose again. After the practice trials were completed, the task proceeded to run 16 test trials. Reaction times were measured from the onset of the target word. Children could only make one selection. The vocabulary task displayed 4 images randomly selected from the fixed bank of 22 images. Participants were prompted to choose one object. Again, reaction times were measured from the onset of the target word and children could only make one selection.
+
+
+### Data analysis
+
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+## Results and Discussion
+
+Could be specific strength of particular word in the NF pairing
+
+but we also get it for NN trials alone
+

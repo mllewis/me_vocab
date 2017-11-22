@@ -2,6 +2,33 @@
 # SD = SE * sqrt(n)
 # SD = sqrt(var)
 
+###mvervis 1995
+n1 = 9
+n2 = 13
+m1 = 3.22/4
+m2 = .62/4
+sd1 = .83/4
+s23 = .65/4
+
+M = ((m1 * n1) + (m2 * n2))/(n1 + n2)
+SD = ((sd1 * n1) + (sd2 * n2))/(n1 + n2)
+
+M
+SD
+
+p1 = 173
+c1 = 286
+p2 = 31
+c2 = 175
+
+p_vocab = ((p1 * n1) + (p2 * n2))/(n1 + n2)
+c_vocab = ((c1 * n1) + (c2 * n2))/(n1 + n2)
+
+p_vocab
+c_vocab
+
+
+
 ### kalashnikova1996a
 # data from page 87 (for noth exps)
 n = 46
@@ -10,7 +37,7 @@ w = 1.96*s/sqrt(n)
 s = (sqrt(n) * w)/1.96 
 s
 
-####kalashnikova2016 2016 
+####kalashnikova2016
 # SD_dif = sqrt((var/n) + var/n)) # convert to SEs
 # SD_dif = sqrt(se1^2 + se2^2)
 

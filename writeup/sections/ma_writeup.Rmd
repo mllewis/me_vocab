@@ -2,16 +2,71 @@
 # Meta-analysis
 
 ```{r}
-ma_raw <- read_feather("../../MA/data/mutual_exclusivity") %>%
-  select(c(1, 3, 6, 12, 14, 15, 18, 20, 22:24, 
-           29:30, 52,53, 95, 96, 97, 98, 100, 101)) %>%
+ma_raw <- read_feather("../MA/data/mutual_exclusivity") %>%
+  select(c(1, 3, 6, 9, 12, 14, 15, 18, 20, 22:24, 26,
+           29:30, 49, 51:53, 95:99, 100, 102:103)) %>%
   mutate_if(is.character, as.factor)
 
 AVG_MONTH <- 30.43688
 ma_c <- ma_raw %>%
-  mutate(mean_age = mean_age_1/AVG_MONTH) %>%
-  filter(infant_type2 != "adults",
-         study_ID != "sugimura1997") # no variability
+  filter(!is.na(d_calc)) %>%
+  filter(N_AFC == "N_AFC-2") %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH,
+         year = as.numeric(str_sub(short_cite, -5, -2)))  %>%
+  filter(mean_age < 150) # exclude MR population?
+summary(ma_c)
+```
+
+MA summary stats
+```{r}
+# year vs. age and method residulaed effect size
+d_resid <- lm(d_calc ~ mean_age * response_mode, 
+              data = filter(ma_c, infant_type == "typical"))
+
+ma_cd <- ma_c %>%
+    filter(infant_type == "typical")  %>%
+    add_residuals(d_resid)
+
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  ggplot(aes(x = year,
+             y = resid)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+# n_1 vs. age and method residulaed effect size 
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  ggplot(aes(x = n_1,
+             y = resid)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+# stimulus type
+# no effect of stimulus type
+ma_cd %>%
+    filter(infant_type == "typical") %>%
+  group_by(object_stimulus) %>%
+  multi_boot_standard(col = "d_calc") %>%
+  ggplot(aes(x = object_stimulus, y = mean, 
+             fill = object_stimulus)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper))
+
+
+# lab group
+N_lab_groups <- length(unique(ma_cd$lab_group))
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  group_by(study_ID, lab_group) %>%
+  summarize(resid = mean(resid)) %>%
+  group_by(lab_group) %>%
+  summarize(mean = mean(resid)) %>%
+  ggplot(aes(x = reorder(lab_group, mean), 
+             y = mean, fill = lab_group)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(legend.position = "none")
 ```
 
 
@@ -24,7 +79,7 @@ We conducted a forward search based on citations of Markman and Wachtel (1988) i
 ### Coding
 For each paper, we coded each relevant condition in each experiment separately, leading to  `r nrow(ma_c)` unique conditions in total. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: method (pointing or eyetracking), mean age of infants, participant population type (e.g., monolingual-typically-developing, ASD, etc.), and estimates of vocabulary size from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability, @fenson2007macarthur].
 
-To estimate the effect size in each condition, we coded a number of quantitative variables: sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), and standard deviations for novel object selections, t-statistic, and Cohen's d. For XX conditions, there was data were insufficient data reported in the main text to calculate an effect size (no means and standard deviations, t-statistic, or cohen's ds), but we were able to esimtate the means and standard deviations though measurement of barplots. 
+To estimate the effect size in each condition, we coded a number of quantitative variables: sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), and standard deviations for novel object selections, t-statistic, and Cohen's d. For several conditions, there was data were insufficient data reported in the main text to calculate an effect size (no means and standard deviations, t-statistic, or cohen's ds), but we were able to esimtate the means and standard deviations though measurement of barplots (N = XX0 or imputation from other data within the paper (N = XX; see SI for details). 
 
 ### Statistical approach
 
@@ -36,8 +91,7 @@ For each
 Of this sample, `r  length(which(!is.na(ma_raw$d_calc)))` did not have 
 
 
-
- We identified 38 relevant papers and coded each condition in each paper for mean age, effect size (Cohen’s d) and CDI productive vocabulary, where reported. Effect size reflected the bias to select the novel object when presented with a novel label, relative to the familiar object. From the 38 total papers, there were 51 conditions in 20 papers for which statistical reporting was sufficient to calculate effect size. 
+We identified 38 relevant papers and coded each condition in each paper for mean age, effect size (Cohen’s d) and CDI productive vocabulary, where reported. Effect size reflected the bias to select the novel object when presented with a novel label, relative to the familiar object. From the 38 total papers, there were 51 conditions in 20 papers for which statistical reporting was sufficient to calculate effect size. 
 
 ## Results
 
@@ -50,8 +104,6 @@ Of this sample, `r  length(which(!is.na(ma_raw$d_calc)))` did not have
 - check eyetracking vs behavioral coding
 - check for duplicates
 ```
-
-
 
 
 ```{r, fig.height = 8, fig.pos = 'T!'}
@@ -69,8 +121,8 @@ ma_plotting <- ma_c %>%
          infant_type2_label = fct_recode(infant_type2_label, 
                                          LT = "late_talkers", 
                                          DHH = "deaf/hard-of-hearing", 
-                                         BL = "bilingual", 
-                                         TL = "trilingual",
+                                         B = "bilingual", 
+                                         `T` = "trilingual",
                                          MR = "youth with mental retardation"),
          d_var_calc2 = ifelse(es_type == "Non-Typical Populations", 
                                 d_var_calc, 0),

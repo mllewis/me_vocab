@@ -1,6 +1,7 @@
 # Calculations for deriving SD from plot measurements
 # SD = SE * sqrt(n)
 # SD = sqrt(var)
+# avg_month <- 365.2425 / 12.0
 
 ###mvervis 1995
 n1 = 9

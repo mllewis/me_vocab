@@ -5,7 +5,7 @@ shorttitle        : "Disambiguation during early word learning"
 author: 
   - name          : "Molly Lewis"
     affiliation   : "1, 6"
-    corresponding : yes    # Define only one corresponding author
+    corresponding : no    # Define only one corresponding author
     address       : "Postal address"
     email         : "my@email.com"
   - name          : "Veronica Cristiano"
@@ -29,15 +29,16 @@ affiliation:
   - id            : "5"
     institution   : "Stanford University"
   - id            : "6"
-    institution   : "University of Wisconsin, Madison"
+    institution   : "University of Wisconsin-Madison"
 
 author_note: |
-  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+  Data from Experiment 2 were previously presented in the Proceedings of the Cognitive Science Society Conference in Lewis & Frank (2013). 
+    $^*$To whom correspondence should be addressed. E-mail: mollylewis@uchicago.edu
 
-  Data from Experiment 2 weer previously presented in the Proceedings of the Cognitive Science Society Conference in Lewis & Frank (2013). 
 
 abstract: |
-  Enter abstract here. Each new line herein must be indented, like this line.
+  Young children tend to map novel words to novel objects even in the presence of familiar competitors, a finding that has been dubbed the “disambiguation” effect. Theoretical accounts ofthis effect have debated whether it is due to initial constraints on children’s lexicons (e.g. a principle of mutual exclusivity) or situation-specific pragmatic inferences. We present synthesis of exisiting evidence on this phenomonon through a meta-analysis of the existing literature. We then present two experiments that help distinguish between these theoretical constraints. We conclude by suggesting that multiple cognitive mechanisms may underlying the disambiguation effect in word learning.
+
   
 keywords          : "keywords"
 wordcount         : "X"
@@ -56,7 +57,8 @@ output            : papaja::apa6_pdf
 ---
 
 ```{r load_packages, include = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
-knitr::opts_chunk$set(cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(cache = FALSE, echo = FALSE, message = FALSE,
+                      warning = FALSE,  fig.pos = "T!")
 
 library(papaja)
 library(tidyverse)
@@ -65,6 +67,7 @@ library(ggthemes)
 library(lme4)
 library(knitr)
 library(feather)
+library(kableExtra)
 
 source("helpers.R")
 ```

@@ -27,7 +27,8 @@ e2_subs %>%
   group_by(age_group) %>%
   summarise(mean_age = mean(age_mo), 
             n = n()) %>%
-  papaja::apa_table(caption = "Demographics of children in Experiment 2.")
+  kable(format = "latex", booktabs = TRUE) 
+  #papaja::apa_table(caption = "Demographics of children in Experiment 2.")
 ```
 
 We planned a total sample of 108 children, 12 per between-subjects labeling condition, and 36 total in each one-year age gorup. Our final sample was `r nrow(e2_subs)` children, ages `r min(e2_subs$age.mo)` -- `r max(e2_subs$age.mo)` months, recruited from the floor of the Boston Children's Museum. Children were randomly assigned to the one-label, two-label, or three label condition, with the total number of children in each age group and condition ranging between 10 and 13.  
@@ -50,7 +51,8 @@ e2 %>%
   group_by(err_type) %>%
   summarise(n = n(), 
             pct = n() / nrow(e2)) %>%
-  apa_table()
+    kable(format = "latex", booktabs = TRUE) 
+
 
 e2_clean <- filter(e2, !err)
 ```
@@ -93,7 +95,8 @@ mod <- glmer(correct ~ age_mo_c * times_labeled_c  +
       data = e2_clean)
 
 summary(mod)$coefficients %>%
-  apa_table()
+    kable(format = "latex", booktabs = TRUE) 
+
 
 
 ```

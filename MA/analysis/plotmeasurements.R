@@ -47,6 +47,15 @@ sd1 = .27
 sd2 = .08
 # SD_dif = sqrt((sd1^2/n) + sd2^2/n)) 
 
+### Namy 2001
+t = 2.92
+n = 16
+x1 = .61
+x2 = .5
+
+#t <- (x1 - x2) / (s/sqrt(n))
+s <- ((x1 -x2) * sqrt(n)) / t
+s
 
 ### Davidson 1997
 # calculate sd based on greek 3-4yo condition
@@ -55,11 +64,9 @@ n = 16
 x1 = .6
 x2 = .5
 
-t = (x1-x2)/ (s/sqrt(n))
-1.46 = .4/s 
-s = .4/1.46
-
-s = 0.2739726
+#t <- (x1 - x2) / (s/sqrt(n))
+s <- (x1 -x2) * sqrt(n)/ t
+s 
 
 
 ### Preisler 2005

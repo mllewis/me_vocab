@@ -37,7 +37,7 @@ author_note: |
 
 
 abstract: |
-  Young children tend to map novel words to novel objects even in the presence of familiar competitors, a finding that has been dubbed the “disambiguation” effect. Theoretical accounts ofthis effect have debated whether it is due to initial constraints on children’s lexicons (e.g. a principle of mutual exclusivity) or situation-specific pragmatic inferences. We present synthesis of exisiting evidence on this phenomonon through a meta-analysis of the existing literature. We then present two experiments that help distinguish between these theoretical constraints. We conclude by suggesting that multiple cognitive mechanisms may underlying the disambiguation effect in word learning.
+  Young children tend to map novel words to novel objects even in the presence of familiar competitors, a finding that has been dubbed the “disambiguation” effect. Theoretical accounts ofthis effect have debated whether it is due to initial constraints on children’s lexicons (e.g. a principle of mutual exclusivity) or situation-specific pragmatic inferences. We present synthesis of exisiting evidence on this phenomonon through a meta-analysis of the existing literature. We then present two experiments that help distinguish between these theoretical constraints. We conclude by suggesting that multiple cognitive mechanisms may underlie the disambiguation effect in word learning.
 
   
 keywords          : "keywords"

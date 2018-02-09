@@ -1,0 +1,219 @@
+---
+title             : "The role of experience in disambiguation during early word learning"
+shorttitle        : "Disambiguation during early word learning"
+
+author: 
+  - name          : "Molly Lewis"
+    affiliation   : "1, 6"
+    corresponding : no    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "my@email.com"
+  - name          : "Veronica Cristiano"
+    affiliation   : "2"
+  - name          : "Brenden Lake"
+    affiliation   : "3"
+  - name          : "Tammy Kwan"
+    affiliation   : "4"
+  - name          : "Michael C. Frank"
+    affiliation   : "5"
+  
+affiliation:
+  - id            : "1"
+    institution   : "University of Chicago"
+  - id            : "2"
+    institution   : "Gallaudet University"
+  - id            : "3"
+    institution   : "New York University"
+  - id            : "4"
+    institution   : "Cognitive Toybox, Inc."
+  - id            : "5"
+    institution   : "Stanford University"
+  - id            : "6"
+    institution   : "University of Wisconsin-Madison"
+
+author_note: |
+  Data from Experiment 2 were previously presented in the Proceedings of the Cognitive Science Society Conference in Lewis & Frank (2013). 
+    $^*$To whom correspondence should be addressed. E-mail: mollylewis@uchicago.edu
+
+
+abstract: |
+  Young children tend to map novel words to novel objects even in the presence of familiar competitors, a finding that has been dubbed the “disambiguation” effect. This effect has been studied widely across children of varying ages and populations. While this effect appears robust, the mechanism underlying it remains unclear. Theoretical  accounts have been proposed relying primarily on the initial constraints on children’s lexicons (e.g. a principle of mutual exclusivity) as well as on situation-specific pragmatic inferences. We present a synthesis of the exisiting evidence of this phenomonon through a meta-analysis of the literature. We then present two experiments that help distinguish between theoretical proposals. We conclude by outlining the elements that a successful  mechanism would have to have, and suggest that multiple cognitive mechanisms may underlying the effect.
+
+  
+keywords          : "keywords"
+wordcount         : ""
+
+bibliography      : ["references.bib"]
+
+figsintext        : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : yes
+
+lang              : "english"
+class             : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r load_packages, include = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(cache = TRUE, echo = FALSE, message = FALSE,
+                      warning = FALSE,  fig.pos = "T!")
+
+library(papaja)
+library(tidyverse)
+library(langcog)
+library(ggthemes)
+library(lme4)
+library(knitr)
+library(feather)
+library(kableExtra)
+
+source("helpers.R")
+```
+
+```{r analysis_preferences}
+# Seed for random number generation
+set.seed(42)
+```
+
+
+# Introduction
+
+A central property of language is that each word in the lexicon maps to a unique concept, and each concept maps to a unique word [@clark1987principle]. Like other important regularities in language (e.g., grammatical categories), children cannot directly observe this general property. Instead, they must learn to use language in a way that is consistent with the generalization on the basis of evidence about only specific word-object pairs. 
+
+Even very young children behave in a way that is consistent with this one-to-one regularity in language. Evidence for this claim comes from what is known as the "disambiguation" or "mutual exclusivity" (ME) effect (we return to the issue of nomenclaturer below). In a typical demonstration of this effect [@markman1988], children are presented with a novel and familiar object (e.g., a whisk and a ball), and are asked to identify the referent of a novel word ("Show me the dax"). Children in this task tend to choose the novel object as the referent, behaving in a way that is consistent with the one-to-one word-concept regularity in language across a wide range of ages and experimental paradigms [@mervis1994two;@golinkoff1994early;@markman2003;@halberda2003development;@bion2012fast].
+
+This effect has received much attention in the word learning literature because the ability to identify the meaning of a word in ambiguous contexts is, in essence, the core problem of word learning. That is, given any referential context, the meaning of a word is underdetermined [@quine1960], and the challenge for the world learner is to identify the referent of the word within this ambiguous context. Critically, the ability to infer that a novel word maps to a novel object makes the problem much easier to solve. For example, suppose a child hears the novel word "kumquat" while in the produce aisle of the grocery store. There are an infinite number of possible meanings of this word given this referential context, but the child's ability to correctly disambiguate would lead her to rule out all meanings for which she already had a name. With this restricted hypothesis space, the child is more likely to identify the correct referent than if all objects in the context were considered as possible referents. 
+
+Despite -- or perhaps due to -- the attention that the ME effect has received, there is little consensus regarding the cognitive mechanisms underlying it. Does it stem from a basic inductive bias on children's learning abilities ("bias accounts," see below), a learned regularity about the structure of language ("overhypothesis accounts"), reasoning about the goals of communication in context ("pragmatic accounts"), or perhaps some mixture of these? The goal of the current manuscript is to lay out these possibilities and discuss the state of the evidence. Along the way we present a meta-analysis of the extant empirical literature. We then present two new, relatively large-sample developmental experiments that investigate the dependence of children's ME inferences on vocabulary (Experiment 1) and experience with particular words (Experiment 2). We end by discussing the emergence of ME inferences in a range of computational models of word learning.  We conclude that:
+
+1. Explanations of ME are not themselves mutually exclusive and likely more than one is at play;
+2. The balance of responsibility for behavior likely changes developmentally, with basic biases playing a greater role for younger children and learned overhypotheses playing a greater role for older children. 
+3. All existing accounts put too little emphasis on the role of experience and strength of representation; this lack of explicit theory in many cases precludes definitive tests. 
+4. ME inferences are distinct from learning.
+
+## A note on terminology. 
+
+@markman1988's seminal paper coined the term "mutual exclusivity," which was meant to label the theoretical proposal that "children constrain word meanings by assuming at first that words are mutually exclusive -- that each object will have one and only one label." [@markman1990, p.66]. That initial paper also adopted a task used by a variety of previous authors, in which a novel and a familiar object were presented to children in a pair and the child was asked to "show me the *x*," where *x* was a novel label. Since then, informal discussions have used the same name for the paradigm and effect (selecting the novel object as the referebnt of the novel word) as well as the theoretical account (an early assumption or bias).
+This conflation of paradigm/effect with theory is problematic, as other authors who have argued against the theoretical account then are in the awkward position of rejecting the name for the paradigm they have used. Other labels (e.g. "disambiguation" or "referent selection" effect) are not ideal, however, because they are not as specific do not refer as closely to the previous literature. Here we adopt the label "mutual exclusivity" (ME) for the general family of paradigms and associated effects, *without* prejudgment of the theoretical account of these effects. 
+
+ME has also been referred to as "fast mapping." This conflation is confusing at best. In an early study, @carey1978 presented children with an incidental word learning scenario by using a novel color term to refer to an object: "You see those two trays over there. Bring me the *chromium* one. Not the red one, the *chromium* one." Those data [and subsequent replications, e.g. @markson1997] showed that this exposure was enough to establish some representation of the link between phonological form and meaning that endured over an extended period; a subsequent clarification of this theoretical claim emphasized that these initial meanings are partial. Importantly, however, demonstrations of retention relied on learning in a case where there was a contrastive presentation of the word with a larger set of contrastive cues [@carey1978] or pre-exposure to the object [@markson1997]. 
+
+
+
+## Theoretical views of "mutual exclusivity"
+
+What are the cognitive processes underlying this effect? A range of  proposals in the literature. 
+
+
+### Constraint and bias accounts
+
+Under one proposal, Markman and colleagues [@markman1988, @markman2003] suggest that children have a constraint on the types of lexicons considered when learning the meaning of a new word -- a "mutual exclusivity constraint."  With this constraint, children are biased to consider only those lexicons that have a one-to-one mapping between words and objects. Importantly, this constraint can be overcome in cases where it is incorrect (e.g. property names),  but it nonetheless serves to restrict the set of lexicons initially entertained when learning the meaning of a novel word. Under this view, then, the disambiguation effect emerges from a general constraint on the structure of lexicons. This constraint is assumed to be innate or early emerging.
+
+
+N3C
+
+
+### Probabilistic accounts
+
+Regier
+
+McMurray
+
+Frank Goodman Tenenbaum
+
+Fazly
+
+
+### Over-hypothesis accounts
+
+
+Lewis & Frank (2013)
+
+
+### Pragmatic accounts
+
+
+The disambiguation effect is argued to result from  online inferences made within the referential context  [@clark1987principle, @diesendruck2001]. In particular, Clark suggests that the disambiguation effect is due to two pragmatic assumptions held by speakers. The first assumption is that speakers within the same speech community use the same words to refer to the same objects ("Principle of Conventionality"). The second assumption is that different linguistic forms refer to different meanings ("Principle of Contrast"). In the disambiguation task described above, then, children might reason (implicitly) as follows: You used a word I've never heard before. Since, presumably we both call a ball "ball" and if you'd meant the ball you would have  said "ball," this new word must refer to the new object. Thus, under this account, the disambiguation effect emerges not from a higher-order constraint on the structure of lexicons, but instead from in-the-moment inferences using general pragmatic principles.
+
+These two proposals have traditionally been viewed as competing explanations of the disambiguation effect. Research in this area has consequently focused on identifying empirical tests that can distinguish between these two theories. For example, @diesendruck2001 compare performance on a disambiguation task when children are told a novel fact about an object relative to a novel referential label. They found that children disambiguated in both conditions and argued on grounds of parsimony that the same pragmatic mechanism was likely to be responsible for both inferences. More recent evidence contradicts this view: tests of children with autism, who are known to have impairments in pragmatic reasoning find comparable performance on the disambiguation task between typically developing children and children with autism [@preissler2005role;@de2011mutual]. This result provides some evidence for the view that disambiguation is due to a domain-specific lexical constraint.
+
+Clark?
+
+In the moment
+
+Learned pragmatics 
+
+### Logical inference accounts
+
+@halberda2003
+
+
+## Theory-constraining findings
+
+NN vs. NF
+
+Speaker-change studies
+
+Autism 
+
+Bilingualism
+
+Fast mapping + no retention
+
+Developmental change (halberda)
+
+
+## Synthesis
+
+These are definitely features of a successful account:
+Timescales
+- must be one "in the moment" 
+- and one longer-term learned mechanism
+
+Experience
+
+Probabilistic representations
+
+Could be the case also that it's a mixture of pragmatic, etc.
+
+We suggest this competing-alternatives approach to the disambiguation effect should be reconsidered.  In a disambiguation task, learners may be making use of both general knowledge about how the lexicon is structured as well as information about the pragmatic or inferential structure of the task. Both of these constraints would then support children's inferences. In other words, these two classes of theories may be describing distinct, complimentary mechanisms that each contribute to a single empirical phenomenon with their weights in any given task determined by children's age and language experience, the nature of the pragmatic situation, and other task-specific factors. 
+
+
+
+## The current study
+
+Gather evidence on strength of finding
+
+Test emergent relationship to vocabulary (E1)
+
+Test causal relationship to representation strength (E2)
+
+Re-evaluate
+
+```{r child = "sections/ma_writeup.Rmd"}
+```
+
+```{r child = "sections/exp1_writeup.Rmd"}
+```
+
+```{r child = "sections/exp2_writeup.Rmd"}
+```
+
+```{r child = "sections/model_writeup.Rmd"}
+```
+
+
+# General Discussion
+
+
+\newpage
+
+# References
+```{r create_r-references}
+r_refs(file = "references.bib")
+```
+
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}

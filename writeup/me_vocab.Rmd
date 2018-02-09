@@ -65,6 +65,8 @@ library(ggthemes)
 library(lme4)
 library(knitr)
 library(feather)
+library(forcats)
+library(ggrepel)
 ```
 
 ```{r analysis_preferences}
@@ -232,13 +234,13 @@ Of this sample, `r  length(which(!is.na(ma_raw$d_calc)))` did not have
  We identified 38 relevant papers and coded each condition in each paper for mean age, effect size (Cohen’s d) and CDI productive vocabulary, where reported. Effect size reflected the bias to select the novel object when presented with a novel label, relative to the familiar object. From the 38 total papers, there were 51 conditions in 20 papers for which statistical reporting was sufficient to calculate effect size. 
 
 ## Results
+
 ```{r}
 
 ```
 
 ```{r}
-
-ma_plotting <-ma_c %>%
+ma_plotting <- ma_c %>%
   mutate(es_type = ifelse(infant_type2 != "typical",
                           "Non-Typical Populations",
                           ifelse(ME_trial_type == "NN", 

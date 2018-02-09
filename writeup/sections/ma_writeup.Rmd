@@ -1,0 +1,506 @@
+
+# Meta-analysis
+
+```{r}
+library(metafor)
+ma_raw <- read_feather("../../MA/data/mutual_exclusivity") %>%
+  select(c(1, 3, 6, 9, 12, 14, 15, 18, 20, 22:24, 26,
+           29:30, 49, 51:53, 95:99, 100, 102:103)) %>%
+  mutate_if(is.character, as.factor)
+
+AVG_MONTH <- 30.43688
+ma_c <- ma_raw %>%
+  filter(!is.na(d_calc)) %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH,
+         year = as.numeric(str_sub(short_cite, -5, -2)))  %>%
+  filter(mean_age < 150) # exclude MR population?
+```
+
+## Methods
+
+
+### Search strategy
+We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017). Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset that used one of two paradigms: (a) the canonical experimental paradigm for testing disambiguation behavior (an experimenter says a novel word in the context of a familiar object and a novel object, and the child guesses the intended referent; "Familiar-Novel"), or (b) a paradigm that exposed children to an unambigous mapping of a novel label to a novel object, and then introduced a second novel object and asked children to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that included more than one familiar object (e.g. Familiar-Familar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age)\footnote{This cutoff was arbitrary but allowed us to include conditions from older children in non-typically-developing populations.}, (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size.
+
+
+### Coding
+For each paper, we coded separately each relevant condition with each age group entered as a separate condition. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: mean age of infants, method (pointing or eyetracking), participant population type, estimates of vocabulary size from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability,@fenson2007macarthur], referent type (object or picture), and number of alternatives in the forced choice task. We coded participant population as one of three subpopulatoins that have studied in the literature: (a) typically-developing monolingual chilldren, (b) multilingual children (including both bilingual and trilingual children), and (c) non-typically developing children. Non-typically developing conditions included children with selective language imparement, language delays, hearing imparement, autism spectrum disorder, and down-syndrome.
+
+In order to estimate effect size for each conditions, we coded several additional variables: sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), and standard deviations for novel object selections, t-statistic, and Cohen's d. For several conditions, there was data were insufficient data reported in the main text to calculate an effect size (no means and standard deviations, *t*-statistics, or Cohen's *d*s), but we were able to esimtate the means and standard deviations though measurement of plots (*N* = `r count(ma_c, data_source) %>% filter(data_source == "figure") %>% select(n) %>% as.numeric()`), imputation from other data within the paper (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper - some imputation") %>% select(n) %>% as.numeric()`; see SI for details), or through contacting authors (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper/author") %>% select(n) %>% as.numeric()`). Our final sample included `r length(ma_c$d_calc)` effect sizes ( *N*~typical-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "typical") %>% select(n) %>% as.numeric()`; *N*~multilingual~ = `r count(ma_c, infant_type) %>% filter(infant_type == "multilingual") %>% select(n) %>% as.numeric()`;  *N*~non-typically-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "NT") %>% select(n) %>% as.numeric()`).
+
+### Statistical approach
+Effect sizes were computed by a script, `compute_es.R`, available in the Github repository. We calculated effect sizes from reported means and standard deviations where available, otherwise we relied on reported test-statistics (*t* or *d*). All analyses were conducted with the metafor package (Viechtbauer, 2010) using mixed-effect models with grouping by paper. \footnote{The exact model specification was as follows: $model <- metafor::rma.mv(yi = effect_size, V = effect_size_var, random = ~ 1 | paper, data = d)$.} In models with moderators, moderators variables were included as additive fixed effects.
+
+## Results
+
+### Bias
+We first conducted analyses to determine if there was bias present in the literature. (see metalab)
+
+
+### Effect size estimates
+```{r, overall_estimates}
+## grand model (all effect sizes)
+grand_model <- rma.mv(d_calc, V = d_var_calc,
+                              random = ~ 1 | short_cite,
+                              method = "REML",
+                              data = ma_c)
+
+
+grand_model_data <- data.frame(model_name = "grand",
+                                estimate = grand_model$b[1],
+                                estimate.cil = grand_model$ci.lb,
+                                estimate.cih = grand_model$ci.ub,
+                                es_type = "grand",
+                                model_type = "overall") 
+
+# NN only model
+#nn_model <- rma.mv(d_calc, V = d_var_calc,
+#                   random = ~ 1 | short_cite,
+#                   method = "REML",
+#                   data = filter(ma_c, ME_trial_type == "NN"))
+
+#nn_model_data <- data.frame(model_name = "NN",
+#                            estimate = nn_model$b[1],
+#                             estimate.cil = nn_model$ci.lb,
+#                             estimate.cih = nn_model$ci.ub,
+#                             es_type = "sub",
+#                             model_type = "sub")
+# 
+# # FN only model
+# fn_model <- rma.mv(d_calc, V = d_var_calc,
+#                    random = ~ 1 | short_cite,
+#                    method = "REML",
+#                    data = filter(ma_c, ME_trial_type == "FN"))
+# 
+# fn_model_data <- data.frame(model_name = "FN",
+#                             estimate = fn_model$b[1],
+#                             estimate.cil = fn_model$ci.lb,
+#                             estimate.cih = fn_model$ci.ub,
+#                             es_type = "sub",
+#                             model_type = "sub")
+
+
+# typical only model
+typical_model <- rma.mv(d_calc, V = d_var_calc,
+                      random = ~ 1 | short_cite,
+                      method = "REML",
+                      data = filter(ma_c, infant_type == "typical"))
+
+typical_model_data <- data.frame(model_name = "typical",
+                                 estimate = typical_model$b[1],
+                                 estimate.cil = typical_model$ci.lb,
+                                 estimate.cih = typical_model$ci.ub,
+                                 es_type = "sub",
+                                 model_type = "sub")
+
+
+# multi-lingual only model
+ml_model <- rma.mv(d_calc, V = d_var_calc,
+                        random = ~ 1 | short_cite,
+                        method = "REML",
+                        data = filter(ma_c, infant_type == "multilingual"))
+
+
+ml_model_data <- data.frame(model_name = "multilingual",
+                                 estimate = ml_model$b[1],
+                                 estimate.cil = ml_model$ci.lb,
+                                 estimate.cih = ml_model$ci.ub,
+                                 es_type = "sub",
+                            model_type = "sub")
+
+
+# non-typical only model
+nt_model <- rma.mv(d_calc, V = d_var_calc,
+                   random = ~ 1 | short_cite,
+                   method = "REML",
+                   data = filter(ma_c, infant_type == "NT"))
+
+nt_model_data <- data.frame(model_name = "NT",
+                                 estimate = nt_model$b[1],
+                                 estimate.cil = nt_model$ci.lb,
+                                 estimate.cih = nt_model$ci.ub,
+                                 es_type = "sub",
+                                 model_type = "sub")
+```
+
+```{r, forest_prep}
+ns <- bind_rows(list(count(ma_c, infant_type) %>% rename(model_name = infant_type)), 
+                count(ma_c, ME_trial_type) %>% rename(model_name = ME_trial_type)) %>%
+                add_row(model_name = "grand", n = mean(.$n))
+
+all_overall_estimates <- bind_rows(list(grand_model_data, 
+                                        typical_model_data, 
+                                        ml_model_data, 
+                                        nt_model_data
+                                        #fn_model_data,
+                                        #nn_model_data
+                                        )) %>%
+                          left_join(ns) %>%
+                          mutate(es_string = paste0(round(estimate,2),
+                                                   " [", 
+                                                    round(estimate.cil,2),
+                                                    ", ",
+                                                    round(estimate.cih,2),
+                                                    "]")) %>%
+                          add_row(model_name = "", model_type = "sub") %>%
+                          mutate(model_name = fct_relevel(model_name, 
+                                                     "typical", "multilingual",
+                                                     "NT",  "", "grand"),
+                                 model_name = fct_rev(model_name),
+                                 model_type = fct_rev(model_type))
+
+ breaks <- seq(-.25, 2.5, .25)
+ labels <- as.character(breaks)
+ labels[!(breaks%%1==0)] <- ''
+ tick.sizes <- rep(.5, length(breaks))
+ tick.sizes[(breaks%%1==0)] <- 1
+```
+
+
+To estimate the overall effect size, we fit a mixed effect model for the full sample of conditions. Effect size estimates are presented in Figure 1. The overall effect size estimate reliably differed from zero (*d* = `r filter(all_overall_estimates, model_name == "grand") %>% select(es_string) %>% as.character()`; see Appendix for by-condition forest plots). We also fit additional models for sub-populations in our sample (d~typically-developing~ = `r filter(all_overall_estimates, model_name == "typical") %>% select(es_string) %>% as.character()`; *d*~multilingual~ = `r filter(all_overall_estimates, model_name == "typical") %>% select(es_string) %>% as.character()`; *d*~non-typically-developing~ = `r filter(all_overall_estimates, model_name == "NT") %>% select(es_string) %>% as.character()`). In the next set of analyses, we ask whether our moderator variables predict variance in these overall effect size estimates. 
+
+#### Trial type, referent type, and number of alternatives
+```{r}
+# trial type
+trial_type_model <- rma.mv(d_calc ~ ME_trial_type, V = d_var_calc,
+                      random = ~ 1 | short_cite,
+                      method = "REML",
+                      data = ma_c)
+
+trial_type_es_string =  paste0(round(trial_type_model$b[2],2),
+                                                   "; Z = ",
+                                                  round(trial_type_model$zval[2],2),
+                                                  "; p = <.001 ")
+                                                   # round(trial_type_model$pval[2],2)
+
+# referent type
+#referent_type_model <- rma.mv(d_calc ~ object_stimulus, V = d_var_calc,
+#                      random = ~ 1 | short_cite,
+#                      method = "REML",
+#                      data = ma_c)
+
+#referent_type_es_string =  paste0(round(referent_type_model$b[2],2),
+#                                                   "; Z = ",
+##                                                  round(referent_type_model$zval[2],2),
+#                                                  "; p = ",
+#                                  round(trial_type_model$pval[2],2))
+# paper is reliable when you don't control for age
+
+
+# N_AFC type
+NAFC_model <- rma.mv(d_calc ~ N_AFC + mean_age, V = d_var_calc,
+                      random = ~ 1 | short_cite,
+                      method = "REML",
+                      data = ma_c)
+
+NAFC_model_es_string =  paste0(round(NAFC_model$b[2],2),
+                                                  "; Z = ",
+                                                  round(NAFC_model$zval[2],2),
+                                                  "; p = ",
+                                  round(NAFC_model$pval[2],2))
+
+
+```
+Here we examined the influnce of three methodological varirables -- trial type, referent type and number of alternatives -- on effect size. Trial type was a signifcant predictor of effect size, with Familiar-Novel conditions leading to overall larger effect sizes, compared to Novel-Novel conditions ($\beta$ = `r trial_type_es_string`). Referent type (object vs. picture; ) and number of alternatives () were not reliable predictors of effect size.
+
+#### Age 
+We next examine developmental change in the magnitude of the disambiguation effect. See Table 1.
+
+#### Vocabulary 
+
+```{r, fig.cap = "Mixed-effect effect size estimates for all conditions (red) and each of the three sub-populations in our sample. Ranges are 95% confidence intervals. The size of the point for the sub-populations corresponds to sample size."}
+p1 <- ggplot(all_overall_estimates, aes(x = model_name,
+                                  y = estimate, 
+                                  color = model_type)) +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_point(aes(size = n, 
+                 shape = model_type)) +
+  geom_linerange(aes(ymin = estimate.cil, 
+                     ymax = estimate.cih)) +
+  geom_text(aes(label = es_string, x = model_name, y = 3.25), 
+            size = 3.5) +
+  coord_flip() 
+
+p1 <- p1 + scale_shape_manual(values = c(16, 15)) +
+  scale_color_manual(values = c("#000000", '#FF0000')) +
+  scale_size_continuous(guide = FALSE) +
+  scale_y_continuous(breaks = breaks, 
+                     labels = labels,
+                     limits = c(-.25, 3.75),
+                     name = "Effect Size") +
+  scale_x_discrete(labels = c("NT" = "Non-Typically-Developing populations", 
+                              "grand" = "Overall estimate",
+                              "typical" = "Typically-Developing populations",
+                              #"FN" = "Familiar-Novel trial type", 
+                              #"NN" = "Novel-Novel trial type",
+                              "multilingual" = "Multilingual populations"),
+                   name = "") + 
+  ggtitle("Mixed-effect estimates of overall effect size") 
+
+p1 <- p1 + 
+  theme_bw() +
+  theme(axis.line.y = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.position = "none",
+        axis.ticks.x = element_line(size = tick.sizes),
+        axis.ticks.y = element_line(size = 0),
+        axis.text.x = element_text(size = 12), 
+        axis.text.y = element_text(size = 12, 
+                                   colour = c('red', rep('black', 4)),
+                                   face = c("bold", rep("plain", 4))),
+        plot.title = element_text(size = 16, face = "bold"),
+        axis.title = element_text(size = 14))
+p1
+```
+
+```{r, moderator_table}
+### MODERATED ESTIMATES
+grand_modelm <- rma.mv(d_calc ~ ME_trial_type + mean_age, V = d_var_calc,
+                      random = ~ 1 | short_cite,
+                      method = "REML",
+                      data = ma_c)
+grand_model_datam <- data.frame(estimate = as.vector(grand_modelm$b[,1]),
+                                estimate.cil = as.vector(grand_modelm$ci.lb),
+                                estimate.cih = as.vector(grand_modelm$ci.ub),
+                                zval =  as.vector(grand_modelm$zval),
+                                pval =  as.vector(grand_modelm$pval),
+                                effect_name = rownames(grand_modelm$b)) %>%
+                        mutate(model_name = "Grand estimate")
+
+# typical
+typical_modelm <- rma.mv(d_calc ~ ME_trial_type + mean_age, V = d_var_calc,
+                        random = ~ 1 | short_cite,
+                        method = "REML",
+                        data = filter(ma_c, infant_type == "typical"))
+
+typical_model_datam <- data.frame(estimate = as.vector(typical_modelm$b[,1]),
+                                estimate.cil = as.vector(typical_modelm$ci.lb),
+                                estimate.cih = as.vector(typical_modelm$ci.ub),
+                                zval =  as.vector(typical_modelm$zval),
+                                pval =  as.vector(typical_modelm$pval),
+                                effect_name = rownames(typical_modelm$b)) %>%
+  mutate(model_name = "Typical populations")
+
+
+# multi-lingual only model
+ml_modelm <- rma.mv(d_calc ~ ME_trial_type + mean_age, V = d_var_calc,
+                   random = ~ 1 | short_cite,
+                   method = "REML",
+                   data = filter(ma_c, infant_type == "multilingual"))
+
+ml_model_datam <- data.frame(estimate = as.vector(ml_modelm$b[,1]),
+                                  estimate.cil = as.vector(ml_modelm$ci.lb),
+                                  estimate.cih = as.vector(ml_modelm$ci.ub),
+                                  zval =  as.vector(ml_modelm$zval),
+                                  pval =  as.vector(ml_modelm$pval),
+                                  effect_name = rownames(ml_modelm$b)) %>%
+  mutate(model_name = "Multilingual populations")
+
+# non-typical only model
+nt_modelm <- rma.mv(d_calc ~ ME_trial_type + mean_age, V = d_var_calc,
+                   random = ~ 1 | short_cite,
+                   method = "REML",
+                   data = filter(ma_c, infant_type == "NT"))
+
+
+nt_model_datam <- data.frame(estimate = as.vector(nt_modelm$b[,1]),
+                             estimate.cil = as.vector(nt_modelm$ci.lb),
+                             estimate.cih = as.vector(nt_modelm$ci.ub),
+                             zval =  as.vector(nt_modelm$zval),
+                             pval =  as.vector(nt_modelm$pval),
+                             effect_name = rownames(nt_modelm$b)) %>%
+  mutate(model_name = "Non-typically developing populations")
+
+
+all_moderated_estimates <- bind_rows(list(grand_model_datam, 
+                                          typical_model_datam, 
+                                          ml_model_datam, 
+                                          nt_model_datam)) %>%
+  mutate(beta = paste0(round(estimate,2),
+                            " [", 
+                              round(estimate.cil,2),
+                             ", ",
+                             round(estimate.cih,2),
+                             "]"),
+         pval = round(pval,2),
+         pval = ifelse(pval <.001, "<.001", pval),
+         zval = round(zval, 2))  %>%
+  select(model_name, effect_name, beta, zval, pval) %>%
+  rename(Model = "model_name", `Fixed effect` = "effect_name", 
+         `z-value` = "zval", `p-value` = "pval") 
+
+kable(all_moderated_estimates, format = "latex", booktabs = TRUE) %>%
+  kable_styling(font_size = 7)
+```
+
+
+```{r, fig.height = 8, fig.pos = 't!', fig.cap = "Developmental plots for each moderator. Ranges correspond to 95% confidence intervals. Model fits are log-linear."}
+ma_plotting <- ma_c %>%
+  mutate(es_type = ifelse(infant_type2 != "typical",
+                          "Non-Typical Populations",
+                          ifelse(ME_trial_type == "NN", 
+                                 "Novel-Novel", "Familiar-Novel")),
+         es_type = ifelse(es_type == "Non-Typical Populations" &  infant_type2 %in% c("bilingual", "trilingual"), "Multi-Lingual", 
+                          ifelse(es_type == "Non-Typical Populations", "Non-Typical Populations", es_type)),
+        es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"),
+
+         infant_type2_label = ifelse(infant_type2 == "typical",
+                                     "", as.character(infant_type2)),
+         infant_type2_label = fct_recode(infant_type2_label, 
+                                         LT = "late_talkers", 
+                                         DHH = "deaf/hard-of-hearing", 
+                                         B = "bilingual", 
+                                         `T` = "trilingual",
+                                         MR = "youth with mental retardation"),
+         d_var_calc2 = ifelse(es_type == "Non-Typical Populations", 
+                                d_var_calc, 0),
+         d_calc2 = ifelse(es_type == "Non-Typical Populations", 
+                                d_calc, 0),
+         d_var_calc2 = d_var_calc,
+         d_calc2 = d_calc,
+         effects.cil = d_calc2 -
+               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2),
+         effects.cih = d_calc2 +
+               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2)) %>%
+        filter(mean_age < 75 | es_type == "Non-Typical Populations")
+
+NF_only <- ma_plotting %>%
+  filter(infant_type2 == "typical",
+         ME_trial_type == "FN") %>%
+  select(d_calc, mean_age)
+
+all_FN <- mutate(NF_only, 
+                 es_type = "Familiar-Novel", 
+                 line_group = 1) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Novel-Novel",
+                           line_group = 2)) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Non-Typical Populations",
+                           line_group = 2)) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Multi-Lingual",
+                           line_group = 2)) %>%
+          mutate(es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"))
+
+NN_NT_only <- ma_plotting %>%
+  mutate(d_calc = ifelse(infant_type2 == "typical" & 
+                            ME_trial_type  == "FN", NA, d_calc),
+         mean_age = ifelse(infant_type2 == "typical" & 
+                            ME_trial_type  == "FN", NA, mean_age),
+         es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel")) %>%
+  select(study_ID, d_calc, mean_age, infant_type2, ME_trial_type, es_type) 
+
+ma_plotting %>%
+  ggplot(aes(x = mean_age, y = d_calc)) +
+    facet_wrap( ~ es_type, scale = "free_x", 2) +
+    geom_hline(aes(yintercept = 0)) +
+    geom_linerange(aes(ymin = effects.cil, ymax = effects.cih), 
+                   alpha = .5, size = .3) +
+    geom_point(aes(size = n_1, shape = ME_trial_type), alpha = .5) +
+    geom_smooth(aes(linetype = as.factor(line_group)), 
+                method = "lm", formula = y ~ log(x), color = "#268bd2",
+                data = all_FN, se = FALSE, size = 1.1) +
+    geom_smooth(aes(y = d_calc, x = mean_age, color = es_type), 
+                method = "lm", formula = y ~ log(x), 
+                data = NN_NT_only, se = FALSE, size = 1.1) +
+    scale_color_manual(values= c("#b58900", "#d33682", "#6c71c4"), guide = FALSE) +
+    ggrepel::geom_text_repel(aes(label = infant_type2_label), box.padding = .5) +
+    scale_shape_discrete(name = "Trial Type",
+                         labels = c("Familiar-Novel", "Novel-Novel")) +
+    scale_size_continuous(name="Sample size") +
+    guides(linetype = FALSE,
+           shape = guide_legend(override.aes = list(size = 4))) +
+    xlab("Mean age (months)") +
+    ylab("Effect size (d)") +
+    ggtitle("Disambiguation Development from Meta-Analysis") +
+    theme_few()  +
+    theme(legend.position = "bottom") 
+```
+
+
+## Bilingualism
+
+
+## Autism Spectrum Disorders
+
+
+
+```{r, eval = F}
+funnel.es.data <- synthesis_all_data %>%
+  mutate(dataset = fct_relevel(dataset, 
+                               "Infant directed speech preference","Phonotactic learning", "Vowel discrimination (native)", 
+                               "Vowel discrimination (non-native)","Statistical sound category learning", "Word segmentation",
+                               "Mutual exclusivity", "Sound symbolism", "Label advantage in concept learning","Online word recognition",
+                               "Gaze following",  "Pointing and vocabulary"),
+         dataset = fct_recode(dataset,
+                              "IDS preference" = "Infant directed speech preference",
+                              "Statistical sound learning" = "Statistical sound category learning", 
+                              "Concept-label advantage" = "Label advantage in concept learning",
+                              "Vowel discrimination\n(native)" = "Vowel discrimination (native)",
+                              "Vowel discrimination\n(non-native)" = "Vowel discrimination (non-native)")) %>%
+  group_by(dataset) %>%
+  mutate(se = sqrt(d_var_calc), 
+         es = d_calc, 
+         center = mean(d_calc), 
+         lower_lim = max(se) + .05 * max(se))
+
+
+# separate df for 95 CI funnel shape
+funnel95.data.wide <- funnel.es.data %>%
+  select(center, lower_lim, dataset) %>%
+  group_by(dataset) %>%
+  summarise(x1 = (center-lower_lim * CRIT_95)[1], 
+            x2 = center[1],
+            x3 = center[1] + lower_lim[1] * CRIT_95,
+            y1 = -lower_lim[1],
+            y2 =  0, 
+            y3 = -lower_lim[1]) 
+
+funnel95.data.x <- funnel95.data.wide  %>%
+  select(dataset,  dplyr::contains("x")) %>%
+  gather("coordx", "x", 2:4) %>%
+  arrange(dataset, coordx) %>%
+  select(-coordx)
+
+funnel95.data.y <- funnel95.data.wide  %>%
+  select(dataset, dplyr::contains("y")) %>%
+  gather("coordy", "y", 2:4) %>%
+  arrange(dataset, coordy) %>%
+  select(-coordy)
+
+funnel95.data <- bind_cols(funnel95.data.x, funnel95.data.y)
+
+ggplot(funnel.es.data, aes(x = es, y = -se)) +
+  facet_wrap(~dataset, scales = "free") +
+  xlab("Effect Size")  +
+  ylab("Standard Error\n")  +
+  scale_colour_solarized(name = "") +
+  geom_polygon(aes(x = x, y = y), 
+               data = funnel95.data,
+               fill = "white") +
+  geom_vline(aes(xintercept=x2), 
+             linetype = "dashed", color = "red", size = .8, data = funnel95.data.wide) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey44",  size = .8) +
+  scale_y_continuous(labels = function(x){abs(x)}) +
+  geom_point(size = .5) +
+  theme(panel.grid.major = element_line(colour = "grey", size = 0.2),
+        panel.grid.minor = element_line(colour = "grey", size = 0.5),
+        strip.text.x = element_text(size = 9),
+        strip.background = element_rect(fill="grey")) 
+```
+
+```{r, eval = F}
+# MA STUFF TO DO:
+- get proportion double checked by joan
+- check sub sample
+- check alvaros ones
+- how deal with pointing + eyetracking one
+- check eyetracking vs behavioral coding
+- check for duplicates
+- check paper vs. objects coding
+```

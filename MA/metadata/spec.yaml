@@ -427,7 +427,7 @@
 
 - field:        N_AFC
   description:  how many alternatives?
-  type:         numeric
+  type:         string
   format:
   example:
   required:     no
@@ -740,7 +740,7 @@
   description:  mutex
   type:         string
   format:
-  example:      natural
+  example:      one
   required:     no
 
 - field:        d_notes
@@ -754,14 +754,29 @@
   description:  mutex
   type:         string
   format:
-  example:      natural
+  example:      typical
   required:     no
 
 - field:        ME_trial_type
   description:  mutex
   type:         string
   format:
-  example:      natural
+  example:      FN
   required:     no
+
+- field:        data_source
+  description:  mutex
+  type:         string
+  format:
+  example:      paper
+  required:     no
+
+- field:        lab_group
+  description:  mutex
+  type:         string
+  format:
+  example:      paper
+  required:     no
+
 
   

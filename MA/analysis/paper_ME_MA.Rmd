@@ -1,5 +1,5 @@
 ---
-title: ME MA for paper
+title: ME MA exploration for paper
 author: Molly Lewis
 subtitle: 
 date: "`r Sys.Date()`"
@@ -7,71 +7,579 @@ output:
   html_document:
     toc: true
     theme: cerulean
-    code_folding: hide
 ---
 
-Load packages
-```{r setup, message = FALSE}
+```{r setup, message = FALSE, warning = FALSE, echo = FALSE}
+
+library(knitr)
 library(tidyverse)
 library(lubridate)
 library(langcog)
-library(skimr) #devtools::install_github("hadley/colformat") #devtools::install_github("ropenscilabs/skimr")
 library(corrr)
-library(knitr)
 library(feather)
+library(metafor)
+library(broom)
+library(modelr)
 
-opts_chunk$set(echo = T, message = F, warning = F, 
+opts_chunk$set(echo = F, message = F, warning = F, 
                error = F, cache = F, tidy = F)
 
-theme_set(theme_minimal())
+
+#theme_set(theme_minimal())
+source("../scripts/synthesis_helpers.R")
+source("../scripts/pcurve.R")
 ```
 
 ```{r}
-ma_raw <- read_feather("../data/mutual_exclusivity") %>%
-  select(c(1, 3, 6, 12, 14, 15, 18, 20, 22:24, 
-           29:30, 52,53, 95, 96, 97, 98, 100, 101)) %>%
+ma_raw <- read_feather("../../data/mutual_exclusivity") %>%
+  select(c(1, 3, 6, 9, 12, 14, 15, 18, 20, 22:24, 26,
+           29:30, 49, 51:53, 95:99, 100, 102:103)) %>%
   mutate_if(is.character, as.factor)
-```
 
-TO DO ON MAs:
-- systematize paper search, and record
-- save papers
-- check coding
-- are all NNs coded?
-- are all FFNs coded?
+AVG_MONTH <- 30.43688
 
-### Summary of coded data
-```{r}
-count(ma_raw, infant_type2) %>%
-  kable()
-
-count(ma_raw, ME_trial_type) %>%
-  kable()
-
-N_d_calc <- length(which(!is.na(ma_raw$d_calc)))
-N_d_calc
-```
-
-
-```{r}
 ma_c <- ma_raw %>%
-  mutate(mean_age = mean_age_1/AVG_MONTH) %>%
-  filter(infant_type2 != "adults",
-         study_ID != "sugimura1997")
+  filter(!is.na(d_calc)) %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH,
+         year = as.numeric(str_sub(short_cite, -5, -2)))   %>%
+  filter(mean_age < 150) # exclude MR population?
 ```
-### Age vs. ME
+
+## Summary of coded data
+```{r}
+summary(ma_c)
+
+count(ma_c, infant_type2) %>%
+  kable(caption = "infant types")
+
+count(ma_c, ME_trial_type) %>%
+  kable(caption = "trial types")
+
+N_d_calc <- length(ma_c$d_calc)
+
+N_lab_groups <- length(unique(ma_c$lab_group))
+
+N_papers <- length(unique(ma_c$study_ID))
+```
+
+There are `r N_d_calc` conditions.  There are `r N_papers` in the sample. There are `r N_lab_groups` lab groups in the sample (lab group is defined as the senior author (common across studies), or the last author). 
+
 ```{r}
 ma_c %>%
+  count(!is.na(mean_production_vocab), infant_type) %>%
+  kable(caption = "production vocab")
+
+ma_c %>%
+  count(!is.na(mean_comprehension_vocab)) %>%
+  kable(caption = "comprehension vocab")
+
+```
+
+## Forest plot
+```{r}
+
+
+```
+
+## Fail-safe-N
+```{r, fail_safe_N}
+CRIT_ES_VALUE <- .01 # must be > 0 
+
+fsn <- get_fail_safe_N("mutex", ma_c, CRIT_ES_VALUE)
+kable(fsn)
+```
+
+## Funnel plot
+```{r, funnel_plot}
+
+CRIT_95 <- 1.96 
+
+funnel.es.data <- ma_c %>%
+        mutate(se = sqrt(d_var_calc), 
+         es = d_calc, 
+         center = mean(d_calc), 
+         lower_lim = max(se) + .05 * max(se))
+
+
+# separate df for 95 CI funnel shape
+funnel95.data.wide <- funnel.es.data %>%
+                select(center, lower_lim) %>%
+                summarise(x1 = (center-lower_lim * CRIT_95)[1], 
+                          x2 = center[1],
+                          x3 = center[1] + lower_lim[1] * CRIT_95,
+                          y1 = -lower_lim[1],
+                          y2 =  0, 
+                          y3 = -lower_lim[1]) 
+
+funnel95.data.x <- funnel95.data.wide  %>%
+                  select(dplyr::contains("x")) %>%
+                  gather("coordx", "x", 1:3) %>%
+                  arrange(coordx) %>%
+                  select(-coordx)
+
+funnel95.data.y <- funnel95.data.wide  %>%
+                  select(dplyr::contains("y")) %>%
+                  gather("coordy", "y", 1:3) %>%
+                  arrange(coordy) %>%
+                  select(-coordy)
+
+funnel95.data <- bind_cols(funnel95.data.x, funnel95.data.y)
+
+ggplot(funnel.es.data, aes(x = d_calc, y = -se)) +
+  xlab("Effect Size")  +
+  ylab("Standard Error\n")  +
+  scale_colour_solarized(name = "") +
+  geom_polygon(aes(x = x, y = y), 
+               data = funnel95.data,
+               fill = "white") +
+  geom_vline(aes(xintercept=x2), 
+             linetype = "dashed", color = "red", size = .8, data = funnel95.data.wide) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey44",  
+             size = .8) +
+  scale_y_continuous(labels = function(x){abs(x)}) +
+  geom_point(size = .5) +
+  theme(panel.grid.major = element_line(colour = "grey", size = 0.2),
+        panel.grid.minor = element_line(colour = "grey", size = 0.5),
+        strip.text.x = element_text(size = 9),
+        strip.background = element_rect(fill="grey")) 
+```
+
+With age and response mode and trial type moderators
+```{r, funnel_plot2}
+
+mod <- rma(d_calc ~ mean_age + response_mode + ME_trial_type, d_var_calc, data = ma_c)
+
+resids <- rstandard(mod)
+
+funnel.es.data <- resids %>%
+        as.data.frame() %>%
+        mutate(center = mean(z),
+                lower_lim = max(se) + .05 * max(se))
+
+
+# separate df for 95 CI funnel shape
+funnel95.data.wide <- funnel.es.data %>%
+                select(center, lower_lim) %>%
+                summarise(x1 = (center-lower_lim * CRIT_95)[1], 
+                          x2 = center[1],
+                          x3 = center[1] + lower_lim[1] * CRIT_95,
+                          y1 = -lower_lim[1],
+                          y2 =  0, 
+                          y3 = -lower_lim[1]) 
+
+funnel95.data.x <- funnel95.data.wide  %>%
+                  select(dplyr::contains("x")) %>%
+                  gather("coordx", "x", 1:3) %>%
+                  arrange(coordx) %>%
+                  select(-coordx)
+
+funnel95.data.y <- funnel95.data.wide  %>%
+                  select(dplyr::contains("y")) %>%
+                  gather("coordy", "y", 1:3) %>%
+                  arrange(coordy) %>%
+                  select(-coordy)
+
+funnel95.data <- bind_cols(funnel95.data.x, funnel95.data.y)
+
+ggplot(funnel.es.data, aes(x = z, y = -se)) +
+  xlab("Standardized Effect Size Residuals")  +
+  ylab("Standard Error\n")  +
+  scale_colour_solarized(name = "") +
+  geom_polygon(aes(x = x, y = y), 
+               data = funnel95.data,
+               fill = "white") +
+  geom_vline(aes(xintercept=x2), 
+             linetype = "dashed", color = "red", size = .8, data = funnel95.data.wide) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey44",  
+             size = .8) +
+  scale_y_continuous(labels = function(x){abs(x)}) +
+  geom_point(size = .5) +
+  theme(panel.grid.major = element_line(colour = "grey", size = 0.2),
+        panel.grid.minor = element_line(colour = "grey", size = 0.5),
+        strip.text.x = element_text(size = 9),
+        strip.background = element_rect(fill="grey")) 
+```
+
+Eggers test
+```{r}
+eggers <- eggers_tests(ma_c %>% mutate(short_name = "mutex")) 
+
+kable(eggers)
+  #eggers_test <- regtest(mod)
+# this doesn't change when include age as moderator
+
+```
+
+Evidence for skew. Lots of heterogenity.
+
+
+## P-curve
+```{r get_pcurves}
+ALPHA <- .05
+P_INCREMENT <- .01 
+ma_c_for_pcurve = ma_c %>% 
+  mutate(r = NA, n_2 = NA, 
+         participant_design = "within_one", 
+         dataset = "mutex", r_calc = NA)
+pc.data <- get_all_pc_data(ma_c_for_pcurve, ALPHA, P_INCREMENT, transform = TRUE) 
+
+p.source <- pc.data %>%
+  select(f.transform, f.value, dataset, study_ID, p_round) %>%
+  group_by(dataset) %>%
+  summarise(n.total = n(),
+            n.transform = length(which(!is.na(f.transform))),
+            sig.p = length(which(p_round < ALPHA))) %>%  
+  mutate(stat_only = ifelse(n.total > n.transform, 1, 0),
+         prop.ts = 1-n.transform/n.total,
+         prop.ts.string = formatC(round(prop.ts, 2), 
+                                format='f', digits = 2)) %>%
+  arrange(-stat_only) %>%
+  as.data.frame()
+
+ci.data <- get_all_CIS_multi(pc.data, ALPHA, P_INCREMENT)
+
+pc_plot_data <- get_p_curve_df(pc.data, ALPHA, P_INCREMENT)
+
+ggplot(pc_plot_data) + 
+  geom_ribbon(aes(ymin = ci.lower, ymax = ci.upper, x = p), 
+              fill = "grey87", data = ci.data) +
+  geom_line(size = 1, aes(x = p, y = value, linetype = measure,
+                          color = measure)) +
+  scale_colour_manual(name = "", values = c("red", "green", "blue"), 
+                      labels=c("Null of no effect", 
+                               "Null of 33% power", "Observed")) +
+  scale_linetype_manual(values = c("dashed", "dashed", "solid"), 
+                        guide = FALSE)  +
+  ylab("Proportion p-values\n") +
+  xlab("p-value") +
+  #geom_text(aes(label = paste(sig.p, "sig. ps /", 
+  #                            n.total, "conditions\nprop. test stat. = ", prop.ts.string),
+  #              x = .021, y = .8), data = p.source, 
+  #          colour = "black", size = 2, hjust = 0) +
+  theme_bw() + 
+  theme(legend.position = "top",
+        legend.key = element_blank(),
+        legend.background = element_rect(fill = "transparent"),
+        strip.text.x = element_text(size = 9),
+        axis.title = element_text(colour = "black", size = 12),
+        panel.margin = unit(.65, "lines"),
+        strip.background = element_rect(fill = "grey"))
+
+```
+
+Stouffer test
+```{r}
+stouffer.data <- stouffer_test(pc.data, ALPHA) %>%
+    filter(pp.measure == "ppr.full")  
+  kable(stouffer.data)
+```
+
+Strong evidence for left skew (no phacking).
+
+## MA models
+### Simple (no moderators)
+```{r}
+m1 <- rma.mv(d_calc, V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c)
+summary(m1)
+```
+
+### ME_trial type
+```{r}
+m1a <- rma.mv(d_calc ~ ME_trial_type + mean_age, V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c)
+summary(m1a)
+
+m1a <- rma.mv(d_calc ~ ME_trial_type, V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c)
+summary(m1a)
+```
+
+### Age
+```{r}
+m2 <- rma.mv(d_calc ~ mean_age + ME_trial_type, V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c)
+summary(m2)
+```
+
+Age is reliable, controling for ME_trial_type
+
+### Vocab
+
+(we don't have production scores for any NN trials)
+```{r}
+m3a <- rma.mv(d_calc ~ mean_production_vocab , V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c)
+summary(m3a)
+```
+Vocab is reliable
+
+### Age + Vocab
+
+#### Plots
+
+Correlation between age and vocab:
+
+```{r}
+ma_c_av_complete <- ma_c %>%
+  filter(!is.na(mean_production_vocab), !is.na(mean_age))
+
+cor.test(ma_c_av_complete$mean_age, ma_c_av_complete$mean_production_vocab) %>%
+  tidy() %>%
+  kable()
+
+ggplot(ma_c_av_complete, aes(x = mean_age, y = mean_production_vocab)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+
+cor.test(ma_c$mean_comprehension_vocab, ma_c$mean_production_vocab, na.rm = T)
+```
+
+Age and vocab are weakly correlated, not quite significant. Note the heterskadastisky!
+
+Age and vocab vs. effect size
+
+```{r}
+ggplot(ma_c_av_complete, aes(x = mean_age, y = d_calc)) +
+  geom_point(aes(color = infant_type)) +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  theme_bw()
+
+ggplot(ma_c_av_complete, aes(x = mean_production_vocab, y = d_calc)) +
+  geom_point(aes(color = infant_type)) +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  theme_bw()
+```
+
+Typical only
+
+```{r}
+
+ggplot(ma_c_av_complete %>% filter(infant_type == "typical"), 
+       aes(x = mean_age, y = d_calc)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  theme_bw()
+
+ggplot(ma_c_av_complete %>% filter(infant_type == "typical"), 
+       aes(x = mean_production_vocab, y = d_calc)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ log(x)) +
+  theme_bw()
+```
+
+#### Models
+```{r}
+m2_complete <- rma.mv(d_calc ~ mean_age, V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c_av_complete)
+summary(m2_complete)
+
+m3a_complete <- rma.mv(d_calc ~ mean_production_vocab , V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c_av_complete)
+summary(m3a_complete)
+
+m4a <- rma.mv(d_calc ~ mean_age + mean_production_vocab, V = d_var_calc,
+                            random = ~ 1 | short_cite, data = ma_c_av_complete)
+summary(m4a)
+```
+
+Typical only:
+
+```{r}
+
+m4b <- rma.mv(d_calc ~ mean_age + mean_production_vocab, V = d_var_calc,
+                            random = ~ 1 | short_cite, data = filter(ma_c_av_complete, infant_type == "typical"))
+summary(m4b)
+```
+
+With set of conditions with complete production and age, age is not a reliable predictor, vocab is. In model with both, vocab is reliable. But for subset of typical participants, age but not vocab is predictive.
+
+
+## Misc MA summary stats (for typical only)
+
+
+Some evidence for a relationship between effect size and sample size: smaller ES, bigger ns (residualizing out age and method)
+
+### Sample size and effect size
+```{r}
+d_resid <- lm(d_calc ~ mean_age * response_mode, 
+              data = filter(ma_c, infant_type == "typical"))
+
+ma_cd <- ma_c %>%
+    filter(infant_type == "typical")  %>%
+    add_residuals(d_resid)
+
+# n_1 vs. age and method residulaed effect size 
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  ggplot(aes(x = n_1,
+             y = resid)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+### ME trial type
+
+Controling for age, huge effect of ME_trial_type
+```{r}
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  group_by(ME_trial_type) %>%
+  multi_boot_standard(col = "d_calc") %>%
+  ggplot(aes(x = ME_trial_type, y = mean, 
+             fill = ME_trial_type)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper))
+
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  group_by(ME_trial_type) %>%
+  multi_boot_standard(col = "resid") %>%
+  ggplot(aes(x = ME_trial_type, y = mean, 
+             fill = ME_trial_type)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper))
+```
+
+### Stimulus type
+
+No effect
+
+```{r}
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  group_by(object_stimulus) %>%
+  multi_boot_standard(col = "d_calc") %>%
+  ggplot(aes(x = object_stimulus, y = mean, 
+             fill = object_stimulus)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper))
+
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  group_by(object_stimulus) %>%
+  multi_boot_standard(col = "resid") %>%
+  ggplot(aes(x = object_stimulus, y = mean, 
+             fill = object_stimulus)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper))
+```
+
+### Lab group
+
+Not interpretable (small sample sizes)
+
+```{r}
+# lab group
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  group_by(study_ID, lab_group) %>%
+  summarize(resid = mean(resid)) %>%
+  group_by(lab_group) %>%
+  summarize(mean = mean(resid)) %>%
+  ggplot(aes(x = reorder(lab_group, mean), 
+             y = mean, fill = lab_group)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(legend.position = "none")
+```
+
+### Time
+Effect gets bigger over time, residulaizing out method and age
+```{r}
+# year vs. age and method residulaed effect size
+
+ma_cd %>%
+  filter(infant_type == "typical") %>%
+  ggplot(aes(x = year,
+             y = resid)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+## Mega developmental plot
+
+```{r, fig.height = 8, fig.pos = 'T!'}
+ma_plotting <- ma_c %>%
+  mutate(es_type = ifelse(infant_type2 != "typical",
+                          "Non-Typical Populations",
+                          ifelse(ME_trial_type == "NN", 
+                                 "Novel-Novel", "Familiar-Novel")),
+         es_type = ifelse(es_type == "Non-Typical Populations" &  infant_type2 %in% c("bilingual", "trilingual"), "Multi-Lingual", 
+                          ifelse(es_type == "Non-Typical Populations", "Non-Typical Populations", es_type)),
+        es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"),
+
+         infant_type2_label = ifelse(infant_type2 == "typical",
+                                     "", as.character(infant_type2)),
+         infant_type2_label = fct_recode(infant_type2_label, 
+                                         LT = "late_talkers", 
+                                         DHH = "deaf/hard-of-hearing", 
+                                         B = "bilingual", 
+                                         `T` = "trilingual",
+                                         MR = "youth with mental retardation"),
+         d_var_calc2 = ifelse(es_type == "Non-Typical Populations", 
+                                d_var_calc, 0),
+         d_calc2 = ifelse(es_type == "Non-Typical Populations", 
+                                d_calc, 0),
+         d_var_calc2 = d_var_calc,
+         d_calc2 = d_calc,
+         effects.cil = d_calc2 -
+               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2),
+         effects.cih = d_calc2 +
+               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2)) %>%
+        filter(mean_age < 75 | es_type == "Non-Typical Populations")
+
+NF_only <- ma_plotting %>%
+  filter(infant_type2 == "typical",
+         ME_trial_type == "FN") %>%
+  select(d_calc, mean_age)
+
+all_FN <- mutate(NF_only, 
+                 es_type = "Familiar-Novel", 
+                 line_group = 1) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Novel-Novel",
+                           line_group = 2)) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Non-Typical Populations",
+                           line_group = 2)) %>%
+          bind_rows(mutate(NF_only, 
+                           es_type = "Multi-Lingual",
+                           line_group = 2)) %>%
+          mutate(es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"))
+
+NN_NT_only <- ma_plotting %>%
+  mutate(d_calc = ifelse(infant_type2 == "typical" & 
+                            ME_trial_type  == "FN", NA, d_calc),
+         mean_age = ifelse(infant_type2 == "typical" & 
+                            ME_trial_type  == "FN", NA, mean_age),
+         es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel")) %>%
+  select(study_ID, d_calc, mean_age, infant_type2, ME_trial_type, es_type) 
+
+ma_plotting %>%
   ggplot(aes(x = mean_age, y = d_calc)) +
-    geom_point(aes(size = n_1,  shape = ME_trial_type, color = infant_type2)) +
-    geom_smooth(method = "lm", formula = y ~ log(x)) +
-    scale_color_discrete(name="Population",
-                       labels=c("ASD", "bilingual", "deaf/heard-of-hearing","late-talkers", "typical")) +
-      scale_shape_discrete(name="Trial type",
-                       labels=c("Familiar-Novel", "Novel-Novel")) +
+    facet_wrap( ~ es_type, scale = "free_x", 2) +
+    geom_hline(aes(yintercept = 0)) +
+    geom_linerange(aes(ymin = effects.cil, ymax = effects.cih), 
+                   alpha = .5, size = .3) +
+    geom_point(aes(size = n_1, shape = ME_trial_type), alpha = .5) +
+    geom_smooth(aes(linetype = as.factor(line_group)), 
+                method = "lm", formula = y ~ log(x), color = "#268bd2",
+                data = all_FN, se = FALSE, size = 1.1) +
+    geom_smooth(aes(y = d_calc, x = mean_age, color = es_type), 
+                method = "lm", formula = y ~ log(x), 
+                data = NN_NT_only, se = FALSE, size = 1.1) +
+    scale_color_manual(values= c("#b58900", "#d33682", "#6c71c4"), guide = FALSE) +
+    ggrepel::geom_text_repel(aes(label = infant_type2_label), box.padding = .5) +
+    scale_shape_discrete(name = "Trial Type",
+                         labels = c("Familiar-Novel", "Novel-Novel")) +
     scale_size_continuous(name="Sample size") +
+    guides(linetype = FALSE,
+           shape = guide_legend(override.aes = list(size = 4))) +
     xlab("Mean age (months)") +
-    ylab("Estimated effect size (d)") +
-    ggtitle("Meta-analysis") +
-    xlim(0, 65)
+    ylab("Effect size (d)") +
+    ggtitle("Disambiguation Development from Meta-Analysis") +
+   # theme_few()  +
+    theme(legend.position = "bottom") 
 ```

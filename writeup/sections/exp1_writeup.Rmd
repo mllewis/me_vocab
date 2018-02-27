@@ -1,31 +1,197 @@
 # Experiment 1: ME and Vocabulary
-
+The goal of Experiment 1 is to more directly explore the influence of vocabulary-related language experience on the disambiguation inference. Our meta-analysis points to a robust developmental increase in the strength of the disambiguation effect with age. While all four accounts are able to predict this change, only the overhypothesis account predicts that this increase should be related to vocabulary knowledge. In our meta-analytic analysis, we explored the relationship  between vocabulary size and the magnitude of the disambiguation effect in the prior literature, but this analysis is limeted by the fact that vocabulary size is not measured for most studies in our sample. In Experiment 1, we therefore aimed to test the prediction that children with larger vocabularies should have a stronger disambiguation bias by measuring vocabulary size on a large sample of children who completed the disambiguation task. Consistent with the overhypothesis account, we find X.
 
 ## Methods
 
-We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
-
 ### Participants
 
-Children were recruited at the Children’s Discovery Museum of San Jose. Children were asked if they would be willing to play an iPad game with the experimenter and were informed that they could stop playing at any time. Children first completed two tasks adapted to iPad; one probing their vocabulary size and one mutual exclusivity inference task. Included in analyses are 166 children out of a planned sample of 160 participants. We ran 62 additional children, who were excluded from analysis based on planned exclusion criteria of low English language exposure (less than or equal to 75%), outside the age range of 24-48 month, children who do not give correct answers on > 50% of familiar noun (control) trials, or < 100% of trials completed. Included in our sample were 97 females and 69 males.
+```{r read_in_data}
+exp1 <- read_csv("../../exp1/processed/all_exp1_data_complete.csv") %>%
+  select(sub_id, age_months, gender, english, 
+         exclude2, prop_correct_vocab, trial_type, correct, 
+         start_time, end_time, resp_start_time) 
+```
+
+```{r do_exclusions}
+# number of trials age [24, 48]
+good_age <- exp1 %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(age_months >= 24 & age_months <= 48) # 213
+
+# english input >= 75
+good_language <- exp1 %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(english >= 75) # 189 
+
+# prop_correct C-NF > .5
+good_controls <- exp1 %>%
+  filter(trial_type == "C-NF") %>%
+  group_by(sub_id) %>%
+  summarize(prop_correct = sum(correct) / n())  %>%
+  filter(prop_correct >= .5) # 171
+
+# completed all trials
+NUM_TRIALS <- 19
+good_counts <- exp1 %>%
+  count(sub_id) %>%
+  filter(n == NUM_TRIALS) # 160
+
+good_sub_ids <- list(good_counts$sub_id, 
+                     good_age$sub_id,
+                     good_language$sub_id,
+                     good_controls$sub_id) %>%
+  accumulate(intersect) %>%
+  last()
+
+final_sample <- filter(exp1, sub_id %in% good_sub_ids) 
+num_good <- length(unique(final_sample$sub_id))
+num_total <- length(unique(exp1$sub_id))
+
+gender_counts <- final_sample %>%
+  distinct(sub_id, .keep_all = T) %>%
+  count(gender)
+```
+
+A sample of `r num_total` children were recruited at the Children’s Discovery Museum of San Jose.   `r num_total - num_good` children were excluded because they did not satsify our planned inclusion criteria:  within the age range of 24-48 months (*n* = `r num_total - dim(good_age)[1]`), completed all trials (*n* = `r num_total - dim(good_counts)[1]`), exposed to English greater than 75% of the time (*n* = `r num_total - dim(good_language)[1] `), and correctly answered at least half of the familiar noun control trials  (*n* = `r num_total - dim(good_controls)[1]`). Our final sample included `r num_good` children (*N*~females~ = `r filter(gender_counts, gender == "female") %>% select(n) %>% unlist(use.names = F)`.
 
 ### Stimuli
+The disambiguation task included color pictures of 14 novel objects (e.g., a pair of tongs) and 24 familiar objects (e.g. a cookie; see SI). Items in the vocabulary assessment were a fixed set of 20 developmentally appropriate words from the Pearson Peabody Vocabulary Test [@dunn1965peabody]. These words were taken from 9 different domains, including professions, food, outside things, instruments, animals, classroom, shapes, verbs, and household items. The words were XXX.
 
-Mutual exclusivity inference task was comprised of 19 trials total; three practice trials of Familiar-Familiar (FF) nouns and 16 experimental trials. Experimental trials consisted of Novel-Familiar (NF), and Novel-Novel (NN) noun pairings. Of the pictures presented in the task, 14 objects were familiar and 24 objects were novel. The task included 8 control trials, equally split between NN noun pairings (C-NN) and NF noun pairings (C-NF) given in random order. Children who did not give correct answers on 50% of control trials were excluded from the final sample. The remaining 8 trials were divided equally between NN and NF trials.
+### Design and Procedure
+Sessions took place individually in a small testing room away from the museum floor.  The experimenter first introduced the child to "Mr. Fox," a cartoon character who wanted to play a guessing game. The experimenter explained that Mr. Fox would tell them the name of the object they had to find, so they had to listen carefully. Children then completed a series of 19 trials on an iPad, 3 practice trials followed by 16 experimental trials. In the practice trials, children were shown two familiar pictures (FF) on the iPad and asked to select one, given a label. If the participant chose incorrectly on a practice trial, the audio would correct them and allow the participant to choose again.
 
-The general format of the vocabulary assessment comprised of a 4 image display and a verbal prompt. Two practice trials were administered, followed by 20 experimental trials. Experimental trials included a fixed set of 20 developmentally appropriate words taken from the Pearson Peabody Vocabulary Test. These words were taken from 9 different domains, including professions, food, outside things, instruments, animals, classroom, shapes, verbs, and household items.
+The child then completed the test phase. Like the practice trials, each of the test trials consisted of a word and two pictures, and the child's task was to identify the referent. Within participants, we manipulated two features of the task: the target referent (Novel or Familiar; N or F) and the type of alternatives (Novel-Novel or Novel-Familiar; NN or FF). On novel referent trials (Experimental), children were given a novel word and expected to select the novel object via the disambiguation inference. On familiar referent trials (Control), children were given a familiar word and expected to select the correct familiar object. On Novel-Novel trials, children saw pictures of two novel objects (e.g.\ tongs and cookie) [How were N words introduced for NN trials?]. On Novel-Familiar trials, children saw a picture of a novel object and a familiar objects (e.g. a leak and tongs). The design features were fully crossed such that half of the trials were of each trial type. Trials were presented randomly, and children were only alloweed to make only one selection. 
 
-### Procedure
-
-Sessions took place individually in a small testing room away from the museum floor. In the ME inference task, the experimenter introduced them to "Mr. Fox," a cartoon character who wanted to play a guessing game. The experimenter explained that Mr. Fox would tell them the name of the object they had to find, so they had to listen carefully. Children then saw 3 practice trials with two commonly known objects (i.e. cup and cookie). If the participant chose incorrectly for this practice trial, the audio would correct them and allow the participant to choose again. After the practice trials were completed, the task proceeded to run 16 test trials. Reaction times were measured from the onset of the target word. Children could only make one selection. The vocabulary task displayed 4 images randomly selected from the fixed bank of 22 images. Participants were prompted to choose one object. Again, reaction times were measured from the onset of the target word and children could only make one selection.
-
+After the disambiguation task, children's vocabulary was measured in a simple vocabulary assessment. In the assessment, children were presented with four randomly selected images, and prompted to choose a picture given a label. Children completed 2 practice trials followed by 20 test trials.  As in the disambiguation task, reaction times were measured from the onset of the target word, and children could only make one selection.
 
 ### Data analysis
 
-We used `r cite_r("r-references.bib")` for all our analyses.
-
-
 ## Results and Discussion
+```{r practice_trials}
+practice_trials <- final_sample %>%
+  filter(trial_type == "FF") %>%
+  group_by(sub_id) %>%
+  summarize(prop_correct = mean(correct)) %>%
+  mutate(group = "temp") %>%
+  group_by(group) %>%
+  multi_boot_standard("prop_correct") 
+
+print_practice <- get_pretty_mean(practice_trials$mean, 
+                                  practice_trials$ci_lower, 
+                                  practice_trials$ci_upper)
+```
+
+
+```{r trial_means_plot, fig.pos = 'T!', fig.width=8, fig.height = 4.5, fig.cap = "Accuracy data for four trial types by half-year age bins. Blue corresponds to trials with the canonical novel-familiar paradigm, and red corresponds to trials with two novel alternatives, where a novel of label for one of the objects is unambiguously introduced on a previous trial. The dashed line corresponds to chance. Ranges are 95\\% CIs."}
+
+mss <- final_sample %>%
+  mutate(age_group = cut(age_months, 
+                         breaks = c(24, 30, 36, 42, 48),
+                         include.lowest = T)) %>%
+  group_by(sub_id, trial_type, age_group) %>%
+  summarize(prop_correct = mean(correct))
+
+ms <- mss %>%
+    group_by(age_group, trial_type) %>%
+    multi_boot_standard("prop_correct") %>%
+  ungroup() %>%
+    filter(trial_type != "FF") %>%
+    mutate(condition_type = ifelse(trial_type %in% c("NF", "NN"),
+                                 "Experimental\n (novel target)", 
+                                 "Control \n (familiar target)"),
+           trial_type2 = ifelse(trial_type %in% c("NN", "C-NN"),
+                                 "Novel-Novel", "Novel-Familiar"),
+           age_group = fct_recode(age_group, "2-2.5" = "[24,30]",
+                                  "2.5-3" = "(30,36]",
+                                  "3-3.5" = "(36,42]",
+                                  "3.5-4" = "(42,48]")) 
+
+ggplot(ms, aes(x = age_group,
+               y = mean)) +
+  facet_wrap(~condition_type) +
+  #geom_bar(stat = "identity", position= position_dodge(width=0.9))+
+  #geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
+   #              position= position_dodge(width=0.9)) +
+  geom_pointrange(aes(ymin = ci_lower, 
+                      ymax = ci_upper, color = trial_type2), size = .5) +
+  geom_line(aes(color = trial_type2, group = trial_type2)) +
+  ylab("Accuracy") +
+  xlab("Age (years)") +
+  geom_hline(aes(yintercept = .5), lty = 2) +
+  ylim(.4, 1) +
+  theme_classic() +
+  theme(strip.text = element_text(size = 11)) +
+  ggthemes::scale_color_solarized(guide = 
+                                    guide_legend(title = "Trial Type"))
+```
+
+```{r}
+ms %>%
+  group_by(trial_type) %>%
+  map_df(get_mes_by_group, trial_type)
+  
+
+
+
+```
+
+```{r glm_analysis}
+crit_sample <- final_sample  %>%
+    filter(trial_type != "FF") %>%
+    mutate(condition_type = ifelse(trial_type %in% c("NF", "NN"),
+                                 "N", "F"),
+           trial_type2 = ifelse(trial_type %in% c("NN", "C-NN"),
+                                 "NN", "NF"),
+           age_months = scale(age_months), # scale continious analysis
+           prop_correct_vocab = scale(prop_correct_vocab)) 
+
+accuracy_model1 <- glmer(correct ~ prop_correct_vocab * trial_type2 * age_months +
+                  (trial_type2 | sub_id), 
+                  family = "binomial",
+                  data = filter(crit_sample, condition_type == "N"),
+                  control = glmerControl(optimizer = "bobyqa"))
+summary(accuracy_model1)
+
+```
+
+Participants succeeed on the three practice trials (Familiar - Familiar) with high accuracy, suggesting that they understood the task (`r print_practice`). 
+
+We next examine performance on the four trial types (Experimental-NF, Experimental-NN, Control -NF, Control-NN). Children were above chance in all four conditions (effect sizes).   Figure \ref{fig:trial_means_plot} presents the mean accuracy for each trial type as a function of 6-month age bins. 
+
+Development interacts more with experimental trials than NN vs. NF. 
+```{r correlation_analysis}
+mss <- final_sample %>%
+  group_by(sub_id, trial_type, age_months) %>%
+  summarize(prop_correct = mean(correct)) %>%
+  left_join(final_sample %>% select(sub_id, age_months, prop_correct_vocab)) %>%
+  distinct() %>%
+  ungroup() %>%
+ mutate(condition_type = ifelse(trial_type %in% c("NF", "NN"),
+                                 "Experimental\n (novel target)", 
+                                 "Control \n (familiar target)"),
+           trial_type2 = ifelse(trial_type %in% c("NN", "C-NN"),
+                                 "Novel-Novel", "Novel-Familiar")) %>%
+  filter(trial_type != "FF")
+
+mss %>%
+  filter(trial_type %in% c("NF", "NN")) %>%
+  ggplot(aes(x = age_months, y = prop_correct, color = trial_type)) +
+  geom_point() +
+  geom_smooth()
+
+
+lm(prop_correct ~ age_months *prop_correct_vocab*trial_type, data = mss) %>%
+  summary()
+
+lm(prop_correct ~ age_months *prop_correct_vocab*trial_type, data = mss) %>%
+  summary()
+
+lm(prop_correct ~ age_months *prop_correct_vocab*condition_type*trial_type2, data = mss) %>%
+  summary() 
+```
+
+
+
 
 Could be specific strength of particular word in the NF pairing
 

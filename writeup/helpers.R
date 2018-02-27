@@ -41,3 +41,28 @@ forest <- function(model, moderators) {
     xlab("") +
     ylab("Effect Size")
 }
+
+get_pretty_mean  <- function(mean, low, high){
+  esimate_print = round(mean, 2)
+  CI_print = paste0(" [", 
+                    round(low, 2),
+                    ", ",
+                    round(high, 2),
+                    "]")
+  paste(esimate_print, CI_print)
+}
+
+get_mes_by_group <- function(m1, group){
+  m1 <- mean(mean_col1, na.rm = T)
+  n1 <- length(mean_col1)
+  sd1 <- sd(mean_col1)
+  m2 <- .5
+  n2 <- n1
+  sd2 <- sd1
+  
+  es <- compute.es::mes(m1, m2, sd1, sd2, n1, n2, verbose = F) %>%
+    select(d, l.d, u.d) %>%
+    mutate(group = group)
+  
+  es
+}

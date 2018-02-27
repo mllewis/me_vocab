@@ -111,9 +111,7 @@ What are the cognitive processes underlying this effect? A range of  proposals i
 
 Under one proposal, Markman and colleagues [@markman1988, @markman2003] suggest that children have a constraint on the types of lexicons considered when learning the meaning of a new word -- a "mutual exclusivity constraint."  With this constraint, children are biased to consider only those lexicons that have a one-to-one mapping between words and objects. Importantly, this constraint can be overcome in cases where it is incorrect (e.g. property names),  but it nonetheless serves to restrict the set of lexicons initially entertained when learning the meaning of a novel word. Under this view, then, the disambiguation effect emerges from a general constraint on the structure of lexicons. This constraint is assumed to be innate or early emerging.
 
-
 N3C
-
 
 ### Probabilistic accounts
 

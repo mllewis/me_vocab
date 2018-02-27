@@ -4,7 +4,7 @@
 # Experiment 2: ME and Familiarity
 
 ```{r}
-e2 <- read_csv("../../data-me_exp/experimental_data_cleaned.csv")  %>%
+e2 <- read_csv("../../exp2/experimental_data_cleaned.csv")  %>%
   mutate(age_group = floor(age_mo/12),
          err_type = ifelse(is.na(correct), "no choice", err_type), 
          err = ifelse(is.na(correct), 1, err))

@@ -57,7 +57,7 @@ output            : papaja::apa6_pdf
 ---
 
 ```{r load_packages, include = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
-knitr::opts_chunk$set(cache = FALSE, echo = FALSE, message = FALSE,
+knitr::opts_chunk$set(cache = TRUE, echo = FALSE, message = FALSE,
                       warning = FALSE,  fig.pos = "T!")
 
 library(papaja)
@@ -95,7 +95,7 @@ Despite -- or perhaps due to -- the attention that the ME effect has received, t
 
 ## A note on terminology. 
 
-@markman1988's seminal paper coined the term "mutual exclusivity," which was meant to label the theoretical proposal that "children constrain word meanings by assuming at first that words are mutually exclusive -- that each object will have one and only one label." [@markman1990, p.66]. That initial paper also adopted a task used by a variety of previous authors [CHECK THESE CITES, including @golinkoff1985;@hutchinson1986;@vincent-smith1974], in which a novel and a familiar object were presented to children in a pair and the child was asked to "show me the *x*," where *x* was a novel label. Since then, informal discussions have used the same name for the paradigm and effect (selecting the novel object as the referebnt of the novel word) as well as the theoretical account (an early assumption or bias).
+@markman1988's seminal paper coined the term "mutual exclusivity," which was meant to label the theoretical proposal that "children constrain word meanings by assuming at first that words are mutually exclusive -- that each object will have one and only one label." [@markman1990, p.66]. That initial paper also adopted a task used by a variety of previous authors [including @golinkoff1985;@hutchinson1986children;@vincent-smith1974acquisition], in which a novel and a familiar object were presented to children in a pair and the child was asked to "show me the *x*," where *x* was a novel label. Since then, informal discussions have used the same name for the paradigm and effect (selecting the novel object as the referebnt of the novel word) as well as the theoretical account (an early assumption or bias).
 This conflation of paradigm/effect with theory is problematic, as other authors who have argued against the theoretical account then are in the awkward position of rejecting the name for the paradigm they have used. Other labels (e.g. "disambiguation" or "referent selection" effect) are not ideal, however, because they are not as specific do not refer as closely to the previous literature. Here we adopt the label "mutual exclusivity" (ME) for the general family of paradigms and associated effects, *without* prejudgment of the theoretical account of these effects. 
 
 ME has also been referred to as "fast mapping." This conflation is confusing at best. In an early study, @carey1978 presented children with an incidental word learning scenario by using a novel color term to refer to an object: "You see those two trays over there. Bring me the *chromium* one. Not the red one, the *chromium* one." Those data [and subsequent replications, e.g. @markson1997] showed that this exposure was enough to establish some representation of the link between phonological form and meaning that endured over an extended period; a subsequent clarification of this theoretical claim emphasized that these initial meanings are partial [@carey2010]. Importantly, however, demonstrations of retention relied on learning in a case where there was a contrastive presentation of the word with a larger set of contrastive cues [@carey1978] or pre-exposure to the object [@markson1997]. 

@@ -52,17 +52,59 @@ get_pretty_mean  <- function(mean, low, high){
   paste(esimate_print, CI_print)
 }
 
-get_mes_by_group <- function(m1, group){
-  m1 <- mean(mean_col1, na.rm = T)
-  n1 <- length(mean_col1)
-  sd1 <- sd(mean_col1)
+get_mes_by_group <- function(group, mss){
+  df <-  filter(mss, trial_type == group)
+  m1 <- mean(df$prop_correct, na.rm = T)
+  n1 <- length(df$prop_correct)
+  sd1 <- sd(df$prop_correct)
   m2 <- .5
   n2 <- n1
   sd2 <- sd1
   
   es <- compute.es::mes(m1, m2, sd1, sd2, n1, n2, verbose = F) %>%
     select(d, l.d, u.d) %>%
-    mutate(group = group)
-  
+    mutate(mean = m1, 
+           sd = sd1,
+           condition = group,
+           tidy_print = paste0("M = ", round(mean, 2), ", SD = ", round(sd, 2),
+                               ", d = ", d, " [", l.d, ", ", u.d, "]")) %>%
+    select(condition, mean, sd, everything()) 
+    
   es
+}
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
 }

@@ -37,15 +37,15 @@ author_note: |
 
 
 abstract: |
-  Young children tend to map novel words to novel objects even in the presence of familiar competitors, a finding that has been dubbed the “disambiguation” effect. Theoretical accounts ofthis effect have debated whether it is due to initial constraints on children’s lexicons (e.g. a principle of mutual exclusivity) or situation-specific pragmatic inferences. We present synthesis of exisiting evidence on this phenomonon through a meta-analysis of the existing literature. We then present two experiments that help distinguish between these theoretical constraints. We conclude by suggesting that multiple cognitive mechanisms may underlie the disambiguation effect in word learning.
+  Young children tend to map novel words to novel objects even in the presence of familiar competitors, a finding that has been dubbed the “disambiguation” effect. This phenomenon is important because it could provide a strong constraint for children in learning new words. But, although the effect is highly robust and widely studied, the cognitive mechanisms underlying  it remain unclear. Existing theoretical accounts include a proposal for initial constraints on children’s lexicons (e.g. a principle of mutual exclusivity), situation-specific pragmatic inferences, probabilistic accounts, and overhypothesis account. In the current paper, we have two goal: synthesize the existing body of literature and directly examine the causal role of experience on the  efect. We present a synthesis of exisiting evidence through a meta-analysis of the existing literature, followed by two experiments that examine the relationship between vocabulary development and the effect. We conclude by summarizing the empirical landscape, and suggest that multiple mechanisms may underly the effect.
 
   
-keywords          : "keywords"
+keywords          : "mutual exclusivity, disambuguation effect,  word learning, meta-analysis"
 wordcount         : "X"
 
 bibliography      : ["references.bib"]
 
-figsintext        : no
+figsintext        : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
@@ -57,8 +57,8 @@ output            : papaja::apa6_pdf
 ---
 
 ```{r load_packages, include = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
-knitr::opts_chunk$set(cache = TRUE, echo = FALSE, message = FALSE,
-                      warning = FALSE,  fig.pos = "T!")
+knitr::opts_chunk$set(cache = FALSE, echo = FALSE, message = FALSE,
+                      warning = FALSE,  fig.pos = "tb", sanitize = T)
 
 library(papaja)
 library(tidyverse)
@@ -75,6 +75,13 @@ source("helpers.R")
 ```{r analysis_preferences}
 # Seed for random number generation
 set.seed(42)
+```
+
+```{r r-refs}
+my_citations <- cite_r(file = "r-references.bib", 
+                       pkgs = c("tidyverse", "lme4", "papaja", "metafor", "knitr"), 
+                       withhold = FALSE,
+                       footnote = TRUE)
 ```
 
 
@@ -109,7 +116,7 @@ What are the cognitive processes underlying this effect? A range of  proposals i
 
 ### Constraint and bias accounts
 
-Under one proposal, Markman and colleagues [@markman1988, @markman2003] suggest that children have a constraint on the types of lexicons considered when learning the meaning of a new word -- a "mutual exclusivity constraint."  With this constraint, children are biased to consider only those lexicons that have a one-to-one mapping between words and objects. Importantly, this constraint can be overcome in cases where it is incorrect (e.g. property names),  but it nonetheless serves to restrict the set of lexicons initially entertained when learning the meaning of a novel word. Under this view, then, the disambiguation effect emerges from a general constraint on the structure of lexicons. This constraint is assumed to be innate or early emerging.
+Under one proposal, Markman and colleagues [@markman1988,@markman2003] suggest that children have a constraint on the types of lexicons considered when learning the meaning of a new word -- a "mutual exclusivity constraint."  With this constraint, children are biased to consider only those lexicons that have a one-to-one mapping between words and objects. Importantly, this constraint can be overcome in cases where it is incorrect (e.g. property names),  but it nonetheless serves to restrict the set of lexicons initially entertained when learning the meaning of a novel word. Under this view, then, the disambiguation effect emerges from a general constraint on the structure of lexicons. This constraint is assumed to be innate or early emerging.
 
 N3C
 
@@ -133,7 +140,7 @@ Lewis & Frank (2013)
 ### Pragmatic accounts
 
 
-The disambiguation effect is argued to result from  online inferences made within the referential context  [@clark1987principle, @diesendruck2001]. In particular, Clark suggests that the disambiguation effect is due to two pragmatic assumptions held by speakers. The first assumption is that speakers within the same speech community use the same words to refer to the same objects ("Principle of Conventionality"). The second assumption is that different linguistic forms refer to different meanings ("Principle of Contrast"). In the disambiguation task described above, then, children might reason (implicitly) as follows: You used a word I've never heard before. Since, presumably we both call a ball "ball" and if you'd meant the ball you would have  said "ball," this new word must refer to the new object. Thus, under this account, the disambiguation effect emerges not from a higher-order constraint on the structure of lexicons, but instead from in-the-moment inferences using general pragmatic principles.
+The disambiguation effect is argued to result from  online inferences made within the referential context  [@clark1987principle;@diesendruck2001]. In particular, Clark suggests that the disambiguation effect is due to two pragmatic assumptions held by speakers. The first assumption is that speakers within the same speech community use the same words to refer to the same objects ("Principle of Conventionality"). The second assumption is that different linguistic forms refer to different meanings ("Principle of Contrast"). In the disambiguation task described above, then, children might reason (implicitly) as follows: You used a word I've never heard before. Since, presumably we both call a ball "ball" and if you'd meant the ball you would have  said "ball," this new word must refer to the new object. Thus, under this account, the disambiguation effect emerges not from a higher-order constraint on the structure of lexicons, but instead from in-the-moment inferences using general pragmatic principles.
 
 These two proposals have traditionally been viewed as competing explanations of the disambiguation effect. Research in this area has consequently focused on identifying empirical tests that can distinguish between these two theories. For example, @diesendruck2001 compare performance on a disambiguation task when children are told a novel fact about an object relative to a novel referential label. They found that children disambiguated in both conditions and argued on grounds of parsimony that the same pragmatic mechanism was likely to be responsible for both inferences. More recent evidence contradicts this view: tests of children with autism, who are known to have impairments in pragmatic reasoning find comparable performance on the disambiguation task between typically developing children and children with autism [@preissler2005role;@de2011mutual]. This result provides some evidence for the view that disambiguation is due to a domain-specific lexical constraint.
 
@@ -197,11 +204,8 @@ Re-evaluate
 ```
 
 ```{r child = "sections/exp2_writeup.Rmd"}
+# EXCLUDED FOR NOW: child = "sections/model_writeup.Rmd" 
 ```
-
-```{r child = "sections/model_writeup.Rmd"}
-```
-
 
 # General Discussion
 
@@ -209,9 +213,11 @@ Re-evaluate
 \newpage
 
 # References
-```{r create_r-references}
-r_refs(file = "references.bib")
+
+```{r session info, include = F}
+sessionInfo() %>% pander::pander(compact = F)
 ```
+
 
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}

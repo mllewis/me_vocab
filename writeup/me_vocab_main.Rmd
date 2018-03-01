@@ -57,7 +57,7 @@ output            : papaja::apa6_pdf
 ---
 
 ```{r load_packages, include = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
-knitr::opts_chunk$set(cache = FALSE, echo = FALSE, message = FALSE,
+knitr::opts_chunk$set(cache = T, echo = FALSE, message = FALSE,
                       warning = FALSE,  fig.pos = "tb", sanitize = T)
 
 library(papaja)

@@ -46,7 +46,8 @@ e_clean <- e %>%
   filter(!is.na(trial_type))
   
 all_data <- left_join(dem_with_vocab, e_clean) %>%
-  mutate_if(is.character, as.factor) 
+  mutate_if(is.character, as.factor) %>%
+  distinct()
   
 # write to csv
 write_csv(all_data, "processed/all_exp1_data_complete.csv")

@@ -1,9 +1,7 @@
 
+# Experiment 2: Disambiguation Effect and Familiarity
 
-
-# Experiment 2: ME and Familiarity
-
-In Experimtnet 2, we test a causal relationship between vocabulary size and the disambiguation effect by experimentally manipulating the strength of word knowledge. We do this by teaching participants a label for a novel object and varying the number of times the object is labeled. This manipulation allows us to vary children's certainity about the label for an object, with objects that have been labeled more frequently leading to high certainty about the label name. This object then serves as the "familiar" object in a novel-novel trial. If the strength of vocabulary knowledge about the "familiar" object influenced 
+In Experiment 2, we test a causal relationship between vocabulary size and the disambiguation effect by experimentally manipulating the strength of word knowledge. We do this by teaching participants a label for a novel object and varying the number of times the object is labeled. This manipulation allows us to vary children's certainty about the label for an object, with objects that have been labeled more frequently associated with high certainty about the label name. The newly, unabiguously labeled object then serves as the "familiar" object in a novel-novel trial. If the strength of vocabulary knowledge about the "familiar" object influences, the strength of the disambiguation effect, then we should expect a larger bias when the the familiar object has been labeled more frequently. We a pattern consistent with the prediction. 
 
 ```{r}
 e2 <- read_csv("../../exp2/experimental_data_cleaned.csv")  %>%
@@ -27,9 +25,12 @@ e2_subs <- e2 %>%
 
 e2_subs %>%
   group_by(age_group) %>%
-  summarise(mean_age = mean(age_mo), 
+  summarise(mean_age = round(mean(age_mo),2), 
             n = n()) %>%
-  kable(format = "latex", booktabs = TRUE) 
+  kable( row.names = F,
+        format = "latex",
+        booktabs = TRUE,
+        col.names = c("Age group", "Mean age (months)", "Sample size"))
   #papaja::apa_table(caption = "Demographics of children in Experiment 2.")
 ```
 
@@ -45,26 +46,22 @@ Each child completed four trials. Each trial consisted of a training and a test 
 
 ### Data analysis
 
-We followed the same analytic approach as we registered in Experiment 1, though data were collected chronologically earlier for Experiment 2. Responses were coded as correct if participants selected the novel object at test. A small number of trials were coded as having parent or sibling interference, experimenter error, or a child who recognized the target object, chose both objects, or did not make a choice. These trials were excluded from further analyses; all trials were removed for two children for whom there was parent or sibling interference on every trial. The analysis we report here is consistent with that used in @lewis2013b, though there are some slight numerical differences due to reclassification of exclusions. 
-
 ```{r}
-e2 %>%
+exclusions <- e2 %>%
   filter(err == 1) %>%
-  group_by(err_type) %>%
-  summarise(n = n(), 
-            pct = n() / nrow(e2)) %>%
-    kable(format = "latex", booktabs = TRUE) 
-
+  count(err_type) 
 
 e2_clean <- filter(e2, !err)
 ```
 
 
+We followed the same analytic approach as we registered in Experiment 1, though data were collected chronologically earlier for Experiment 2. Responses were coded as correct if participants selected the novel object at test. A small number of trials were coded as having parent or sibling interference (*N* = `r filter(exclusions, err_type == "interference")$n`), experimenter error (*N* = `r filter(exclusions, err_type == "exp err")$n`), or a child who recognized the target object (*N* = `r filter(exclusions, err_type == "recog obj")$n`), chose both objects (*N* = `r filter(exclusions, err_type == "changed mind")$n`) or did not make a choice (*N* = `r filter(exclusions, err_type == "no choice")$n`). These trials were excluded from further analyses; all trials were removed for two children for whom there was parent or sibling interference on every trial. We centered both age and number of labels for interpretability of coefficients.  The analysis we report here is consistent with that used in @lewis2013b, though there are some slight numerical differences due to reclassification of exclusions. 
+
 ## Results and Discussion
 
- As predicted, children showed a stronger disambiguation effect as the number of training labels increased, and as noise decreased with age.
+As predicted, children showed a stronger disambiguation effect as the number of training labels increased, and as noise decreased with age.
 
-```{r}
+```{r, fig.width=5, fig.height =3.5, fig.cap = "Accuracy data for three age groups across three different conditions. Conditions varied by the number of times the child observed an unambigious novel label applied to the familiar object prior to the critical disambiguation trial. The dashed line corresponds to chance. Ranges are 95\\% CIs."}
 mss <- e2_clean %>%
   group_by(age_group, cond, sub_num) %>%
   summarise(correct = mean(correct)) 
@@ -82,7 +79,9 @@ ggplot(ms, aes(x = factor(age_group), y = mean, col = cond)) +
   ylab("Proportion correct") + 
   scale_color_solarized(name = "Condition", 
                         labels=c("1 label", "2 label", "3 label")) + 
-  theme_few()
+  theme_classic() +
+  ggtitle("Experiment 2")
+
 ```
 
 ```{r}
@@ -91,16 +90,35 @@ e2_clean$age_mo_c <- scale(e2_clean$age_mo,
 e2_clean$times_labeled_c <- scale(e2_clean$times_labeled, 
                                   scale = FALSE, center = TRUE)
 
-mod <- glmer(correct ~ age_mo_c * times_labeled_c  + 
+m3 <- glmer(correct ~ age_mo_c * times_labeled_c  + 
                (times_labeled_c | sub_num), 
       family = "binomial", 
-      data = e2_clean)
+      data = e2_clean) %>%
+      summary()
 
-summary(mod)$coefficients %>%
-    kable(format = "latex", booktabs = TRUE) 
+print_model3 <- m3$coefficients %>%
+  data.frame() %>%
+  stats::setNames(c("B", "SE", "Z", "p")) %>%
+  rownames_to_column("term")  %>%
+  mutate_at(2:5, function(x) {round(x, 2)}) %>%
+  mutate(p_print = ifelse(p == 0, "< .001", p),
+         pp_print = ifelse(p == 0, "< .001", paste0("= ", p)),
+         pretty_model = paste0("B = ", B, ", SE = ", SE, 
+                               ", Z = ", Z, ", p ", pp_print),
+        term = c("(Intercept)",
+                  "Age",
+                  "Num. Labels Observed",
+                  "Age x Num. Labels Observed")) %>%
+  select(-p) %>%
+  rename(p = "p_print") %>%
+  select(term, everything(), -pp_print, -pretty_model)
 
-
-
+kable(print_model3,
+        row.names = F,
+        format = "latex",
+        booktabs = TRUE) %>%
+        #caption = "Parameters of logistic mixed model predicting accuracy on disambiguation trials as a function of Age (months) and number of times a label for the familiar object was observed.") 
+    kable_styling(font_size = 9)
 ```
 
-We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects, and participant as a random effect. We centered both age and number of labels for interpretability of coefficients. Model results are shown in Table XYZ. There was a significant effect of age such that older children showed a stronger disambiguation bias and a  significant effect of number of labels, such that more training labels led to stronger disambiguation, but the interaction between age and number of labels was not significant.
+We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects, and participant as a random effect. Model results are shown in Table XYZ. There was a significant effect of age such that older children showed a stronger disambiguation bias and a  significant effect of number of labels, such that more training labels led to stronger disambiguation, but the interaction between age and number of labels was not significant.

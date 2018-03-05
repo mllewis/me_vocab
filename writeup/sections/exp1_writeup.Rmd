@@ -1,5 +1,6 @@
-# Experiment 1: ME and Vocabulary
-Our meta-analysis points to a robust developmental increase in the strength of the disambiguation effect with age. While all four accounts are able to predict this change, only the overhypothesis account predicts that this increase should be  directly related to vocabulary knowledge. However, the meta-analytic approach is limited in its ability to measure this relationship since few studies in our sample measure vocabulary size (*N* = 8), and even fewer measure vocabulary size at multiple ages within the same study [*N*=2, @mather2009learning;@markman2003].  In Experiment 1, we therefore aimed to test the prediction that children with larger vocabularies should have a stronger disambiguation bias by measuring vocabulary size in a large sample of children across multipe ages who also completed the disambiguation task. We find that vocabulary size is a strong predictor of the strength of the disambiguation effect across development and that it predicts more variance than developmental age.
+# Experiment 1: Disambiguation Effect and Vocabulary Size
+
+Our meta-analysis points to a robust developmental increase in the strength of the disambiguation effect with age. While all four accounts are able to predict this change, only the overhypothesis account predicts that this increase should be  directly related to vocabulary knowledge. However, the meta-analytic approach is limited in its ability to measure this relationship since few studies in our sample measure vocabulary size (*N* = 8), and even fewer measure vocabulary size at multiple ages within the same study [*N*=2; @mather2009learning;@markman2003].  In Experiment 1, we therefore aimed to test the prediction that children with larger vocabularies should have a stronger disambiguation bias by measuring vocabulary size in a large sample of children across multiple ages who also completed the disambiguation task. We find that vocabulary size is a strong predictor of the strength of the disambiguation effect across development and that vocabulary size predicts more variance than developmental age.
 
 ```{r longtiduinal_vocab_studies_from_meta, include = F, eval = F}
 
@@ -44,7 +45,70 @@ filter(study_ID %in% filter(vocab_studies,
 exp1 <- read_csv("../../exp1/processed/all_exp1_data_complete.csv") %>%
   select(sub_id, age_months, gender, english, 
          exclude2, prop_correct_vocab, trial_type, correct, 
-         start_time, end_time, resp_start_time, object1) 
+         start_time, end_time, resp_start_time, object1)  
+```
+
+```{r, eval = F, include = F}
+
+d <- read_csv("../../exp1/raw/Fendle Subject Log.csv") %>%
+  filter(`Exclusion codes` != "P" | is.na(`Exclusion codes`)) %>%
+  mutate(SID = ifelse(substr(SID, 1, 1) == "0", # get rid of leading 0s so can join with demographics 
+                         substring(SID, 2, last = 1000000L), SID))
+
+
+age_m <-exp1 %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(age_months < 24 | age_months > 48) %>%
+  select(sub_id) %>%
+  arrange(sub_id) %>%
+  pull()
+
+age_v <- d %>%
+  filter(`Exclusion codes` %in% c("AGE", "DF/AGE", "NE/AGE", "DF/NE/AGE"))%>%
+           select(SID) %>%
+    arrange(SID) %>%
+  pull()
+
+setdiff(age_v, age_m)
+setdiff(age_m, age_v) # "2071706" "2201710"
+
+good_counts <- exp1 %>%
+  count(sub_id) %>%
+  filter(n > 19)
+
+df_m <- exp1 %>%
+  count(sub_id) %>%
+  filter(n < NUM_TRIALS)  %>%
+  select(sub_id) %>%
+  arrange(sub_id) %>%
+  pull()
+
+df_v <- d %>%
+  filter(`Exclusion codes` %in% c("DF", "DF/AGE", "DF/NE/AGE", "DF/NE")) %>%
+           select(SID) %>%
+    arrange(SID) %>%
+  pull()
+
+setdiff(df_v, df_m) # "1031705" (don't have this one - no data)
+setdiff(df_m, df_v) #"11161604" (AGE), "1121707" (NE/AGE)  "1171704" (NA) , "12131602" "1261606"  (AGE) "1311701"  (NE) "4181701"  (NE) "5241704" (NE/AGE) "6201706" (NE) "6221701"  (NA)
+
+ne_m <- exp1 %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(english < 75) %>%
+  select(sub_id) %>%
+  arrange(sub_id) %>%
+  pull()
+
+ne_v <- d %>%
+  filter(`Exclusion codes` %in% c("NE", "NE/AGE", "DF/NE", "DF/NE/AGE")) %>%
+           select(SID) %>%
+  arrange(SID) %>%
+  pull()
+
+
+setdiff(ne_v, ne_m) # "6201705" # sayw 100 english
+setdiff(ne_m, ne_v) # "1061701" "1061703" "1191606" "1271701" "2201708" "2201709" "2201712" "2281703" "3021701" "3211701" "6021701" "6201707" # all these kids didnt' finish
+
 ```
 
 ```{r do_exclusions}
@@ -69,7 +133,7 @@ good_controls <- exp1 %>%
 NUM_TRIALS <- 19
 good_counts <- exp1 %>%
   count(sub_id) %>%
-  filter(n == NUM_TRIALS) # 160
+  filter(n == NUM_TRIALS) # 178
 
 good_sub_ids <- list(good_counts$sub_id, 
                      good_age$sub_id,
@@ -87,20 +151,20 @@ gender_counts <- final_sample %>%
   count(gender)
 ```
 
-A sample of `r num_total` children were recruited at the Children’s Discovery Museum of San Jose.   `r num_total - num_good` children were excluded because they did not satsify our planned inclusion criteria:  within the age range of 24-48 months (*n* = `r num_total - dim(good_age)[1]`), completed all trials (*n* = `r num_total - dim(good_counts)[1]`), exposed to English greater than 75% of the time (*n* = `r num_total - dim(good_language)[1] `), and correctly answered at least half of the familiar noun control trials  (*n* = `r num_total - dim(good_controls)[1]`). Our final sample included `r num_good` children (*N*~females~ = `r filter(gender_counts, gender == "female") %>% select(n) %>% unlist(use.names = F)`).
+A sample of `r num_total` children were recruited at the Children’s Discovery Museum of San Jose.   `r num_total - num_good` children were excluded because they did not satisfy our planned inclusion criteria:  within the age range of 24-48 months (*n* = `r num_total - dim(good_age)[1]`), completed all trials (*n* = `r num_total - dim(good_counts)[1]`), exposed to English greater than 75% of the time (*n* = `r num_total - dim(good_language)[1] `), and correctly answered at least half of the familiar noun control trials  (*n* = `r num_total - dim(good_controls)[1]`). Our final sample included `r num_good` children (*N*~females~ = `r filter(gender_counts, gender == "female") %>% select(n) %>% unlist(use.names = F)`).
 
 ### Stimuli
-The disambiguation task included color pictures of 14 novel objects (e.g., a pair of tongs) and 24 familiar objects (e.g. a cookie; see SI). Items in the vocabulary assessment were a fixed set of 20 developmentally appropriate words from the Pearson Peabody Vocabulary Test [@dunn1965peabody]. The novel words were XXX.
+The disambiguation task included color pictures of 14 novel objects (e.g., a pair of tongs) and 24 familiar objects (e.g. a cookie; see SI). Items in the vocabulary assessment were a fixed set of 20 developmentally appropriate words from the Pearson Peabody Vocabulary Test [see appendix; @dunn1965peabody]. <!--The novel words were XXX. -->
 
 ### Design and Procedure
 Sessions took place individually in a small testing room away from the museum floor.  The experimenter first introduced the child to "Mr. Fox," a cartoon character who wanted to play a guessing game. The experimenter explained that Mr. Fox would tell them the name of the object they had to find, so they had to listen carefully. Children then completed a series of 19 trials on an iPad, 3 practice trials followed by 16 experimental trials. In the practice trials, children were shown two familiar pictures (FF) on the iPad and asked to select one, given a label. If the participant chose incorrectly on a practice trial, the audio would correct them and allow the participant to choose again.
 
-The child then completed the test phase. Like the practice trials, each of the test trials consisted of a word and two pictures, and the child's task was to identify the referent. Within participants, we manipulated two features of the task: the target referent (Novel (Experimental)  or Familiar (Control)) and the type of alternatives (Novel-Familiar or Novel-Novel; NF or NN). On novel referent trials, children were given a novel word and expected to select the novel object via the disambiguation inference. On familiar referent trials, children were given a familiar word and expected to select the correct familiar object. On Novel-Familiar trials, children saw a picture of a novel object and a familiar objects (e.g. a cookie and a pair of tongs). On Novel-Novel trials, children saw pictures of two novel objects (e.g.\ a pair of tongs and a leak) [How were N words introduced for NN trials?].  The design features were fully crossed such that half of the trials were of each trial type  (Experimental-NF, Experimental-NN, Control-NF, Control-NN). Trials were presented randomly, and children were only allowed to make one selection. 
+The child then completed the test phase. Like the practice trials, each of the test trials consisted of a word and two pictures, and the child's task was to identify the referent. Within participants, we manipulated two features of the task: the target referent (Novel (Experimental)  or Familiar (Control)) and the type of alternatives (Novel-Familiar or Novel-Novel; NF or NN). On novel referent trials, children were given a novel word and expected to select the novel object via the disambiguation inference. On familiar referent trials, children were given a familiar word and expected to select the correct familiar object. On Novel-Familiar trials, children saw a picture of a novel object and a familiar objects (e.g. a cookie and a pair of tongs). On Novel-Novel trials, children saw pictures of two novel objects (e.g.\ a pair of tongs and a leak) <!--How were N words introduced for NN trials?]-->.  The design features were fully crossed such that half of the trials were of each trial type  (Experimental-NF, Experimental-NN, Control-NF, Control-NN). Trials were presented randomly, and children were only allowed to make one selection. 
 
 After the disambiguation task, we measured children's vocabulary in a simple vocabulary assessment. in which children were presented with four randomly selected images and prompted to choose a picture given a label. Children completed 2 practice trials followed by 20 test trials.  
 
 ### Data analysis
-All models are logistic mixed effect models fit with the lme4 package in R [@R-lme4]. Each model was fit with the maximal random effect structure. All ranges are 95% confidence intervals. Effect sizes are Cohen's *d* values.
+Selections on the disambiguation task were coded as correct if the participant selected the familiar object on Control and the novel object on Experimental trials. We centered both age and vocabulary size for interpretability of coefficients. All models are logistic mixed effect models fit with the lme4 package in R [@R-lme4]. Each model was fit with the maximal random effect structure. All ranges are 95% confidence intervals. Effect sizes are Cohen's *d* values.
 
 ## Results and Discussion
 ```{r practice_trials}
@@ -139,8 +203,11 @@ crit_sample <- final_sample  %>%
                                  "N", "F"),
            trial_type2 = ifelse(trial_type %in% c("NN", "C-NN"),
                                  "NN", "NF"),
-           age_months = scale(age_months), # scale continious analysis
-           prop_correct_vocab = scale(prop_correct_vocab)) 
+           age_months = scale(age_months, 
+                              scale = FALSE, center = TRUE), # scale continious analysis
+           prop_correct_vocab = scale(prop_correct_vocab, 
+                                      scale = FALSE, center = TRUE))
+
 
 accuracy_model1 <- glmer(correct ~ condition_type * trial_type2 +
                   (trial_type2*condition_type | sub_id) +
@@ -180,7 +247,7 @@ age_vocab_corr <- final_sample %>%
                                   conf.high))
 ```
 
-Our main question was how accuracy on the experimental trials changed over development. We examined two measures of developmental change: Age (months) and vocabulary size, as measured in our vocabulary assesessment. We assigned a vocabulary score to each child as the proportion correct selections on the vocabulary assessment out of 20 possible. Age and vocabulary size were positively correlated, with older children tending to have larger vocabularies compared to younger children (*r* = `r age_vocab_corr$pretty_corr`, *p* < .001).
+Our main question was how accuracy on the experimental trials changed over development. We examined two measures of developmental change: Age (months) and vocabulary size, as measured in our vocabulary assessment We assigned a vocabulary score to each child as the proportion correct selections on the vocabulary assessment out of 20 possible. Age and vocabulary size were positively correlated, with older children tending to have larger vocabularies compared to younger children (*r* = `r age_vocab_corr$pretty_corr`, *p* < .001).
 
 ```{r trial_means_plot, fig.width=8, fig.height =3.5, fig.cap = "Accuracy data for four trial types by half-year age bins. Blue corresponds to trials with the canonical novel-familiar paradigm, and red corresponds to trials with two novel alternatives, where a novel of label for one of the objects is unambiguously introduced on a previous trial. The dashed line corresponds to chance. Ranges are 95\\% CIs.", include = F}
 
@@ -215,7 +282,7 @@ ggplot(ms, aes(x = age_group,
   geom_pointrange(aes(ymin = ci_lower, 
                       ymax = ci_upper, color = trial_type2), size = .5) +
   geom_line(aes(color = trial_type2, group = trial_type2)) +
-  ylab("Accuracy") +
+  ylab("Proportion Correct") +
   xlab("Age (years)") +
   geom_hline(aes(yintercept = .5), lty = 2) +
   ylim(.4, 1) +
@@ -259,7 +326,7 @@ ggplot(ms, aes(x = age_group,
 #   ungroup()
 ```
 
-```{r test_p, fig.width=8, fig.height = 4, fig.cap = "Accuracy as a function of age (months; left) and vocabulary size (proportion correct on vocabulary assessment; right). Blue corresponds to trials with the canonical novel-familiar disambiguation paradigm, and red corresponds to trials with two novel alternatives, where a novel of label for one of the objects is unambiguously introduced on a previous trial. The dashed line corresponds to chance. Ranges are 95\\% confidence intervals."}
+```{r fig.width=8, fig.height = 4, fig.cap = "Accuracy as a function of age (months; left) and vocabulary size (proportion correct on vocabulary assessment; right). Blue corresponds to trials with the canonical novel-familiar disambiguation paradigm, and red corresponds to trials with two novel alternatives, where a novel of label for one of the objects is unambiguously introduced on a previous trial. The dashed line corresponds to chance. Ranges are 95\\% confidence intervals."}
 
 plot_data <- final_sample %>%
   filter(trial_type %in% c("NN", "NF")) %>%
@@ -272,7 +339,7 @@ age_plot <- ggplot(plot_data, aes(x = age_months,
              y = prop_correct, 
              color = trial_type)) +
   geom_smooth(method = "lm", formula = y~log(x), alpha = .2) + 
-  ylab("Accuracy") +
+  ylab("Proportion Correct") +
   geom_hline(aes(yintercept = .5), lty = 2) +
   theme_classic() +
   ggtitle("Age" ) +
@@ -333,7 +400,7 @@ kable(print_model2,
         row.names = F,
         format = "latex",
         booktabs = TRUE) %>%
-        #caption = "Parameters of logistic mixed model predicting accuracy on disambiguation trials as a function of trial type (Novel-Familiar (NF) vs. Novel-Novel (NN)), age (months), and vocabulary size as measured by our vocabulary assessment.") 
+        #caption = "Parameters of logistic mixed model predicting accuracy on disambiguation trials as a function of trial type (Novel-Familiar (NF) vs. Novel-Novel (NN)), age (months), and vocabulary size as measured by our vocabulary assessment") 
     kable_styling(font_size = 9)
 
 text_pretty_model2 <- print_model2 %>%
@@ -374,7 +441,7 @@ text_pretty_model2 <- print_model2 %>%
 #     kable_styling(font_size = 8)
 ```
 
-Fig. \ref{fig:dev_change_plot} shows log linear model fits for accuracy as a function of age (left) and vocabulary size (right) for both NF and NN trial types.  To examine the relative influence of maturation and vocabulary size on accuracy, we fit a model predicting accuracy with vocabulary size, age, and trial type (Experimental-NN, and Experimental-NF). We included all possible main and interaction terms as fixed effects. Table 1 presents the model parameters. The only reliable predictor of accuracy was vocabulary size (`r text_pretty_model2 %>% filter(term == "Vocabulary") %>% select(pretty_model) %>% pull()`), suggesting that children with larger vocabularies tended to be more accurate in the disambiguation task. Notably, age was not a reliable predictor of accuracy over and above vocabulary size (`r text_pretty_model2 %>% filter(term == "Age") %>% select(pretty_model) %>% pull()`). 
+Figure 3 shows log linear model fits for accuracy as a function of age (left) and vocabulary size (right) for both NF and NN trial types.  To examine the relative influence of maturation and vocabulary size on accuracy, we fit a model predicting accuracy with vocabulary size, age, and trial type (Experimental-NN, and Experimental-NF). We included all possible main and interaction terms as fixed effects. Table 1 presents the model parameters. The only reliable predictor of accuracy was vocabulary size (`r text_pretty_model2 %>% filter(term == "Vocabulary") %>% select(pretty_model) %>% pull()`), suggesting that children with larger vocabularies tended to be more accurate in the disambiguation task. Notably, age was not a reliable predictor of accuracy over and above vocabulary size (`r text_pretty_model2 %>% filter(term == "Age") %>% select(pretty_model) %>% pull()`). 
 
 ### Discussion
 Experiment 1 directly examines the relationship between the strength of the disambiguation effect and vocabulary size. We find that the strength of the disambiguation effect is highly predicted by vocabulary size. In addition, we find that the bias is larger for NF trials, compared to NN trials. 
@@ -420,11 +487,11 @@ meta_plot_data %>%
   ggthemes::scale_color_solarized()
 ```
 
-The magnitude of the effects that we find are roughly consistent with meta-analytic estimates of those same effects. Figure X presents the data from the experimental conditions in Experiment 1 together with meta-analytic estimates, as a function of age. To compare the experimental data with the meta-analytic data, an effect size was calculated for each participant.\footnote{Because some participants had no variability in their responses (all correct or all incorrect), we used the across-participant mean standard deviation as an estimate of the participant level standard deviation in order to convert accuracy scores into Cohen's d values.} The change in effect size between As in the meta-analytic models, the effect size is smaller for NN trials compared to NF trials, though the magnitude of this difference is smaller. We also see that the variance is larger for the meta-analytic estimates compared to the experimental data, presumably because there is more heterogenity across experiments than across participants within the same experiment. The experimental data thus provide converging data with the meta-analysis that there developmental change in the strength of the bias, and that the effect is weaker for NN trials.
+The magnitude of the effects that we find are roughly consistent with meta-analytic estimates of those same effects. Figure 4 presents the data from the experimental conditions in Experiment 1 together with meta-analytic estimates, as a function of age. To compare the experimental data with the meta-analytic data, an effect size was calculated for each participant.\footnote{Because some participants had no variability in their responses (all correct or all incorrect), we used the across-participant mean standard deviation as an estimate of the participant level standard deviation in order to convert accuracy scores into Cohen's d values.} The change in effect size between As in the meta-analytic models, the effect size is smaller for NN trials compared to NF trials, though the magnitude of this difference is smaller. We also see that the variance is larger for the meta-analytic estimates compared to the experimental data, presumably because there is more heterogeneity across experiments than across participants within the same experiment. The experimental data thus provide converging data with the meta-analysis that there developmental change in the strength of the bias, and that the effect is weaker for NN trials.
 
 In addition, the data from Experiment 1 provide new evidence relevant to the mechanism underlying the effect: children with larger vocabulary tend to to have a stronger disambiguation bias. In principle there are two ways that vocabulary knowledge could support the disambiguation inference. The first is by influencing the strength of the learner's knowledge about the label for the familiar word: If a learner is more certain about the label for the familiar object, they can be more certain about the label for novel object. This account explains  the developmental change observed for NF trials. However, this account does not explain the relationship of vocabulary with NN trials, since no prior vocabulary knowledge is directly relevant to this inference.  This relationship between vocabulary size and NF size suggests that vocabulary knowledge could also influence the effect by providing evidence for general constraint that there is a one-to-one mapping between words and referents. This empirical fact is consistent with the overhypothesis account.
 
-Importantly, however, data from both the meta-analytic study and the current experiment only provide correlational evidence about the relationship between vocabulary size and the disambiguation inference. In Experiment 2, we test a causal relational between vocabulary knowlege and the disambiguation effect through an experimental manipulation. 
+Importantly, however, data from both the meta-analytic study and the current experiment only provide correlational evidence about the relationship between vocabulary size and the disambiguation inference. In Experiment 2, we experimentally test the hypothesis that the strength of the learner's knowledge about the familiar object influences the strength of the disambiguation inference, thereby testing one possible route through which vocabulary knowledge may be related to the disambiguatoin phenomenon.
 
 
 

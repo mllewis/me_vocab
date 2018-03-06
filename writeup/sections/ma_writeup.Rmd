@@ -1,7 +1,8 @@
 
 # Meta-analysis
 
-To assess the strength of the disambiguation bias as well a moderating factors, we conducted a meta-analysis on the existing body of literature that examines the disambiguation effect.
+To assess the strength of the disambiguation bias as well a moderating factors, we conducted a meta-analysis on the existing body of literature that investigates the disambiguation effect.
+
 ```{r}
 library(metafor)
 library(broom)
@@ -25,7 +26,7 @@ ma_c <- ma_raw %>%
 ## Methods
 
 ### Search strategy
-We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017). Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that included more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age)\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.}, (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size.
+We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017). \footnote{Data and analysis code for this and subsquent studies are available in an online repository at: \url{https://github.com/langcog/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that included more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age)\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.}, (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size.
 
 ### Coding
 For each paper, we coded separately each relevant condition with each age group entered as a separate condition. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: mean age of infants, method (pointing or eyetracking), participant population type, estimates of vocabulary size from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability;@fenson2007macarthur], referent type (object or picture), and number of alternatives in the forced choice task. We used production vocabulary as our estimate of vocabulary size since it was available for more studies in our sample. We coded participant population as one of three subpopulations that have studied in the literature: (a) typically-developing monolingual chilldren, (b) multilingual children (including both bilingual and trilingual children), and (c) non-typically developing children. Non-typically developing conditions included children with selective language impairment, language delays, hearing impairment, autism spectrum disorder, and down-syndrome.
@@ -154,7 +155,7 @@ forest_model_data <- mod_print %>%
  tick.sizes[(breaks%%1==0)] <- 1
 ```
 
-```{r, fig.cap = "Mixed-effect effect size estimates for all conditions (red) and each of the four theoretically-relevant conditions in our sample. Ranges are 95% confidence intervals. Point size corresponds to sample size. FN = Familiar-Novel trials; NN = Novel-Novel trials." , fig.height = 3, fig.width = 9}
+```{r, fig.cap = "Mixed-effect effect size estimates for all conditions (red) and each of the four theoretically-relevant conditions in our sample. Ranges are 95% confidence intervals. Point size corresponds to sample size. FN = Familiar-Novel trials; NN = Novel-Novel trials." , fig.height = 3, fig.width = 9, fig.pos = "t"}
 p1 <- ggplot(forest_model_data, 
              aes(x = model_name, 
                  y = estimate, 
@@ -203,7 +204,7 @@ p1 <- p1 +
 p1
 ```
 
-The overall effect size for these conditions was `r filter(mod_print, condition_type == "TFN", !age_moderated)$estimate_print`, and reliably greater than zero (*p* `r filter(mod_print, condition_type == "TFN", !age_moderated)$p_print`). The effect sizes contained considerable heterogeneity, however (*Q* = `r filter(mod_print, condition_type == "TFN", !age_moderated)$Q_print`; *p* `r filter(mod_print, condition_type == "TFN", !age_moderated)$p_print`). 
+The overall effect size for these conditions was `r filter(mod_print, condition_type == "TFN", !age_moderated)$estimate_print`, and reliably greater than zero (*p* `r filter(mod_print, condition_type == "TFN", !age_moderated)$p_print`; Figure 1). The effect sizes contained considerable heterogeneity, however (*Q* = `r filter(mod_print, condition_type == "TFN", !age_moderated)$Q_print`; *p* `r filter(mod_print, condition_type == "TFN", !age_moderated)$p_print`). 
 
 
 ```{r MA_model_table}
@@ -229,24 +230,19 @@ intercept <- mod_print %>%
     select(condition_type, n, everything()) %>%
     mutate(n = ifelse(is.na(n), "", n),
            condition_type = as.factor(condition_type), 
-          condition_type = fct_recode(condition_type, `Non-Typically-Developing populations (FN/NN)` = "NT", 
-            `Overall estimate` = "grand",
-            `Typically-Developing populations (FN trials)`  = "TFN",
+          condition_type = fct_recode(condition_type,
+                                      `Non-Typically-Developing populations (FN/NN)` = "NT", 
+           `Overall estimate` = "grand",
+           `Typically-Developing populations (FN trials)`  = "TFN",
            `Typically-Developing populations (NN trials)` = "TNN",
            `Multilingual populations (FN/NN)` =   "multilingual"))
   
-  print_age_table_data <- print_age_table_data[c(1,2,7,8,9,10,3,4,5,6),]
-  
-  kable(print_age_table_data, 
-        col.name = c("model", "n", "term", "estimate", "Z", "p"), 
-        row.names = F, 
-        format = "latex", 
-        booktabs = TRUE) %>%
-        #caption = "Metaanalytic model parameters for 5 different models. Each model predicts effect size with age as a fixed effect.")  %>%
-     kable_styling(font_size = 9)
-  
-# Meta-analytic model parameters for model including age as a fixed effect. Models for each of the four conditions are presented separately, with a fifth with all effect sizes presented as the overall model. Ranges are 95% confidence intervals. FN = Familiar-Novel; NN = Novel-Novel. 
+print_age_table_data <- print_age_table_data[c(1,2,7,8,9,10,3,4,5,6),]
+colnames(print_age_table_data) <- c("Model", "n", "term", "estimate", "Z", "p")
+```
 
+```{r, results = "asis"}
+apa_table(print_age_table_data, caption = "Meta-analytic model parameters for model including age as a fixed effect. The first model (top) estimates effect sizes for all studies in our sample. The four subsequent models present separate models paremeters for four seperate conditions. Ranges are 95\\% confidence intervals.", small = T, note = "n = sample size (number of studies); FN = Familiar-Novel; NN = Novel-Novel.")
 ```
 
 
@@ -270,13 +266,15 @@ av_a_beta <- round(age_vocab_model$beta[1],2)
 av_v_beta <- round(age_vocab_model$beta[2],2)
 av_a_zval <- round(age_vocab_model$zval[1],2)
 av_v_zval <- round(age_vocab_model$zval[2],2)
-av_a_pval <- ifelse(round(age_vocab_model$pval[1],2)  < .0001, "<.0001", paste0(" = ", round(age_vocab_model$pval[2],2)))
-av_v_pval <- ifelse(round(age_vocab_model$pval[2],2)  < .0001, "<.0001", paste0(" = ", round(age_vocab_model$pval[2],2)))
+av_a_pval <- ifelse(round(age_vocab_model$pval[1],2)  < .0001,
+                    "<.0001", paste0(" = ", round(age_vocab_model$pval[1],2)))
+av_v_pval <- ifelse(round(age_vocab_model$pval[2],2)  < .0001,
+                    "<.0001", paste0(" = ", round(age_vocab_model$pval[2],2)))
 ```
 
-We next tried to predict this heterogeneity with two moderators corresponding to developmental change: age and vocabulary size. In a model with age as a moderator, age was a reliable predictor of effect size ($\beta$ = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_estimate_print`, *z* = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_z_print`, *p* `r filter(mod_print, condition_type == "TFN", age_moderated)$age_p_print`; see Table X), suggesting that the disambiguation effect becomes larger as children get older. Age of participants was highly correlated with vocabulary size in our sample (*r* = `r round(age_vocab_corr$estimate,2)`, *p* < .01), so next we asked whether vocabulary size predicted independent variance in the magnitude of the disambiguation bias on the subset of conditions for which we had estimates of vocabulary size (*N* = `r num_vocab_conditions`). To test this, we fit a model with both age and vocabulary size as moderators. Vocabulary size ($\beta$ = `r av_v_beta`, *z* = `r av_v_zval`,  *p* `r av_v_pval`), but not age ($\beta$ = `r av_a_beta`, *z* = `r av_a_zval`,  *p* `r av_a_pval`, was a reliable predictor of disambiguation effect size. <!--ACTUALLY THIS ISN'T TRUE (true only for full model)-->
+We next tried to predict this heterogeneity with two moderators corresponding to developmental change: age and vocabulary size. In a model with age as a moderator, age was a reliable predictor of effect size ($\beta$ = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_estimate_print`, *z* = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_z_print`, *p* `r filter(mod_print, condition_type == "TFN", age_moderated)$age_p_print`; see Table 1), suggesting that the disambiguation effect becomes larger as children get older. Age of participants was highly correlated with vocabulary size in our sample (*r* = `r round(age_vocab_corr$estimate,2)`, *p* < .01), so next we asked whether vocabulary size predicted independent variance in the magnitude of the disambiguation bias on the subset of conditions for which we had estimates of vocabulary size (*N* = `r num_vocab_conditions`). To test this, we fit a model with both age and vocabulary size as moderators. Vocabulary size ($\beta$ = `r av_v_beta`, *z* = `r av_v_zval`,  *p* `r av_v_pval`), but not age ($\beta$ = `r av_a_beta`, *z* = `r av_a_zval`,  *p* `r av_a_pval`, was a reliable predictor of disambiguation effect size. <!--ACTUALLY THIS ISN'T TRUE (true only for full model)-->
 
-These analyses confirm that the disambiguation phenomenon is robust, and associated with a relatively large effect size (*d* = `r filter(mod_print, condition_type == "TFN", !age_moderated)$estimate_print`). In addition, this set of analyses provides theory-constraining evidence about the mechanisms underlying the effect. In particular, the finding that vocabulary predicts more variance in effect size, compared to age, suggests that there is an experience related component to the mechanism, independent of pure maturational development.
+These analyses confirm that the disambiguation phenomenon is robust, and associated with a relatively large effect size (*d* = `r filter(mod_print, condition_type == "TFN", !age_moderated)$estimate_print`). In addition, this set of analyses provides theory-constraining evidence about the mechanisms underlying the effect. In particular, the finding that vocabulary predicts more variance in effect size, compared to age, suggests that there is an experience related component to the mechanism, independent of maturational development alone.
 
 ### Typically-Developing Population: Novel-Novel Trials
 The results from the Familiar-Novel trials point to a role for vocabulary knowledge in the strength of the disambiguation effect. One way in which this vocabulary knowledge could lead to increased performance on the Familiar-Novel disambiguation task is through increased certainty about the label associated with the familiar word: If a child is less certain that a ball is called "ball," then the child should be less certain that the novel label applies to the novel object. Novel-Novel trials control for potential variability in certainty about the familiar object by teaching participants a new label for a novel object prior to the critical disambiguation trial, where this previously-learned label becomes the "familiar" object in the disambiguation trial.  If knowledge of the familiar object is not the only contributor to age-related changes in the disambiguation effect, then there should be developmental change in Novel-Novel trials, as well as Novel-Familiar trials. In addition, if the strength of knowledge of the "familiar" object influences the strength of the disambiguation effect, then the overall effect size should be smaller for Novel-Novel trials, compared to Familiar-Novel trials.
@@ -294,8 +292,10 @@ at_a_beta <- round(TFN_NNN_model$beta[1],2)
 at_t_beta <- round(TFN_NNN_model$beta[2],2)
 at_a_zval <- round(TFN_NNN_model$zval[1],2)
 at_t_zval <- round(TFN_NNN_model$zval[2],2)
-at_a_pval <- ifelse(round(TFN_NNN_model$pval[1],2)  < .0001, "<.0001", paste0(" = ", round(TFN_NNN_model$pval[1],2)))
-at_t_pval <- ifelse(round(TFN_NNN_model$pval[2],2)  < .0001, "<.0001", paste0(" = ", round(TFN_NNN_model$pval[2],2)))
+at_a_pval <- ifelse(round(TFN_NNN_model$pval[1],2)  < .0001,
+                    "<.0001", paste0(" = ", round(TFN_NNN_model$pval[1],2)))
+at_t_pval <- ifelse(round(TFN_NNN_model$pval[2],2)  < .0001, 
+                    "<.0001", paste0(" = ", round(TFN_NNN_model$pval[2],2)))
 ```
 
 Finally, we fit a model with both age and trial type (Familiar-Novel or Novel-Novel) as moderators of the disambiguation effect. Both moderators predicted independent variance in disambiguation effect size (age: $\beta$ = `r at_a_beta`, *z* = `r at_a_zval`,  *p* `r at_a_pval`; trial-type: $\beta$ = `r at_t_beta`, *z* = `r at_t_zval`,  *p* `r at_t_pval`), with Familiar-Novel conditions and conditions with older participants tending to have larger effect sizes.
@@ -359,7 +359,7 @@ These three constraints are consistent with many of individual proposed accounts
 
 In the next section, we  gather additional evidence to shed light on the relative contributions of these different mechanisms on the disambiguation effect. In particular, we use experimental methods to more directly examine the relationship between linguistic experience and the disambiguation effect.
 
-```{r, fig.height = 8, fig.pos = 't!', fig.cap = "Developmental plots for each moderator. Ranges correspond to 95% confidence intervals. Model fits are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (NN vs. NF). Note that the x-axis scale varies by facet. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = down syndrome; SLI = selective language imparement; DHH = deaf/heard-of-hearing."}
+```{r, fig.height = 8, fig.pos = 't!', fig.cap = "Developmental plots for each moderator. Ranges correspond to 95% confidence intervals. Model fits are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that the x-axis scale varies by facet. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = down syndrome; SLI = selective language imparement; DHH = deaf/heard-of-hearing."}
 
 ma_plotting <- ma_c %>%
   mutate(es_type = ifelse(infant_type2 != "typical",

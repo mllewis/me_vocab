@@ -1,7 +1,7 @@
 
 # Experiment 2: Disambiguation Effect and Familiarity
 
-In Experiment 2, we test a causal relationship between vocabulary size and the disambiguation effect by experimentally manipulating the strength of word knowledge. We do this by teaching participants a label for a novel object and varying the number of times the object is labeled. This manipulation allows us to vary children's certainty about the label for an object, with objects that have been labeled more frequently associated with high certainty about the label name. The newly, unabiguously labeled object then serves as the "familiar" object in a novel-novel trial. If the strength of vocabulary knowledge about the "familiar" object influences, the strength of the disambiguation effect, then we should expect a larger bias when the the familiar object has been labeled more frequently. We a pattern consistent with the prediction. 
+In Experiment 2, we test a causal relationship between vocabulary size and the disambiguation effect by experimentally manipulating the strength of word knowledge. We do this by teaching participants a label for a novel object and varying the number of times the object is labeled. This manipulation allows us to vary children's certainty about the label for an object, with objects that have been labeled more frequently associated with high certainty about the label name. The newly, unabiguously labeled object then serves as the "familiar" object in a novel-novel trial. If the strength of vocabulary knowledge about the "familiar" object influences, the strength of the disambiguation effect, then we should expect a larger bias when the the familiar object has been labeled more frequently. We find a pattern consistent with this prediction. 
 
 ```{r}
 e2 <- read_csv("../../exp2/experimental_data_cleaned.csv")  %>%
@@ -23,18 +23,19 @@ e2_subs <- e2 %>%
             n = n(), 
             err = sum(err)) 
 
-e2_subs %>%
+e2_demos <- e2_subs %>%
   group_by(age_group) %>%
   summarise(mean_age = round(mean(age_mo),2), 
             n = n()) %>%
-  kable( row.names = F,
-        format = "latex",
-        booktabs = TRUE,
-        col.names = c("Age group", "Mean age (months)", "Sample size"))
-  #papaja::apa_table(caption = "Demographics of children in Experiment 2.")
+  mutate_at(vars(n, age_group), as.character)
+colnames(e2_demos) <- c("Age group", "Mean age (months)", "Sample size")
 ```
 
-We planned a total sample of 108 children, 12 per between-subjects labeling condition, and 36 total in each one-year age gorup. Our final sample was `r nrow(e2_subs)` children, ages `r min(e2_subs$age.mo)` -- `r max(e2_subs$age.mo)` months, recruited from the floor of the Boston Children's Museum. Children were randomly assigned to the one-label, two-label, or three label condition, with the total number of children in each age group and condition ranging between 10 and 13.  
+```{r, results = "asis"}
+apa_table(e2_demos, caption = "Demographics of children in Experiment 2.")
+```
+
+We planned a total sample of 108 children, 12 per between-subjects labeling condition, and 36 total in each one-year age group (see Table 3). Our final sample was `r nrow(e2_subs)` children, ages `r min(e2_subs$age_mo)` -- `r max(e2_subs$age_mo)` months, recruited from the floor of the Boston Children's Museum. Children were randomly assigned to the one-label, two-label, or three label condition, with the total number of children in each age group and condition ranging between 10 and 13.  
 
 ### Materials
 
@@ -42,7 +43,7 @@ Materials were the set of novel objects used in @de2011mutual, consisting of unu
 
 ### Procedure
 
-Each child completed four trials. Each trial consisted of a training and a test phase in a "novel-novel" disambiguation task [@demarchena2011]. In the training phase, the experimenter presented the child with a novel object, and explicitly labeled the object with a novel label 1, 2, or 3 times ("Look at the *dax*"), and contrasted it with a second novel object ("And this one is cool too") to ensure equal familiarity. In the test phase, the child was asked to point to the object referred to by a second novel label ("Can you show me the *zot*?"). Number of labels used in the training phase was manipulated between subjects. There were eight different novel words and objects. Object presentation side, object, and word were counterbalanced across children. 
+Each child completed four trials. Each trial consisted of a training and a test phase in a "novel-novel" disambiguation task [@de2011mutual]. In the training phase, the experimenter presented the child with a novel object, and explicitly labeled the object with a novel label 1, 2, or 3 times ("Look at the *dax*"), and contrasted it with a second novel object ("And this one is cool too") to ensure equal familiarity. In the test phase, the child was asked to point to the object referred to by a second novel label ("Can you show me the *zot*?"). Number of labels used in the training phase was manipulated between subjects. There were eight different novel words and objects. Object presentation side, object, and word were counterbalanced across children. 
 
 ### Data analysis
 
@@ -59,9 +60,9 @@ We followed the same analytic approach as we registered in Experiment 1, though 
 
 ## Results and Discussion
 
-As predicted, children showed a stronger disambiguation effect as the number of training labels increased, and as noise decreased with age.
+As predicted, children showed a stronger disambiguation effect as the number of training labels increased, and as noise decreased with age (Figure 5).
 
-```{r, fig.width=5, fig.height =3.5, fig.cap = "Accuracy data for three age groups across three different conditions. Conditions varied by the number of times the child observed an unambigious novel label applied to the familiar object prior to the critical disambiguation trial. The dashed line corresponds to chance. Ranges are 95\\% CIs."}
+```{r, fig.width=5, fig.height =3.5, fig.cap = "Accuracy data for three age groups across three different conditions. Conditions varied by the number of times the child observed an unambiguous novel label applied to the familiar object prior to the critical disambiguation trial. The dashed line corresponds to chance. Ranges are 95\\% confidence intervals."}
 mss <- e2_clean %>%
   group_by(age_group, cond, sub_num) %>%
   summarise(correct = mean(correct)) 
@@ -112,13 +113,13 @@ print_model3 <- m3$coefficients %>%
   select(-p) %>%
   rename(p = "p_print") %>%
   select(term, everything(), -pp_print, -pretty_model)
-
-kable(print_model3,
-        row.names = F,
-        format = "latex",
-        booktabs = TRUE) %>%
-        #caption = "Parameters of logistic mixed model predicting accuracy on disambiguation trials as a function of Age (months) and number of times a label for the familiar object was observed.") 
-    kable_styling(font_size = 9)
 ```
 
-We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects, and participant as a random effect. Model results are shown in Table XYZ. There was a significant effect of age such that older children showed a stronger disambiguation bias and a  significant effect of number of labels, such that more training labels led to stronger disambiguation, but the interaction between age and number of labels was not significant.
+```{r, results = "asis"}
+apa_table(print_model3, caption = "Parameters of logistic mixed model predicting accuracy on disambiguation trials as a function of age (months) and number of times a label for the familiar object was observed.")
+
+```
+
+We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects, and participant as a random effect. Model results are shown in Table 4. There was a significant effect of age such that older children showed a stronger disambiguation bias and a  significant effect of number of labels, such that more training labels led to stronger disambiguation, but the interaction between age and number of labels was not significant.
+
+These data provide causal evidence that the strength of knowledge of the familiar word influences the strength of the disambiguation effect. It thus points to one route through which a child's vocabulary knowledge might influence the disambiguation inference.

@@ -1,0 +1,35 @@
+\relax 
+\citation{clark1987principle}
+\citation{markman1988}
+\citation{quine1960}
+\citation{markman1988}
+\citation{markman2003}
+\citation{clark1987principle}
+\citation{diesendruck2001}
+\citation{diesendruck2001}
+\citation{de2011mutual}
+\citation{frank2009a}
+\citation{goodman2010rational}
+\newlabel{generative_process}{{1}{2}}
+\newlabel{sim_1}{{2}{3}}
+\newlabel{sim_3}{{4}{4}}
+\citation{quine1960}
+\bibstyle{apacite}
+\bibdata{/Documents/GRADUATE_SCHOOL/Papers/bib_files/biblibrary}
+\bibcite{clark1987principle}{\citeauthoryear {Clark}{Clark}{{\APACyear {1987}}}}
+\APACbibcite{clark1987principle}{\citeauthoryear {Clark}{Clark}{{\APACyear {1987}}}}
+\bibcite{diesendruck2001}{\citeauthoryear {Diesendruck\ \BBA{} Markson}{Diesendruck\ \BBA{} Markson}{{\APACyear {2001}}}}
+\APACbibcite{diesendruck2001}{\citeauthoryear {Diesendruck\ \BBA{} Markson}{Diesendruck\ \BBA{} Markson}{{\APACyear {2001}}}}
+\bibcite{frank2009a}{\citeauthoryear {Frank, Goodman,{}\ \BBA{} Tenenbaum}{Frank\ \BOthers {.}}{{\APACyear {2009}}}}
+\APACbibcite{frank2009a}{\citeauthoryear {Frank, Goodman,{}\ \BBA{} Tenenbaum}{Frank\ \BOthers {.}}{{\APACyear {2009}}}}
+\bibcite{goodman2010rational}{\citeauthoryear {Goodman, Tenenbaum, Feldman,{}\ \BBA{} Griffiths}{Goodman\ \BOthers {.}}{{\APACyear {2010}}}}
+\APACbibcite{goodman2010rational}{\citeauthoryear {Goodman, Tenenbaum, Feldman,{}\ \BBA{} Griffiths}{Goodman\ \BOthers {.}}{{\APACyear {2010}}}}
+\bibcite{de2011mutual}{\citeauthoryear {Marchena, Eigsti, Worek, Ono,{}\ \BBA{} Snedeker}{Marchena\ \BOthers {.}}{{\APACyear {2011}}}}
+\APACbibcite{de2011mutual}{\citeauthoryear {Marchena, Eigsti, Worek, Ono,{}\ \BBA{} Snedeker}{Marchena\ \BOthers {.}}{{\APACyear {2011}}}}
+\newlabel{sim_2}{{3}{5}}
+\bibcite{markman1988}{\citeauthoryear {Markman\ \BBA{} Wachtel}{Markman\ \BBA{} Wachtel}{{\APACyear {1988}}}}
+\APACbibcite{markman1988}{\citeauthoryear {Markman\ \BBA{} Wachtel}{Markman\ \BBA{} Wachtel}{{\APACyear {1988}}}}
+\bibcite{markman2003}{\citeauthoryear {Markman, Wasow,{}\ \BBA{} Hansen}{Markman\ \BOthers {.}}{{\APACyear {2003}}}}
+\APACbibcite{markman2003}{\citeauthoryear {Markman, Wasow,{}\ \BBA{} Hansen}{Markman\ \BOthers {.}}{{\APACyear {2003}}}}
+\bibcite{quine1960}{\citeauthoryear {Quine}{Quine}{{\APACyear {1960}}}}
+\APACbibcite{quine1960}{\citeauthoryear {Quine}{Quine}{{\APACyear {1960}}}}

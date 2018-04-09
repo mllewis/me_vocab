@@ -1,0 +1,178 @@
+% Mutual exclusivity 
+% Annual Cognitive Science Conference 2013
+% 
+
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage{cogsci}
+\usepackage{pslatex}
+\usepackage{apacite}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{amsmath}
+
+\title{An ideal observer analysis of the disambiguation effect}
+ 
+\author{{\large \bf Molly Lewis} \\ \texttt{mll@stanford.edu}\\ Department of Psychology \\ Stanford University \\ 
+\And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University \\ }
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\textbf{Keywords:} 
+word learning; mutual exclusivity;
+\end{abstract}
+
+%%%%%%%%% Introduction %%%%%%%%% 
+\section{Introduction}
+
+A central property of language is that each word in the lexicon maps to a unique concept, and each concept maps to a unique word \cite{clark1987principle}. However, like the case for grammatical categories or any other regularity in language, children acquiring language cannot directly observe this regularity. Instead, they must learn to use language in a way that is consistent with this regularity, and they must do so on the basis of limited evidence. 
+
+There is a large body of evidence suggesting very young children behave in a way that is consistent with this one-to-one regularity in language. This evidence comes from what is known as the ``disambiguation effect.'' In a typical demonstration of this effect \cite<e.g.>{markman1988}, children are presented with a novel and familiar object (e.g. a whisk and a ball), and are asked to identify the referent of a novel word (``Show me the dax''). Children in this task tend to choose the novel object as the referent,  behaving in a way that is consistent with the one-to-one word-concept regularity in language.
+
+This effect has received much attention in the word learning literature because the ability to identify the meaning of a word in ambiguous contexts is, in essence, the core problem of word learning. That is, given any referential context, the meaning of a word is underdetermined \cite{quine1960}, and the challenge for the world learner is to identify the referent of the word within this ambiguous context. Critically, the ability to infer that a novel word maps to a novel object makes the problem much easier to solve. For example, suppose a child hears the novel word ``kumquat" while in the produce aisle of the grocery store. There are an infinite number of possible meanings of this word given this referential context, but the child's ability to correctly disambiguate would lead her to rule out all meanings for which she already had a name. With this restricted hypothesis space, the child is  more likely to identify the correct referent than if   all objects in the context were considered as possible referents. 
+
+What are the cognitive processes underlying this effect? There are broadly two proposals in the literature. Under one proposal, Markman and colleagues \citeyear{markman1988, markman2003} suggest that children have a constraint on the types of lexicons considered when learning the meaning of a new word --- a ``mutual exclusivity constraint''.  With this constraint, children are biased to consider only those lexicons that have a one-to-one mapping between words and objects. Importantly, this constraint can be overcome in cases where it is incorrect (e.g. property names),  but it nonetheless serves to restrict the set of lexicons initially entertained when learning the meaning of a novel word. Under this constraint-based view, then, the disambiguation effect emerges from a domain-specific constraint on the structure of lexicons.
+
+Under a second proposal, the disambiguation effect  is argued to result from  online inferences made within the referential context  \cite{clark1987principle, diesendruck2001}. In particular, Clark suggests that the disambiguation effect is due to two pragmatic assumptions held by speakers. The first assumption is that speakers within the same speech community use the same words to refer to the same objects (``Principle of Conventionality"). The second assumption is that different linguistic forms refer to different meanings (``Principle of Contrast"). In the disambiguation task described above, then, children might reason (implicitly) as follows: You used a word I've never heard before. Since, presumably we both call a ball ``ball" and if you'd meant the ball you would have  said ``ball", this new word must refer to the new object. Thus, under this account, the disambiguation effect emerges not from a higher-order constraint on the structure of lexicons, but instead from in-the-moment inferences using general pragmatic principles.
+
+These two proposals have traditionally been viewed as competing explanations of the disambiguation effect. Research in this area has consequently focused on identifying empirical tests that can distinguish between these two theories. For example, \citeA{diesendruck2001}  compare performance on a disambiguation task when children are told a novel fact about an object relative to a novel referential label. They reason that if   the disambiguation effect is due to  a domain-specific mutual-exclusivity constraint, children should only show disambiguation in the novel label condition. They find that children disambiguate in both conditions, suggesting that disambiguation is domain-general. Other work has attempted to distinguish between these two theories by testing children with autism, who are known to have impaired pragmatic reasoning abilities \cite{de2011mutual}. They find comparable performance on the disambiguation task between  typically developing children and children with autism. This result provides some evidence for the view that disambiguation is due to a domain-specific lexical constraint.
+
+We suggest this competing-alternatives approach of the disambiguation effect should be reconsidered.  In a disambiguation task, learners may be making use of both prior knowledge and information based on the structure of the task. In particular, learners could be making use of both  a prior Mutual Exclusivity constraint  and information about the structure of the task by way of a pragmatic principles. That is, these two theories may be describing  different, complimentary mechanisms contributing to a single empirical phenomenon. 
+
+There is thus a third possible account of the disambiguation effect: Two distinct processes may jointly contribute to the disambiguation phenomenon. Situation-time pragmatic inferences and a domain-specific constraint about the relationship between language and concepts. The model described here explores this third alternative computationally. We constructed a hierarchical Bayesian model that captures the effects of both situation-time inferences and higher-level constraints about the structure of lexicons.  Situation-time inferences are captured through the influence of the laws of probability within a referential context, and higher-order lexical constraints are captured through constraints imposed on the types of possible lexicons. We use this model to explore how both situation-time inferences and higher-level lexical constraints can independently contribute, and interact, to give rise to disambiguation behavior. 
+
+
+%%%%%%%%% Modeling %%%%%%%%% 
+\section{Design of the Model}
+\begin{figure}[t]
+\begin{center}
+\includegraphics[scale=.25]{figs/redac_model.png}
+\end{center}
+\caption{Schema of the generative process in the model. $O$ and $W$ correspond to objects and words. $I$ corresponds to a speaker's referential intent. $L$  corresponds to lexicons (a set of mappings between words and objects), and $C$ corresponds to constraints imposed on the structure of lexicons.} 
+\label{generative_process}
+\end{figure}
+
+Our goal is to understand what assumptions could lead to disambiguation behavior in children. To explore this, we model the  observable variables in the disambiguation task --- words and objects --- and conceptualize the learner's goal as inferring mappings between words and objects on the basis of observed associations between words and objects. We refer to a set of mappings between words and objects as a lexicon. Using  Bayesian inference, we conduct  an ideal observer analysis of the disambiguation task to determine the most likely lexicons given a set of observations of words and objects.
+
+The variables in the model are assumed to be probabilistically related.  We assume a dependency structure identical to the  the model developed by \citeA{frank2009a}, with the  added complexity of constraints placed on lexicons (described below; see Fig.\ \ref{generative_process}). The critical feature of this existing model is that words are assumed to be generated by intentions. This feature allows the model to jointly solve the problems of mapping a word to an object in ambiguous contexts and learning a long term mapping between a word and concept.
+
+We consider a hypothesis space of four different constraints placed on the mappings between words and objects within lexicons: one word to one object (`1-1 constraint'), one word to many object (`1-many constraint'), many words to one object (`many-1 constraint'), and a null constraint. The 1-many constraint  applies  a restriction  that  each concept maps to at most one word in a lexicon. The many-1 constraint applies a restriction  that each word maps to at most one concept in a lexicon. The 1-1 constraint applies both of these restrictions, and the null constraint applies neither of these restrictions. The 1-many constraint is identical to the concept learning model proposed by \citeA{goodman2010rational} using a disjunctive normal form grammar. 
+
+Formally, the ideal learner infers a  distribution over lexicons, given a corpus $D$ of situations and a constraint $C$ on the lexicon.  Each situation $s$ is defined as a set of words and a set of objects. From Bayes' rule, the posterior probability of a lexicon is given by:
+\begin{align*}
+p(L\mid D,  C) &\propto  p(D \mid L,C) p(L) p(C)
+\end{align*}
+
+Using the generative process assumed by the model, the likelihood term, $p(D \mid L,C)$, can be rewritten in terms of the  intentions $I$ in the situation $s$. Because intentions are unobservable, we sum across all possible intentions in the situation:
+\begin{align*}
+p(D \mid L,C) &= \sum_{i \in I}p(w_s, o_s, i_s \mid L)\\
+\end{align*}
+By the chain rule, this expands to:
+\begin{align*}
+p(D \mid L,C)&= \sum_{i \in I}p(w_s \mid i_s, L) p(i_s \mid o_s)\\
+\end{align*}
+Finally, we aggregate  across situations by taking the product of each independent situation:
+\begin{align*}
+p(D \mid L,C)&= \prod_{s\in D}\sum_{i \in I}p(w_s \mid i_s, L) p(i_s \mid o_s)\\
+\end{align*}
+
+We assume a uniform distribution over possible intentions  given the objects in the situation. That is, $p(i_s \mid o_s) \propto 1$.  The term $p(w_s \mid i_s, L)$ is defined as a uniform distribution over words mapped to the concept  of $ i_s$ in the lexicon $L$. %%I'm not sure how to write out the noise process here....
+
+
+
+%%%%%%%%% Simulations %%%%%%%%% 
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[width = 7in]{figs/me_sim_1.eps}
+\end{center}
+\caption{}
+\label{sim_1}
+\end{figure*}
+\section{Simulations and Experimental Results}
+To explore our model's performance in the disambiguation task, we tested our ideal learner in three different scenarios. Simulation \#1 explores the joint contributions of two 
+different sources of the disambiguation bias: lexical constraints and inferences on the basis of simple probabilistic properties of the observed data.  In Simulations \#2 and \#3, we explore the independent contributions of these two sources, respectively. We also describe results of an experimental test of the predictions made by our model in Simulation \#3.
+
+\subsection {Simulation \#1:  Disambiguation bias emerges under all lexical constraints}
+As a first test on the disambiguation task, we trained the model on a single unambiguous situation in which  a  single word was associated with an object. This piece of evidence corresponds to the known word in the disambiguation task (``ball"   in the example described above). We then tested the ideal learner in a situation with the previously learned object mapping (i.e.\  ball), a new object (i.e.\  whisk), and a novel word (i.e.\ ``dax"). Using Bayesian inference, the model infers a distribution over lexicons on the basis of the observed data. Lexicons that map the new word (``dax") to the new object (\textsc{whisk}\footnote{Capital letters are used to denote the intended object.}  ) are scored as correct, while lexicons that map the old object (\textsc{ball}) are scored as incorrect.
+
+
+
+\subsubsection {Results}
+Figure \ref{sim_1} shows the posterior distribution over lexicons given a world restricted to two words and two objects. Each of the 16 possible lexicons are represented along the x-axis, where lexicons  are represented by object and word nodes connected by links. Green links indicate the correct link between the novel word (``dax") and object (\textsc{whisk}). Correct links are assumed to lead to disambiguation behavior. Red links indicate an incorrect link, and grey links indicate links irrelevant to the disambiguation task. 
+
+
+In this maximally simple simulation of the disambiguation task, learners with any constraint, or no constraint at all, favor a lexicon that has a link between the novel word and the novel object. This bias results from  simple probabilistic properties of the inference problem: Given that the learner has already observed an association between ball and ``ball", lexicons that posit a link between \textsc{ball} and ``dax" are less probable than those that posit a link between \textsc{whisk} and ``ball", independent of any constraint imposed on lexicons.
+
+The luce choice for lexicons that correctly map the novel word to the novel object  is .91 under the 1-1 constraint, .84 under the 1-many constraint, .7 under the many-1 constraint, and .59 under the null constraint. Thus, the model  favors correct lexicons more than chance ($.5$) under all possible constraints.
+ 
+Importantly, these results suggest that disambiguation behavior in children could emerge without a 1-1 constraint on lexicons. However, although a a constraint is not necessary for the effect, the  effect is stronger when the learner imposes a 1-1 constraint. This suggests that {\it both} the laws of probability and a higher-order constraint on lexicons could lead to disambiguation behavior in children.
+
+\subsection {Simulation \#2: One-to-one constraint independently contributes to disambiguation bias}
+Simulation \#1 suggested that a learner could behave in a way consistent with the1-1 word-concept regularity in language without assuming a hard constraint on the structure of lexicons. However, it is possible that leaners may also induce a higher-order constraint on lexicons, given the right kind of evidence. As shown in Simulation \#1, the induction of a 1-1 constraint would provide a stronger bias toward disambiguation. To explore the model's ability to learn a  hierarchical 1-1 constraint on lexicons,  we trained our model on three corpuses: 1-1 consistent evidence, mixed evidence, and 1-many consistent evidence. We then examined the distribution over theories predicted by the model, as a result of hierarchical learning.
+
+\subsubsection{Results}
+ Given 1-1 evidence, the model induces a 1-1 constraint on lexicons , and this bias becomes stronger as the number of observations increases (Figure \ref{sim_2}). The posterior probability of the 1-1 theory is less when the model is trained on mixed or 1-many consistent evidence. This simulation suggests that a learner could, in principle,  induce a 1-1 constraint on lexicons with limited evidence. 
+
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[width = 7in]{figs/me_sim_2.eps}
+\end{center}
+\caption{Simulation \#3 Results} 
+\label{sim_2}
+\end{figure*}
+
+\subsection {Simulation \#3: Laws of probability independently contribute to disambiguation bias}
+Simulation \#1 demonstrated that  basic laws of probability are sufficient to account for a disambiguation bias. Simulation \#2 suggests learners can also infer a constraint on lexicons, and this inference is independent of inferences resulting from  simple probabilistic reasoning. In Simulation \#3, we explored whether the portion of the effect due to the laws of probability  could be boosted by providing more evidence for a link between the known word and object. Recall that the disambiguation effect in Simulation \#1 emerged as a result of prior evidence for an association between the known word and object ( ``ball" and ball). Thus, this model predicts that if the learner receives more evidence for an association between the known word and known object, the disambiguation bias should become stronger as a result of the laws of probability.
+
+Simulation \#3 tests this prediction. We trained the model with either 1, 2, or 3 situations in which a word (``ball") was unambiguously associated with an object (ball). We then tested the model in the disambiguation task with a known and unknown object (ball and whisk) and a novel word (``whisk"). If more observed associations between the known word and object lead to a stronger bias toward correct lexicons, we should expect the disambiguation bias to increase with the number of training situations.
+
+
+\subsubsection{Results}
+Assuming a 1-1 constraint, the magnitude of the luce choice bias toward correct lexicons increases with number of training situations with the known word-- known object association (Fig.\ \ref{sim_3}, left panel). In addition, the magnitude of this increase is sensitive to the noise parameter $\gamma$ that determines the probability that the wrong word was spoken to refer to an object.
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[scale=.3]{figs/me_sim_3.eps}
+\end{center}
+\caption{Model predictions (left) and experimental results (right) for success in the disambiguation task as a function of the number of labels observed in training.  } 
+\label{sim_3}
+\end{figure}
+
+
+\subsection{Experimental test of Simulation \#3}
+We experimentally tested  the prediction that confidence in the known word mapping leads to a stronger disambiguation inference. 
+
+\subsubsection{Method}
+We recruited 110 children ages 2;1 -- 4;11 to participate in the  study. In each by-year age group (two-year-olds to four-year-olds), we collected data from 35-38 children. %**exclusions?
+
+Each child completed a training and a test phase in a disambiguation task. In the training phase, the experimenter presented the child with a novel object, and explicitly  labeled the object with a novel label  1, 2, or 3 times (``Look at the dax"). In the test phase, the child was shown the training object and a second novel object, and asked to point to the object referred to by a second novel label (``Show me the zot"). Number of labels was manipulated between subjects, and each child completed four trials with eight different novel words (``dax", ``zot", "gup," etc.) and objects (bracket, bulb, cork, etc.). Object presentation side, object and  word were all counterbalanced across trials and children. % ***I'm just guessing here, what was the actual language?
+
+\subsubsection{Results}Responses were coded as correct if participants selected the
+novel object at test. As predicted, children showed a stronger disambiguation effect as the number of training labels increased, and as noise decreased with age (Fig.\  \ref{sim_3}, right panel).
+
+We analyzed the results using a logit mixed model to predict correct responses with age and number of labels as fixed effects, and participant as a random effect. There was a significant effect of age ($\beta$ = .044, $ p < .001$) such that older children showed a stronger disambiguation bias. There was also a significant effect of number of labels, such that more training labels led to stronger disambiguation   ($\beta$ = .454, $p < .001$). The interaction between age and number of labels was not significant ($\beta$ = .019, $p = .16$).
+
+
+%%%%%%%%% Discussion and Conclusion %%%%%%%%% 
+
+\section {Discussion and Conclusion}
+The disambiguation effect suggests the presence of  an underlying cognitive mechanism that helps children solve the notoriously difficult mapping problem \cite{quine1960}. Two different mechanisms have been proposed: a constraint on the structure of permitted lexicons, and in-the-moment inferences about the most likely referent given the context. In the present simulations, we used a hierarchical Bayesian model to explore the independent contributions of these two effects and find  that  neither mechanism is necessary to create a bias, but either is sufficient. We nonetheless find that disambiguation is strongest when both mechanisms jointly contribute.
+
+This result has consequences for attempts to experimentally differentiate between the proposed accounts of disambiguation. Given that both mechanisms can --- in principle -- lead to disambiguation behavior, existing experimental tests of disambiguation cannot distinguish between these two possibilities. That is, any evidence for disambiguation behavior is consistent with both a pragmatic account and a mutual exclusivity constraint account of the effect. Future research should thus reconsider the assumption that a single mechanism must completely and independently give rise to disambiguation effects, and begin to pursue a more nuanced understanding of this phenomenon. 
+
+Importantly, however, the limits of an ideal observer analysis should be considered. While our results suggest that both mechanisms {\it could}  contribute to disambiguation behavior, this does not entail that both mechanisms do in fact contribute. That is, it remains possible that disambiguation behavior is the result of a single mechanism. Nonetheless, given evidence in other domains (cite?) that the mind simultaneously makes use of in-the-moment inferences and domain-general knowledge, it seems plausible that disambiguation behavior emerges from multiple cognitive mechanisms.
+
+
+\bibliographystyle{apacite}
+
+\setlength{\bibleftmargin}{.125in}
+\setlength{\bibindent}{-\bibleftmargin}
+
+\bibliography{/Documents/GRADUATE_SCHOOL/Papers/bib_files/biblibrary}
+
+\end{document}

@@ -1,0 +1,72 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.7)
+The top-level auxiliary file: ME_cogsci_2013.aux
+The style file: apacite.bst
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Database file #1: /Documents/GRADUATE_SCHOOL/Papers/bib_files/biblibrary.bib
+apacite.bst [2009/03/01 v4.05 APA bibliography style]
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5187 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5196 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5196 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5200 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5200 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5208 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5214 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5217 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5225 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5225 of file apacite.bst
+Name 1 in "Frank, M.C., and Goodman, N.D. and Tenenbaum, J.B." has a comma at the end for entry frank2009a
+while executing---line 5225 of file apacite.bst
+Warning--No address in quine1960
+You've used 8 entries,
+            6361 wiz_defined-function locations,
+            1232 strings with 10960 characters,
+and the built_in function-call counts, 14167 in all, are:
+= -- 1661
+> -- 137
+< -- 681
++ -- 678
+- -- 16
+* -- 966
+:= -- 2675
+add.period$ -- 32
+call.type$ -- 8
+change.case$ -- 40
+chr.to.int$ -- 0
+cite$ -- 17
+duplicate$ -- 378
+empty$ -- 595
+format.name$ -- 231
+if$ -- 2650
+int.to.chr$ -- 0
+int.to.str$ -- 16
+missing$ -- 0
+newline$ -- 199
+num.names$ -- 64
+pop$ -- 213
+preamble$ -- 1
+purify$ -- 32
+quote$ -- 0
+skip$ -- 898
+stack$ -- 0
+substring$ -- 731
+swap$ -- 253
+text.length$ -- 18
+text.prefix$ -- 0
+top$ -- 1
+type$ -- 640
+warning$ -- 1
+while$ -- 79
+width$ -- 0
+write$ -- 256
+(There were 11 error messages)

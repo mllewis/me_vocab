@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99c (Web2C 7.5.7)
+The top-level auxiliary file: ME_cogsci_2013-d3.aux
+The style file: apacite.bst
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Database file #1: biblibrary.bib
+apacite.bst [2009/03/01 v4.05 APA bibliography style]
+Warning--No address in quine1960
+You've used 20 entries,
+            6361 wiz_defined-function locations,
+            1305 strings with 12699 characters,
+and the built_in function-call counts, 35531 in all, are:
+= -- 4199
+> -- 322
+< -- 1773
++ -- 1744
+- -- 42
+* -- 2419
+:= -- 6771
+add.period$ -- 79
+call.type$ -- 20
+change.case$ -- 100
+chr.to.int$ -- 0
+cite$ -- 41
+duplicate$ -- 926
+empty$ -- 1459
+format.name$ -- 537
+if$ -- 6627
+int.to.chr$ -- 0
+int.to.str$ -- 40
+missing$ -- 0
+newline$ -- 482
+num.names$ -- 160
+pop$ -- 501
+preamble$ -- 1
+purify$ -- 80
+quote$ -- 0
+skip$ -- 2281
+stack$ -- 0
+substring$ -- 1883
+swap$ -- 601
+text.length$ -- 43
+text.prefix$ -- 0
+top$ -- 1
+type$ -- 1600
+warning$ -- 1
+while$ -- 184
+width$ -- 0
+write$ -- 614
+(There was 1 warning)

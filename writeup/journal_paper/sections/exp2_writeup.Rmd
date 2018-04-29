@@ -4,7 +4,7 @@
 In Experiment 2, we test a causal relationship between vocabulary size and the disambiguation effect by experimentally manipulating the strength of word knowledge. We do this by teaching participants a label for a novel object and varying the number of times the object is labeled. This manipulation allows us to vary children's certainty about the label for an object, with objects that have been labeled more frequently associated with high certainty about the label name. The newly, unabiguously labeled object then serves as the "familiar" object in a novel-novel trial. If the strength of vocabulary knowledge about the "familiar" object influences, the strength of the disambiguation effect, then we should expect a larger bias when the the familiar object has been labeled more frequently. We find a pattern consistent with this prediction. 
 
 ```{r}
-e2 <- read_csv("../../exp2/experimental_data_cleaned.csv")  %>%
+e2 <- read_csv("../../../exp2/experimental_data_cleaned.csv")  %>%
   mutate(age_group = floor(age_mo/12),
          err_type = ifelse(is.na(correct), "no choice", err_type), 
          err = ifelse(is.na(correct), 1, err))

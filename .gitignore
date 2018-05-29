@@ -35,6 +35,8 @@ vignettes/*.pdf
 # Temporary python files 
 *.pyc
 
+resources/ME_papers/*
+
 # Sublime text files
 *.sublime-project
 *.sublime-workspace

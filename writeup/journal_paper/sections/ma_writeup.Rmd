@@ -458,7 +458,7 @@ typical_only <- ma_plotting %>%
 ```{r, eval = F}
 # MA STUFF TO DO:
 - get proportion double checked by joan
-- new paper from Hutchinson, madison guy (Ron), paper from merriman
+- new paper from Hutchinson, Ron Pomper paper from merriman
 - check sub sample
 - check alvaros ones
 - how deal with pointing + eyetracking one

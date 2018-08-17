@@ -72,6 +72,11 @@ library(lme4)
 library(knitr)
 library(feather)
 library(kableExtra)
+library(ggrepel)
+library(metafor)
+library(broom)
+library(compute.es)
+library(pander)
 
 source("helpers.R")
 ```

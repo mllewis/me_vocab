@@ -1,6 +1,7 @@
 # Experiment 1: Disambiguation Effect and Vocabulary Size
 
-Our meta-analysis points to a robust developmental increase in the strength of the disambiguation effect with age. While all four accounts are able to predict this change, only the overhypothesis account predicts that this increase should be  directly related to vocabulary knowledge. However, the meta-analytic approach is limited in its ability to measure this relationship since few studies in our sample measure vocabulary size (*N* = 8), and even fewer measure vocabulary size at multiple ages within the same study [*N*=2; @mather2009learning;@markman2003].  In Experiment 1, we therefore aimed to test the prediction that children with larger vocabularies should have a stronger disambiguation bias by measuring vocabulary size in a large sample of children across multiple ages who also completed the disambiguation task. We find that vocabulary size is a strong predictor of the strength of the disambiguation effect across development and that vocabulary size predicts more variance than developmental age.
+Our meta-analysis points to a robust developmental increase in the strength of the disambiguation effect with age.  However, the meta-analytic approach is limited in its ability to measure this relationship since few studies in our sample measure vocabulary size (*N* = 8), and even fewer measure vocabulary size at multiple ages within the same study [*N* = 2; @mather2009learning;@markman2003].  In Experiment 1, we therefore aimed to test the prediction that children with larger vocabularies should have a stronger disambiguation bias by measuring vocabulary size in a large sample of children across multiple ages who also completed the disambiguation task. We find that vocabulary size is a strong predictor of the strength of the disambiguation effect across development and that vocabulary size predicts more variance than developmental age.
+
 
 ```{r longtidinal_vocab_studies_from_meta, include = F, eval = F}
 
@@ -38,6 +39,8 @@ filter(study_ID %in% filter(vocab_studies,
 ```
 
 ## Methods
+
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study.
 
 ### Participants
 
@@ -149,6 +152,9 @@ gender_counts <- final_sample %>%
   distinct(sub_id, .keep_all = T) %>%
   count(gender)
 ```
+
+
+To determine sample size, we conducted a power analyses and determined that we needed a large N to do partial correlations with age.  and so that meant we needed a short and easy testing procedure, motivating us to do everything on tablet in the museum... then after some piloting we selected words that we estimated (on the basis of Wordbank and other resources) would be challenging for children across the broader age range. Of course, this assessment is way worse than CDI but we couldn't do that in the full developmental range of the study, and a full PPVT would be prohibitively time consuming.
 
 A sample of `r num_total` children were recruited at the Children’s Discovery Museum of San Jose.   `r num_total - num_good` children were excluded because they did not satisfy our planned inclusion criteria:  within the age range of 24-48 months (*n* excluded = `r num_total - dim(good_age)[1]`), completed all trials (*n* excluded= `r num_total - dim(good_counts)[1]`), exposed to English greater than 75% of the time (*n* excluded = `r num_total - dim(good_language)[1] `), and correctly answered at least half of the familiar noun control trials  (*n* excluded = `r num_total - dim(good_controls)[1]`). Our final sample included `r num_good` children (*N*~females~ = `r filter(gender_counts, gender == "female") %>% select(n) %>% unlist(use.names = F)`).
 
@@ -502,7 +508,9 @@ meta_plot_data %>%
   ggthemes::scale_color_solarized()
 ```
 
-The pattern of findings is consistent with meta-analytic estimates of those same effects. Figure 4 presents the data from the experimental conditions in Experiment 1 together with meta-analytic estimates, as a function of age. To compare the experimental data with the meta-analytic data, an effect size was calculated for each participant.\footnote{Because some participants had no variability in their responses (all correct or all incorrect), we used the across-participant mean standard deviation as an estimate of the participant level standard deviation in order to convert accuracy scores into Cohen's d values.} As in the meta-analytic models, the effect size is smaller for NN trials compared to NF trials, though the magnitude of this difference is smaller. We also see that the variance is larger for the meta-analytic estimates compared to the experimental data, presumably because there is more heterogeneity across experiments than across participants within the same experiment. The experimental data thus provide converging data with the meta-analysis that there is developmental change in the strength of the bias, and that the effect is weaker for NN trials.
+The pattern of findings is broadly consistent with meta-analytic estimates of those same effects. Figure 4 presents the data from the experimental conditions in Experiment 1 together with meta-analytic estimates, as a function of age. To compare the experimental data with the meta-analytic data, an effect size was calculated for each participant.\footnote{Because some participants had no variability in their responses (all correct or all incorrect), we used the across-participant mean standard deviation as an estimate of the participant level standard deviation in order to convert accuracy scores into Cohen's d values.} As in the meta-analytic models, the effect size is smaller for NN trials compared to NF trials, though the magnitude of this difference is smaller. We also see that the variance is larger for the meta-analytic estimates compared to the experimental data, presumably because there is more heterogeneity across experiments than across participants within the same experiment. The experimental data thus provide converging data with the meta-analysis that there is developmental change in the strength of the bias, and that the effect is weaker for NN trials.
+
+However, there are some notable differences between the meta-analytic results and that of Experiment 1. the developmental effect is smaller, etc. The directions and significances are the same but the magnitude suggests that there are other things perhaps going on, e.g. 1) people adjusting paradigms for different age groups, 2) different populations, 3) different familiar words, etc. etc. I would add a paragraph discussing these differences. 
 
 In addition, the data from Experiment 1 provide new evidence relevant to the mechanism underlying the effect: children with larger vocabulary tend to to have a stronger disambiguation bias. In principle there are two ways that vocabulary knowledge could support the disambiguation inference. The first is by influencing the strength of the learner's knowledge about the label for the familiar word: If a learner is more certain about the label for the familiar object, they can be more certain about the label for novel object. This account explains  the developmental change observed for NF trials. However, this account does not explain the relationship of vocabulary with NN trials, since no prior vocabulary knowledge is directly relevant to this inference.  This relationship between vocabulary size and NF size suggests that vocabulary knowledge could also influence the effect by providing evidence for general constraint that there is a one-to-one mapping between words and referents. This empirical fact is consistent with the overhypothesis account.
 

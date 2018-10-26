@@ -122,4 +122,6 @@ apa_table(print_model3, caption = "Parameters of logistic mixed model predicting
 
 We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects, and participant as a random effect. Model results are shown in Table 4. There was a significant effect of age such that older children showed a stronger disambiguation bias and a  significant effect of number of labels, such that more training labels led to stronger disambiguation, but the interaction between age and number of labels was not significant.
 
+[Add a caveat in the results and discussion that we can't directly compare magnitudes between the experience effect that we observe in this experiment and the effects of vocabulary size! at best we show that the causal arrow points in the same direction as the correlational one. This is in some sense cold comfort, but at least it's something. :)]
+
 These data provide causal evidence that the strength of knowledge of the familiar word influences the strength of the disambiguation effect. It thus points to one route through which a child's vocabulary knowledge might influence the disambiguation inference.

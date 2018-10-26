@@ -209,13 +209,8 @@ sessionInfo() %>% pander::pander(compact = F)
 \setlength{\parindent}{-0.5in}
 \setlength{\leftskip}{0.5in}
 
----
-nocite: | 
-  @markman1992constraints
-
 
 ```{r}
-
 r_refs(file = "r-references.bib")
 render_appendix("appendix.Rmd")
 ```

@@ -153,7 +153,7 @@ forest_model_data <- mod_print %>%
  tick.sizes[(breaks%%1==0)] <- 1
 ```
 
-```{r, fig.cap = "Mixed-effect effect size estimates for all conditions (red) and each of the four theoretically-relevant conditions in our sample. Ranges are 95% confidence intervals. Point size corresponds to sample size. FN = Familiar-Novel trials; NN = Novel-Novel trials." , fig.height = 3, fig.width = 9, fig.pos = "t"}
+```{r, fig.cap = "Mixed-effect effect size estimates for all conditions (red) and each of the four theoretically-relevant conditions in our sample. Ranges are 95 percent confidence intervals. Point size corresponds to sample size. FN = Familiar-Novel trials; NN = Novel-Novel trials." , fig.height = 3, fig.width = 9, fig.pos = "t"}
 p1 <- ggplot(forest_model_data, 
              aes(x = model_name, 
                  y = estimate, 
@@ -240,7 +240,7 @@ colnames(print_age_table_data) <- c("Model", "n", "term", "estimate", "Z", "p")
 ```
 
 ```{r, results = "asis"}
-apa_table(print_age_table_data, caption = "Meta-analytic model parameters for model including age as a fixed effect. The first model (top) estimates effect sizes for all studies in our sample. The four subsequent models present separate models paremeters for four seperate conditions. Ranges are 95\% confidence intervals.", small = T, note = "n = sample size (number of studies); FN = Familiar-Novel; NN = Novel-Novel.")
+apa_table(print_age_table_data, caption = "Meta-analytic model parameters for model including age as a fixed effect. The first model (top) estimates effect sizes for all studies in our sample. The four subsequent models present separate models paremeters for four seperate conditions. Ranges are 95 percent confidence intervals.", small = T, note = "n = sample size (number of studies); FN = Familiar-Novel; NN = Novel-Novel.")
 ```
 
 

@@ -1,10 +1,8 @@
-# Experiment 1: Disambiguation Effect and Vocabulary Size
+# Experiment 1: ME Effect and Vocabulary Size
 
-Our meta-analysis points to a robust developmental increase in the strength of the disambiguation effect with age.  However, the meta-analytic approach is limited in its ability to measure this relationship since few studies in our sample measure vocabulary size (*N* = 8), and even fewer measure vocabulary size at multiple ages within the same study [*N* = 2; @mather2009learning;@markman2003].  In Experiment 1, we therefore aimed to test the prediction that children with larger vocabularies should have a stronger disambiguation bias by measuring vocabulary size in a large sample of children across multiple ages who also completed the disambiguation task. We find that vocabulary size is a strong predictor of the strength of the disambiguation effect across development and that vocabulary size predicts more variance than developmental age.
-
+In Experiment 1, we test the prediction that children with larger vocabularies should show a strong ME effect by measuring vocabulary size in a large sample of children across multiple ages who also completed the ME task. We find that vocabulary size is a strong predictor of the strength of the ME effect across development and that vocabulary size predicts more variance than developmental age.
 
 ```{r longtidinal_vocab_studies_from_meta, include = F, eval = F}
-
 AVG_MONTH <- 30.43688
 
 ma_c <- ma_raw %>%
@@ -56,7 +54,6 @@ d <- read_csv("../../exp1/raw/Fendle Subject Log.csv") %>%
   filter(`Exclusion codes` != "P" | is.na(`Exclusion codes`)) %>%
   mutate(SID = ifelse(substr(SID, 1, 1) == "0", # get rid of leading 0s so can join with demographics 
                          substring(SID, 2, last = 1000000L), SID))
-
 
 age_m <- exp1 %>%
   distinct(sub_id, .keep_all = T) %>%
@@ -165,7 +162,7 @@ The disambiguation task included color pictures of 14 novel objects (e.g., a fun
 Sessions took place individually in a small testing room away from the museum floor.  The experimenter first introduced the child to "Mr. Fox," a cartoon character who wanted to play a guessing game (see Fig. 1). The experimenter explained that Mr. Fox would tell them the name of the object they had to find, so they had to listen carefully. Children then completed a series of 19 trials on an iPad, 3 practice trials followed by 16 experimental trials. In the practice trials, children were shown two familiar pictures (FF) on the tablet and asked to select one, given a label (e.g. "Touch the ball!"). If the participant chose incorrectly on a practice trial, the audio would correct them and allow the participant to choose again. The audio was presented through the tablet speakers. 
 
 
-```{r, fig.cap = "Example screenshots for a Experimental Novel-Familiar test trial. On each test trial, Mr. Fox first appeared to get the child's attention (a). Next, an object appeared and was labeled through the tablet speakers (`It's a ball!`; b). Two objects then appeared and children were asked to make a selection (`Touch the funnel!`; c)."}
+```{r, fig.pos = "!t", fig.cap = "Example screenshots for a Experimental Novel-Familiar test trial. On each test trial, Mr. Fox first appeared to get the child's attention (a). Next, an object appeared and was labeled through the tablet speakers (`It's a ball!`; b). Two objects then appeared and children were asked to make a selection (`Touch the funnel!`; c)."}
 include_graphics("figs/fendle_fig1.png")
 ```
 

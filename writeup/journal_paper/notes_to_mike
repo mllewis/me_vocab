@@ -1,0 +1,28 @@
+Medium issues:
+  
+  - terminology: we talk in the intro about how we're going to use "mutual exclusivity" but actually talk a lot about "disambiguation." do we want to choose one or the other? (I think I prefer mutual exclusivity, especially because we could use ME as the tag). further, if we do this, maybe we want to move the terminology even further up? it's worth a pass to look at consistency throughout. 
+
+*- inferences: I think it might be useful to distinguish one more level of abstraction for what these labels actually label: the PARADIGM, the INFERENCE that we think kids make in the paradigm, the EFFECT (that they do it), and the THEORY. Previously we were conflating INFERENCE and EFFECT which I think is not crazy, but maybe a little sloppy especially in the discussion of super/subordinates where for me being able to refer to the INFERENCE specifically is useful...
+
+*- we need some caveating regarding the Horst learning results in the intro and how we're not going to talk about them. I added a stub para in the terminology section so that we can summarize and cite these papers and say we're not going to talk about them? if that's what you want to do... also note that in the intro we had an "me != learning" point that I've commented out because we don't currently engage. 
+
+- What do you think is the deal with the multi-lingual analyses? The trend seems strong. Does it come out if you leave out age? Do you think this is age-related confounding? Or is the issue the age * language status interaction? I'm sorry - I think you asked about this interaction issue at an earlier stage and I didn't get it. (Same with the non-TD populations). 
+> Not sure - for both cases there's no effect of population type (even without age p = .15/.21)
+
+- Experiment 1 was preregistered, I think the analyses are consistent with that, but actually the preregistered analysis was partial correlations I believe? Do you have access to the protocol? If not, I can send it to you (it's on OSF) but I can't get it easily on the plane. 
+
+- I think we need to add some justificatory text about the vocab app and why we chose to use it as our assessment tool. Basically, I'd say that we had done power analyses and determined that we needed a large N to do partial correlations with age and so that meant we needed a short and easy testing procedure, motivating us to do everything on tablet in the museum... then after some piloting we selected words that we estimated (on the basis of Wordbank and other resources) would be challenging for children across the broader age range. Of course, this assessment is way worse than CDI but we couldn't do that in the full developmental range of the study, and a full PPVT would be prohibitively time consuming.
+
+- E1: "The pattern of findings is consistent with meta-analytic estimates of those same effects." I would say "broadly consistent" the effects are smaller, the developmental effect is smaller, etc. The directions and significances are the same but the magnitude suggests that there are other things perhaps going on, e.g. 1) people adjusting paradigms for different age groups, 2) different populations, 3) different familiar words, etc. etc. I would add a paragraph discussing these differences. 
+
+- E2: should at least add a caveat in the results and discussion that we can't directly compare magnitudes between the experience effect that we observe in this experiment and the effects of vocabulary size! at best we show that the causal arrow points in the same direction as the correlational one. This is in some sense cold comfort, but at least it's something. :)
+
+very minor issues:
+
+- % in 95% confidence interval not escaped right. 
+
+- figure numbering in E1 is Xa and Xb?
+
+- figure 4 is referenced for the experiment vs. MA plot but it's actually fig 5. 
+
+- spell check!

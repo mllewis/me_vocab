@@ -23,10 +23,10 @@ ma_c <- ma_raw %>%
 ## Methods
 
 ### Search strategy
-We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017). \footnote{Data and analysis code for this and subsquent studies are available in an online repository at: \url{https://github.com/langcog/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that included more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age)\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.}, (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size.
+We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017).\footnote{Data and analysis code for this and subsquent studies are available in an online repository at: \url{https://github.com/langcog/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that included more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age)\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.}, (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size.
 
 ### Coding
-For each paper, we coded separately each relevant condition with each age group entered as a separate condition. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: mean age of infants, estimates of mean vocabulary size of the sample population from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability;@fenson2007macarthur] referent type (object or picture), and participant population type (typically- developing, non-typically developing, or multilingual). \footnote{We also coded a number of other moderating variables not relevant to the current analyses (method (eyetracking or pointing), number of alternatives in the forced choice task, and task modality (paper vs. object)). See the SI for these analyses.} We used production vocabulary as our estimate of vocabulary size since it was available for more studies in our sample. We coded participant population as one of three subpopulations that have studied in the literature: (a) typically-developing monolingual chilldren, (b) multilingual children (including both bilingual and trilingual children), and (c) non-typically developing children. Non-typically developing conditions included children with selective language impairment, language delays, hearing impairment, autism spectrum disorder, and down-syndrome.
+For each paper, we coded separately each relevant condition with each age group entered as a separate condition. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: mean age of infants, estimates of mean vocabulary size of the sample population from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability;@fenson2007macarthur], and participant population type.\footnote{We also coded a number of other moderating variables not included here: method (eyetracking or pointing), number of alternatives in the forced choice task, and task modality (paper vs. object). See the SI for these analyses.} We used production vocabulary as our estimate of vocabulary size since it was available for more studies in our sample. We coded participant population as one of three subpopulations that have studied in the literature: (a) typically-developing monolingual chilldren, (b) multilingual children (including both bilingual and trilingual children), and (c) non-typically developing children. Non-typically developing conditions included children with selective language impairment, language delays, hearing impairment, autism spectrum disorder, and down-syndrome.
 
 In order to estimate effect size for each conditions, we also coded sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), and standard deviations for novel object selections, *t*-statistic, and Cohen's *d*. For several conditions, there was insufficient data reported in the main text to calculate an effect size (no means and standard deviations, *t*-statistics, or Cohen's *d*s), but we were able to estimate the means and standard deviations though measurement of plots (*N* = `r count(ma_c, data_source) %>% filter(data_source == "figure") %>% select(n) %>% as.numeric()`), imputation from other data within the paper (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper - some imputation") %>% select(n) %>% as.numeric()`; see SI for details), or through contacting authors (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper/author") %>% select(n) %>% as.numeric()`). Our final sample included `r length(ma_c$d_calc)` effect sizes (*N*~typical-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "typical") %>% select(n) %>% as.numeric()`; *N*~multilingual~ = `r count(ma_c, infant_type) %>% filter(infant_type == "multilingual") %>% select(n) %>% as.numeric()`;  *N*~non-typically-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "NT") %>% select(n) %>% as.numeric()`).
 
@@ -360,15 +360,13 @@ tnta_tnt_pval <- ifelse(round(T_vs_NT_model$pval[3],2)  < .0001, "<.0001", paste
 
 We also asked whether the effect size for non-typically developing children differed from typically-developing children, controlling for age. We fit a model predicting effect size with both development type (typical vs. non-typical) and age. Population type was a reliable predictor of effect size with non-typically developing children tending to have a smaller bias compared to typically developing children ($\beta$ = `r tnta_tnt_beta`, *z* = `r tnta_tnt_zval`,  *p*  `r tnta_tnt_pval`). Age was also a reliable predictor of effect size in this model ($\beta$ = `r tnta_a_beta`, *z* = `r tnta_a_zval`,  *p*  `r tnta_a_pval`).
 
-This analysis suggests that non-typically developing children succeed in the ME paradigm just as typically developing children do, albeit at lower rates. Theoretical accounts of ME will need to account for how non-typically developing children are able to succeed in the ME task, despite a range of different cognitive impairments. 
+This analysis suggests that non-typically developing children succeed in the ME paradigm just as typically developing children do, albeit at lower rates, and show the same broad developmental trajectory Theoretical accounts of ME will need to account for how non-typically developing children are able to develop making the ME inference,  despite a range of different cognitive impairments. 
 
 ## Discussion
 
 To summarize our meta-analytic findings, we find a robust ME effect in each of the three populations we examined, as well as  evidence that the magnitude of this effect increases across development. We also find that the effect is larger in the canonical Familiar-Novel paradigm compared to the Novel-Novel paradigm, but both designs show roughly the same developmental trajectory.
 
 Taken together, these analyses provide several theoretical constraints with respect to the mechanism underlying the ME effect. First, the strength of the bias increases across development, independent of the strength of the learners knowledge of the "familiar" word. This constraint comes from the fact that the bias strengthens across development in the Novel-Novel conditions, and from the fact that there is not a significant impairment to effect in multilingual children (who presumably have less language experience with any particular language). Second, developmental change in the strength of the ME effect is observed for children across a variety of populations, suggesting that developmental change is a robust pattern and is related to the the mechanism underlying the ME effect for different populatuions 
-
-There is also some evidence that language experience accounts for developmental change. This is based on the fact that we see a larger effect size in Familiar-Novel trials compared to Novel-Novel trials, but the meta-analytic approach is limited in its ability to measure this relationship since few studies in our sample measure vocabulary size (*N* = 8), and even fewer measure vocabulary size at multiple ages within the same study [*N* = 2; @mather2009learning;@markman2003]. In the next section,  we use experimental methods to more directly examine the relationship between linguistic experience and the ME effect.
 
 ```{r, fig.height = 8, fig.pos = '!t', fig.cap = "Developmental plots for each moderator. Ranges correspond to 95% confidence intervals. Model fits are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that the x-axis scale varies by facet. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = down syndrome; SLI = selective language imparement; DHH = deaf/heard-of-hearing."}
 
@@ -453,8 +451,8 @@ ma_plotting %>%
     xlab("Mean age (months)") +
     ylab("Effect size (d)") +
     ggtitle("Disambiguation Development from Meta-Analysis") +
-    theme_few()  +
-    theme(legend.position = "bottom") 
+    theme_classic()  +
+    theme(legend.position = "bottom")
 
 # save typical only for ES size calculation for Exp 1
 typical_only <- ma_plotting %>%
@@ -465,6 +463,46 @@ typical_only <- ma_plotting %>%
 #write_csv(typical_only, "../../MA/data/typical_ES.csv")
 ```
 
+```{r longtidinal_vocab_studies_from_meta}
+
+ma_c <- ma_raw %>%
+  filter(!is.na(d_calc)) %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH,
+         year = as.numeric(str_sub(short_cite, -5, -2)),
+         condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
+                                 ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
+                                        as.character(infant_type))))) %>%
+  filter(mean_age < 150) 
+
+vocab_studies <- ma_c %>%
+  filter(infant_type == "typical")%>%
+  filter(!is.na(mean_production_vocab) ) %>% 
+  count(study_ID)  
+
+#1 bion2013         1
+#2 byers2009        1
+#3 graham1998       1
+#4 horst2008        3
+#5 horst2010        3
+#6 markman2003      8
+#7 mather2009       4
+#8 williams2009     2
+
+vocab_studies_by_age <- ma_c %>%
+  filter(infant_type == "typical")%>%
+  filter(!is.na(mean_production_vocab) ) %>% 
+  distinct(study_ID, mean_age, expt_num) %>%
+  count(study_ID, expt_num) %>%
+  distinct(study_ID, .keep_all = T) %>%
+  filter(n > 1)
+
+#1 horst2010                3
+#2 markman2003              2
+#4 mather2009               2
+#5 williams2009             2
+```
+
+There is also some evidence that language experience accounts for developmental change. This is based on the fact that we see a larger effect size in Familiar-Novel trials compared to Novel-Novel trials, but the meta-analytic approach is limited in its ability to measure this relationship since few studies in our sample measure vocabulary size (*N* = `r nrow(vocab_studies)`), and even fewer measure vocabulary size at multiple ages within the same study [*N* = `r nrow(vocab_studies_by_age)`, @mather2009learning; @markman2003; @williams2009; @horst2010role]. In the next section,  we use experimental methods to more directly examine the relationship between linguistic experience and the ME effect.
 
 ```{r, eval = F}
 # MA STUFF TO DO:
@@ -477,182 +515,3 @@ typical_only <- ma_plotting %>%
 - check for duplicates
 - check paper vs. objects coding
 ```
-
-```{r, eval = F}
-funnel.es.data <- synthesis_all_data %>%
-  mutate(dataset = fct_relevel(dataset, 
-                               "Infant directed speech preference","Phonotactic learning", "Vowel discrimination (native)", 
-                               "Vowel discrimination (non-native)","Statistical sound category learning", "Word segmentation",
-                               "Mutual exclusivity", "Sound symbolism", "Label advantage in concept learning","Online word recognition",
-                               "Gaze following",  "Pointing and vocabulary"),
-         dataset = fct_recode(dataset,
-                              "IDS preference" = "Infant directed speech preference",
-                              "Statistical sound learning" = "Statistical sound category learning", 
-                              "Concept-label advantage" = "Label advantage in concept learning",
-                              "Vowel discrimination\n(native)" = "Vowel discrimination (native)",
-                              "Vowel discrimination\n(non-native)" = "Vowel discrimination (non-native)")) %>%
-  group_by(dataset) %>%
-  mutate(se = sqrt(d_var_calc), 
-         es = d_calc, 
-         center = mean(d_calc), 
-         lower_lim = max(se) + .05 * max(se))
-
-
-# separate df for 95 CI funnel shape
-funnel95.data.wide <- funnel.es.data %>%
-  select(center, lower_lim, dataset) %>%
-  group_by(dataset) %>%
-  summarise(x1 = (center-lower_lim * CRIT_95)[1], 
-            x2 = center[1],
-            x3 = center[1] + lower_lim[1] * CRIT_95,
-            y1 = -lower_lim[1],
-            y2 =  0, 
-            y3 = -lower_lim[1]) 
-
-funnel95.data.x <- funnel95.data.wide  %>%
-  select(dataset,  dplyr::contains("x")) %>%
-  gather("coordx", "x", 2:4) %>%
-  arrange(dataset, coordx) %>%
-  select(-coordx)
-
-funnel95.data.y <- funnel95.data.wide  %>%
-  select(dataset, dplyr::contains("y")) %>%
-  gather("coordy", "y", 2:4) %>%
-  arrange(dataset, coordy) %>%
-  select(-coordy)
-
-funnel95.data <- bind_cols(funnel95.data.x, funnel95.data.y)
-
-ggplot(funnel.es.data, aes(x = es, y = -se)) +
-  facet_wrap(~dataset, scales = "free") +
-  xlab("Effect Size")  +
-  ylab("Standard Error\n")  +
-  scale_colour_solarized(name = "") +
-  geom_polygon(aes(x = x, y = y), 
-               data = funnel95.data,
-               fill = "white") +
-  geom_vline(aes(xintercept=x2), 
-             linetype = "dashed", color = "red", size = .8,
-             data = funnel95.data.wide) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey44",  size = .8) +
-  scale_y_continuous(labels = function(x){abs(x)}) +
-  geom_point(size = .5) +
-  theme(panel.grid.major = element_line(colour = "grey", size = 0.2),
-        panel.grid.minor = element_line(colour = "grey", size = 0.5),
-        strip.text.x = element_text(size = 9),
-        strip.background = element_rect(fill="grey")) 
-```
-
-```{r, eval  = F,  fig.pos = 'T!', fig.width=8, fig.height=5.5, fig.cap = "all age residualized funnel plot"}
-
-grand_model <- rma.mv(d_calc, V = d_var_calc + mean_age,
-                              random = ~ 1 | short_cite,
-                              method = "REML",
-                              data = ma_c)
-
-
-funnel.es.data <-rstandard(grand_model) %>%
-  as.data.frame() %>%
-  mutate(es = resid, 
-         center = mean(resid), 
-         lower_lim = max(se) + .05 * max(se),
-         type = ma_c$infant_type)
-
-
-# separate df for 95 CI funnel shape
-funnel95.data.wide <- funnel.es.data %>%
-                select(center, lower_lim) %>%
-                summarise(x1 = (center-lower_lim * CRIT_95)[1], 
-                          x2 = center[1],
-                          x3 = center[1] + lower_lim[1] * CRIT_95,
-                          y1 = -lower_lim[1],
-                          y2 =  0, 
-                          y3 = -lower_lim[1]) 
-
-funnel95.data.x <- funnel95.data.wide  %>%
-                  select(dplyr::contains("x")) %>%
-                  gather("coordx", "x", 1:3) %>%
-                  arrange(coordx) %>%
-                  select(-coordx)
-
-funnel95.data.y <- funnel95.data.wide  %>%
-                  select(dplyr::contains("y")) %>%
-                  gather("coordy", "y", 1:3) %>%
-                  arrange(coordy) %>%
-                  select(-coordy)
-
-funnel95.data <- bind_cols(funnel95.data.x, funnel95.data.y)
-
-ggplot(funnel.es.data, aes(x = es, y = -se)) +
-  xlab("Age-Residualized Effect Size")  +
-  ylab("Standard Error\n")  +
-  scale_colour_solarized(name = "Population",
-                         labels=c("Multilingual", "Non-typical", "Typical")) +
-  geom_polygon(aes(x = x, y = y), 
-               data = funnel95.data,
-               fill = "white") +
-  geom_vline(aes(xintercept=x2), 
-             linetype = "dashed", color = "red", size = .8, data = funnel95.data.wide) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey44",  size = .8) +
-  scale_y_continuous(labels = function(x){abs(x)}) +
-  ggtitle("Age-Residualized Effect sizes (all populations)") +
-  geom_point(size = 1.7, alpha = .7, aes(color = type)) +
-  theme(panel.grid.major = element_line(colour = "grey", size = 0.2),
-        panel.grid.minor = element_line(colour = "grey", size = 0.5),
-        strip.text.x = element_text(size = 9),
-        strip.background = element_rect(fill="grey"),
-        legend.position = c(0.9, 0.8))
-```
-
-```{r,  eval = F,  fig.pos = 'T!', fig.width=8, fig.height=5.5, fig.cap = "NF funnel"}
-funnel.es.data <- ma_c %>%
-  filter(infant_type2 == "typical",
-         ME_trial_type == "FN") %>%
-  mutate(es = d_calc, 
-         se = sqrt(d_var_calc),
-         center = mean(d_calc), 
-         lower_lim = max(se) + .05 * max(se))
-
-# separate df for 95 CI funnel shape
-funnel95.data.wide <- funnel.es.data %>%
-                select(center, lower_lim) %>%
-                summarise(x1 = (center-lower_lim * CRIT_95)[1], 
-                          x2 = center[1],
-                          x3 = center[1] + lower_lim[1] * CRIT_95,
-                          y1 = -lower_lim[1],
-                          y2 =  0, 
-                          y3 = -lower_lim[1]) 
-
-funnel95.data.x <- funnel95.data.wide  %>%
-                  select(dplyr::contains("x")) %>%
-                  gather("coordx", "x", 1:3) %>%
-                  arrange(coordx) %>%
-                  select(-coordx)
-
-funnel95.data.y <- funnel95.data.wide  %>%
-                  select(dplyr::contains("y")) %>%
-                  gather("coordy", "y", 1:3) %>%
-                  arrange(coordy) %>%
-                  select(-coordy)
-
-funnel95.data <- bind_cols(funnel95.data.x, funnel95.data.y)
-
-ggplot(funnel.es.data, aes(x = es, y = -se)) +
-  xlab("Effect Size")  +
-  ylab("Standard Error\n")  +
-  geom_polygon(aes(x = x, y = y), 
-               data = funnel95.data,
-               fill = "white") +
-  geom_vline(aes(xintercept=x2), 
-             linetype = "dashed", color = "red", size = .8, data = funnel95.data.wide) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey44",  size = .8) +
-  ggtitle("Typical Population: Novel-Familar Trials") +
-  scale_y_continuous(labels = function(x){abs(x)}) +
-  geom_point(size = 1.7, alpha = .7) +
-  theme(panel.grid.major = element_line(colour = "grey", size = 0.2),
-        panel.grid.minor = element_line(colour = "grey", size = 0.5),
-        strip.text.x = element_text(size = 9),
-        strip.background = element_rect(fill="grey"),
-        legend.position = c(0.9, 0.8))
-```
-

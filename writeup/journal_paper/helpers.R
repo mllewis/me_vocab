@@ -66,8 +66,8 @@ get_mes_by_group <- function(group, mss){
     mutate(mean = m1, 
            sd = sd1,
            condition = group,
-           tidy_print = paste0("M = ", round(mean, 2), ", SD = ", round(sd, 2),
-                               ", d = ", d, " [", l.d, ", ", u.d, "]")) %>%
+           tidy_print = paste0("_M_ = ", round(mean, 2), ", _SD_ = ", round(sd, 2),
+                               ", _d_ = ", d, " [", l.d, ", ", u.d, "]")) %>%
     select(condition, mean, sd, everything()) 
     
   es

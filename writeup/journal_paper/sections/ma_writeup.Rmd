@@ -1,7 +1,7 @@
 
 # Meta-analysis
 
-To assess the strength of the ME effect as well a moderating factors, we conducted a meta-analysis on the existing body of literature that investigating the ME effect.
+To assess the strength of the ME effect as well a moderating factors, we conducted a meta-analysis on the existing body of literature  investigating the ME effect.
 
 ```{r}
 ma_raw <- read_feather("../../../MA/data/mutual_exclusivity") %>%
@@ -20,32 +20,10 @@ ma_c <- ma_raw %>%
   filter(mean_age < 150)  # exclude MR population?
 ```
 
-```{r}
-
-m = ma_raw %>%
-  distinct(long_cite, .keep_all = T) %>%
-  slice(1:3) %>%
-  select(short_cite) %>%
-  mutate(year = (str_extract_all(short_cite, "[[:digit:].]")))
-  mutate(citation = ReadCrossRef(long_cite, year = 2005)
-  
-library("RefManageR")
-
-k = ReadCrossRef(ma_raw$long_cite[2], year = 2005)
-
-m = GetBibEntryWithDOI("10.1016/j.cognition.2004.10.003")
-
-WriteBib(m, "test.bib")
-
-paste0(m$year[[1]])
-
-
-```
-
 ## Methods
 
 ### Search strategy
-We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017).\footnote{Data and analysis code for this and subsequent studies are available in an online repository at: \url{https://github.com/langcog/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that included more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age)\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.}, (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size.
+We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017).\footnote{Data and analysis code for this and subsequent studies are available in an online repository at: \url{https://github.com/langcog/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that included more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age),\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.} (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size. Papers included in the meta-analysis are marked with an astericks in the bibliography.
 
 ### Coding
 For each paper, we coded separately each relevant condition with each age group entered as a separate condition. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: mean age of infants, estimates of mean vocabulary size of the sample population from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability;@fenson2007macarthur], and participant population type.\footnote{We also coded a number of other moderating variables not included here: method (eyetracking or pointing), number of alternatives in the forced choice task, and task modality (paper vs. object). See the SI for these analyses.} We used production vocabulary as our estimate of vocabulary size since it was available for more studies in our sample. We coded participant population as one of three subpopulations that have studied in the literature: (a) typically-developing monolingual children, (b) multilingual children (including both bilingual and trilingual children), and (c) non-typically developing children. Non-typically developing conditions included children with selective language impairment, language delays, hearing impairment, autism spectrum disorder, and down-syndrome.
@@ -260,7 +238,7 @@ print_age_table_data <- bind_rows(intercept, age) %>%
            `Multilingual populations (FN/NN)` =   "multilingual"))
   
 print_age_table_data <- print_age_table_data[c(1,2,7,8,9,10,3,4,5,6),]
-colnames(print_age_table_data) <- c("Model", "n", "term", "estimate", "Z", "p")
+colnames(print_age_table_data) <- c("Model", "n", "term", "estimate [CI]", "Z", "p")
 ```
 
 ```{r, results = "asis"}
@@ -307,7 +285,7 @@ av_v_pval <- ifelse(round(age_vocab_model$pval[3],2)  < .0001,
                     "<.0001", paste0(" = ", round(age_vocab_model$pval[3],2)))
 ```
 
-We next tried to predict this heterogeneity with two moderators corresponding to developmental change: age and vocabulary size. In a model with age as a moderator, age was a reliable predictor of effect size ($\beta$ = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_estimate_print`, *Z* = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_z_print`, *p* `r filter(mod_print, condition_type == "TFN", age_moderated)$age_p_print`; see Table 1), suggesting that the ME effect becomes larger as children get older. Age of participants was highly correlated with vocabulary size in our sample (*r* = `r round(age_vocab_corr$estimate,2)`, *p* < .01), so next we asked whether vocabulary size predicted independent variance in the magnitude of the ME effect on the subset of conditions for which we had estimates of vocabulary size (*N* = `r num_vocab_conditions`). To test this, we fit a model with both age and vocabulary size as moderators. Age ($\beta$ = `r av_a_beta`, *Z* = `r av_a_zval`,  *p* `r av_a_pval`), but not vocabulary size ($\beta$ = `r av_v_beta`, *Z* = `r av_v_zval`,  *p* `r av_v_pval`), was a reliable predictor of ME effect size.  <!-- this is so weird - look at plots above, vocabulary *looks* like a better predictor-->
+We next tried to predict this heterogeneity with two moderators corresponding to developmental change: age and vocabulary size. In a model with age as a moderator, age was a reliable predictor of effect size ($\beta$ = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_estimate_print`, *Z* = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_z_print`, *p* `r filter(mod_print, condition_type == "TFN", age_moderated)$age_p_print`; see Table 1), suggesting that the ME effect becomes larger as children get older (Figure 2). Age of participants was highly correlated with vocabulary size in our sample (*r* = `r round(age_vocab_corr$estimate,2)`, *p* < .01), so next we asked whether vocabulary size predicted independent variance in the magnitude of the ME effect on the subset of conditions for which we had estimates of vocabulary size (*N* = `r num_vocab_conditions`). To test this, we fit a model with both age and vocabulary size as moderators. Age ($\beta$ = `r av_a_beta`, *Z* = `r av_a_zval`,  *p* `r av_a_pval`), but not vocabulary size ($\beta$ = `r av_v_beta`, *Z* = `r av_v_zval`,  *p* `r av_v_pval`), was a reliable predictor of ME effect size.  <!-- this is so weird - look at plots above, vocabulary *looks* like a better predictor-->
 
 These analyses confirm that the ME effect is robust, and associated with a relatively large effect size (*d* = `r filter(mod_print, condition_type == "TFN", !age_moderated)$estimate_print`). They also suggest that the magnitude of the effect strengthens over development. Vocabulary size, though correlated with age, does not predict additional effect size variance over and above age. This finding is difficult to interpret however, given the fact that estimates of vocabulary size are likely far less accurate than those of age.
 
@@ -472,7 +450,7 @@ ma_plotting %>%
            shape = guide_legend(override.aes = list(size = 4))) +
     xlab("Mean age (months)") +
     ylab("Effect size (d)") +
-    ggtitle("Disambiguation Development from Meta-Analysis") +
+    ggtitle("Mutual Exclusivity across Development from Meta-Analytic Data") +
     theme_classic()  +
     theme(legend.position = "bottom")
 

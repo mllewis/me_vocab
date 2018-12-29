@@ -1,10 +1,12 @@
 
 # Experiment 2: Mutual Exclusivity Effect and Familiarity
 
-In Experiment 2, we used the same design as in the Novel-Novel trials from Experiment 1, but manipulated the amount of  exposure children were given to the novel object and label prior to the critical ME trial. We reasoned that children who observed more instances of a novel label refering to a novel object should have higher certainty about the label name. If the strength of  knowledge about the "familiar" object influences the strength of the ME effect, then we should expect a larger ME effect when the "familiar" object has been labeled more frequently. We find a pattern consistent with this prediction. 
+In Experiment 2, we used the same design as in the Novel-Novel trials from Experiment 1, but manipulated the amount of  exposure children were given to the novel object and label prior to the critical ME trial. We reasoned that children who observed more instances of a novel label referring to a novel object should have higher certainty about the label name. If the strength of  knowledge about the "familiar" object influences the strength of the ME effect, then we should expect a larger ME effect when the "familiar" object has been labeled more frequently. We find a pattern consistent with this prediction. 
 
 ```{r}
-e2 <- read_csv("../../../exp2/experimental_data_cleaned.csv")  %>%
+EXP2_DATA_PATH <- here("data/2_exp_data.csv")
+
+exp2 <- read_csv(EXP2_DATA_PATH)  %>%
   mutate(age_group = floor(age_mo/12),
          err_type = ifelse(is.na(correct), "no choice", err_type), 
          err = ifelse(is.na(correct), 1, err))
@@ -17,7 +19,7 @@ We report how we determined our sample size, all data exclusions (if any), all m
 ### Participants
 
 ```{r}
-e2_subs <- e2 %>%
+e2_subs <- exp2 %>%
     mutate(age_group = as.factor(age_group),
           age_group = fct_recode(age_group,
                                 "2-yo" = "2",
@@ -54,11 +56,11 @@ Each child completed four trials. Each trial consisted of a training and a test 
 ### Data analysis
 
 ```{r}
-exclusions <- e2 %>%
+exclusions <- exp2 %>%
   filter(err == 1) %>%
   count(err_type) 
 
-e2_clean <- filter(e2, !err)
+e2_clean <- filter(exp2, !err)
 ```
 
 
@@ -68,7 +70,7 @@ We followed the same analytic approach as we registered in Experiment 1, though 
 
 Children showed a stronger ME effect with development and as the number of training labels increased (Figure 6).
 
-```{r, fig.width=5, fig.height =3.5, fig.pos = "!t", fig.cap = "Accuracy data for three age groups across three different conditions. Conditions varied by the number of times the child observed an unambiguous novel label applied to the familiar object prior to the critical ME trial. The dashed line corresponds to chance. Ranges are 95\\% confidence intervals."}
+```{r, fig.width=5, fig.height =3.5, fig.pos = "!t", fig.cap = "Accuracy data for three age groups across three different conditions in Experiment 2. Conditions varied by the number of times the child observed an unambiguous novel label applied to the familiar object prior to the critical ME trial. The dashed line corresponds to chance. Ranges are 95\\% confidence intervals."}
 mss <- e2_clean %>%
   group_by(age_group, cond, sub_num) %>%
   summarise(correct = mean(correct)) 
@@ -126,6 +128,6 @@ apa_table(print_model3, caption = "Parameters of logistic mixed model predicting
 
 ```
 
-We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects.\footnote{The model specification was as follows:  \texttt{accuracy  $\sim$ times.labeled $*$ age  + (times.labeled~\textbar~subject.id).}} Model results are shown in Table 6. There was a significant effect of both age and number of labels: Children who were older and observed the occurences of label for the "familiar" object showed stronger ME effect. The interaction between age and number of labels was not significant.
+We analyzed the results using a logistic mixed model to predict correct responses with age, number of labels, and their interaction as fixed effects.\footnote{The model specification was as follows:  \texttt{accuracy  $\sim$ times.labeled $*$ age  + (times.labeled~\textbar~subject.id).}} Model results are shown in Table 6. There was a significant effect of both age and number of labels: Children who were older and observed the occurrences of label for the "familiar" object showed stronger ME effect. The interaction between age and number of labels was not significant.
 
 Experiment 1 thus provides causal evidence for a link between the strength of knowledge about the "familiar" word in the ME task and the strength of the ME effect: A stronger representation about the "familiar" word in the ME task leads to a stronger ME inference. This pattern of findings is consistent with the correlational relationship observed in Experiment 1 in which children with larger vocabularies tended to show a larger ME effect. We cannot, however, compare the magnitude of the effects in the two experiments since a few exposures to a novel label in the laboratory is not straight-forwardly comparable to the history of labeling experiences that a child encounters in their natural environment. Nevertheless, Experiment 2 provides strong evidence that at least part of the relationship between vocabulary size and the strength of the ME effect observed in Experiment 1 is due to children's knowledge about  the familiar object label.

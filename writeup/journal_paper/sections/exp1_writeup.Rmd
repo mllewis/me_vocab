@@ -9,7 +9,8 @@ We report how we determined our sample size, all data exclusions (if any), all m
 ### Participants
 
 ```{r read_in_data}
-exp1 <- read_csv("../../../exp1/processed/all_exp1_data_complete.csv") %>%
+EXP1_DATA_PATH <- here("data/1_exp_data.csv")
+exp1 <- read_csv(EXP1_DATA_PATH) %>%
   select(sub_id, age_months, gender, english, 
          exclude2, prop_correct_vocab, trial_type, correct, 
          start_time, end_time, resp_start_time, object1)  
@@ -83,7 +84,7 @@ The ME task included color pictures of 14 novel objects (e.g., a funnel) and 24 
 ### Design and Procedure
 In order to test a large sample of children, we designed a short and simple testing procedure that could be conducted on a tablet in a museum setting.  Sessions took place individually in a small testing room away from the museum floor.  The experimenter first introduced the child to "Mr. Fox," a cartoon character who wanted to play a guessing game (see Fig. 2). The experimenter explained that Mr. Fox would tell them the name of the object they had to find, so they had to listen carefully. Children then completed a series of 19 trials on an iPad, 3 practice trials followed by 16 experimental trials. In the practice trials, children were shown two familiar pictures (FF) on the tablet and asked to select one given a label (e.g. "Touch the ball!"). If the participant chose incorrectly on a practice trial, the audio would correct them and allow the participant to choose again. The audio was presented through the tablet speakers. 
 
-```{r, fig.pos = "!t", fig.cap = "Example screenshots for a Experimental Novel-Familiar test trial. On each test trial, Mr. Fox first appeared to get the child's attention (a). Next, an object appeared and was labeled through the tablet speakers ('It's a ball'; b). Two objects then appeared and children were asked to make a selection ('Touch the funnel'; c)."}
+```{r, fig.pos = "!t", fig.cap = "Example screenshots for a Experimental Novel-Familiar test trial in Experiment 1. On each test trial, Mr. Fox first appeared to get the child's attention (a). Next, an object appeared and was labeled through the tablet speakers (`It's a ball'; b). Two objects then appeared and children were asked to make a selection (`Touch the funnel'; c)."}
 include_graphics("figs/fendle_fig1.png")
 ```
 
@@ -139,7 +140,7 @@ summary_stats <- unique(mss$trial_type) %>%
 ```
 
 
-```{r glm_model1, cache = TRUE}
+```{r glm_model1, cache = FALSE}
 crit_sample <- final_sample  %>%
     filter(trial_type != "FF") %>%
     mutate(condition_type = ifelse(trial_type %in% c("NF", "NN"),
@@ -147,7 +148,7 @@ crit_sample <- final_sample  %>%
            trial_type2 = ifelse(trial_type %in% c("NN", "C-NN"),
                                  "NN", "NF"),
            age_months = scale(age_months, 
-                              scale = FALSE, center = TRUE), # scale continious analysis
+                              scale = FALSE, center = TRUE), # scale continuous analysis
            prop_correct_vocab = scale(prop_correct_vocab, 
                                       scale = FALSE, center = TRUE))
 
@@ -212,9 +213,6 @@ ms <- mss %>%
 ggplot(ms, aes(x = age_group,
                y = mean)) +
   facet_wrap(~condition_type) +
-  #geom_bar(stat = "identity", position= position_dodge(width=0.9))+
-  #geom_linerange(aes(ymin = ci_lower, ymax = ci_upper), 
-   #              position= position_dodge(width=0.9)) +
   geom_pointrange(aes(ymin = ci_lower, 
                       ymax = ci_upper, color = trial_type2), size = .5) +
   geom_line(aes(color = trial_type2, group = trial_type2)) +
@@ -304,7 +302,7 @@ vocab_plot <- ggplot(plot_data, aes(x = prop_correct_vocab,
 multiplot(age_plot, vocab_plot, cols = 2)
 ```
 
-```{r glm_analysis, cache = T}
+```{r glm_analysis, cache = FALSE}
 ## FREQUENTIST - this is the preregistered model (https://osf.io/tt29f/register/5771ca429ad5a1020de2872e)
 accuracy_model2 <- glmer(correct ~ prop_correct_vocab * trial_type2 * age_months +
                   (trial_type2 | sub_id),
@@ -349,7 +347,8 @@ Experiment 1 examines the relationship between the strength of the ME effect and
 
 ```{r fig.height = 4, fig.pos = "!t", fig.cap = "Meta-analytic data and data from experimental trials in Experiment 1 as a function of age. Effect sizes for Experiment 1 data are calculated for each participant, assuming the across-participant mean standard deviation as an estimate of the participant level standard deviation. Ranges are 95% confidence intervals."} 
 
-meta_plot_data <- read_csv("../../../MA/data/typical_ES.csv") %>%
+TYPICAL_MA_DATA_PATH <- here("data/0_metaanalysis_data_typical_only.csv")
+meta_plot_data <- read_csv(TYPICAL_MA_DATA_PATH) %>%
   select(-mean_production_vocab) %>%
   mutate(data_source = "Meta-analysis",
          trial_type = fct_recode(trial_type, NF = "FN")) 

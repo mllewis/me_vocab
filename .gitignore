@@ -4,6 +4,7 @@
 /resources/*
 *.fff
 *.ttt
+/writeup/journal_paper/resources/*
 
 # Session Data files
 .RData

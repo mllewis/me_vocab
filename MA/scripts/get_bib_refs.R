@@ -68,7 +68,7 @@ walk(1:nrow(ma_citation_data),
 dois <- read_csv(OUTFILE, col_names = c("study_ID", "doi")) %>%
   filter(!is.na(doi))
 
-walk(dois$doi, ~ WriteBib(GetBibEntryWithDOI(.), BIBOUTFILE ,append = T))
+walk(dois$doi, ~ WriteBib(GetBibEntryWithDOI(.), BIBOUTFILE , append = T))
 
 bib2 <- read_csv(OUTFILE, col_names = c("study_ID", "doi")) %>%
   filter(is.na(doi)) %>%

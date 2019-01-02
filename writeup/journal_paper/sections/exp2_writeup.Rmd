@@ -70,7 +70,7 @@ We followed the same analytic approach as we registered in Experiment 1, though 
 
 Children showed a stronger ME effect with development and as the number of training labels increased (Figure 6).
 
-```{r, fig.width=5, fig.height =3.5, fig.pos = "!t", fig.cap = "Accuracy data for three age groups across three different conditions in Experiment 2. Conditions varied by the number of times the child observed an unambiguous novel label applied to the familiar object prior to the critical ME trial. The dashed line corresponds to chance. Ranges are 95\\% confidence intervals."}
+```{r, fig.width=5, fig.height =3.5, fig.pos = "!t", fig.cap = "Accuracy data for three age groups across three different conditions in Experiment 2. Conditions varied by the number of times the child observed an unambiguous novel label applied to the familiar object prior to the critical ME trial. The dashed line corresponds to chance. Ranges are 95\\% confidence intervals. Points jittered along the x-axis for visibility."}
 mss <- e2_clean %>%
   group_by(age_group, cond, sub_num) %>%
   summarise(correct = mean(correct)) 

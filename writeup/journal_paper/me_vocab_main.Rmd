@@ -10,10 +10,10 @@ author:
     email         : "mollyllewis@gmail.com"
   - name          : "Veronica Cristiano"
     affiliation   : "3"
-  - name          : "Brenden Lake"
-    affiliation   : "4"
+  - name          : "Brenden M. Lake"
+    affiliation   : "4,5"
   - name          : "Tammy Kwan"
-    affiliation   : "5"
+    affiliation   : "4,5"
   - name          : "Michael C. Frank"
     affiliation   : "6"
   
@@ -27,12 +27,12 @@ affiliation:
   - id            : "4"
     institution   : "New York University"
   - id            : "5"
-    institution   : "Cognitive Toybox, Inc."
+    institution   : "Cognitive ToyBox, Inc."
   - id            : "6"
     institution   : "Stanford University"
     
 author_note: |
-  Data from Experiment 2 were previously presented in the Proceedings of the Cognitive Science Society Conference in Lewis & Frank (2013). 
+  We would like to thank support from Cognitive ToyBox, and note that BML and TK are co-founders of Cognitive ToyBox which developed the app in Experiment 1. Data from Experiment 2 were previously presented in the Proceedings of the Cognitive Science Society Conference in Lewis & Frank (2013).
   
 abstract: |
   Given a novel word and a familiar and a novel referent, children have a bias to assume the novel word refers to the novel referent. This bias -- often referred to as the "Mutual Exclusivity" (ME) effect -- is thought to be a potentially powerful route through which children might learn new word meanings, and,  consequently, has been the focus of a large amount of empirical study and theorizing. Here, we focus on two aspects  of the effect that have received relatively little attention in the literature: Development and experience. In particular, we characterize change in the strength of the effect across development, and investigate the role that linguistic experience plays in this developmental change. We first summarize the current body of empirical findings via a meta-analysis, and then present two experiments that examine the relationship between a child's amount of linguistic experience and the strength of the ME effect. We conclude that the strength of the effect varies dramatically across development and that linguistic experience is likely one causal factor contributing to this change. In the General Discussion,  we describe how existing theories of ME can account for our findings, and highlight the value of computational modeling for future theorizing.
@@ -43,7 +43,7 @@ keywords          : "mutual exclusivity, disambiguation effect,  word learning, 
 wordcount         : "approx. 9200"
 bibliography      : "references.bib"
 csl               : "apa6-meta.csl"
-figsintext        : no
+figsintext        : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
@@ -74,7 +74,7 @@ library(metafor)
 library(broom)
 library(citr)
 library(here)
-source("helpers.R")
+source(here("writeup/journal_paper/helpers.R"))
 ```
 
 ```{r analysis_preferences}
@@ -137,7 +137,7 @@ We set out to measure developmental and experience-based shifts in children's ab
 
 ## The role of development in theories of the ME effect
 
-We next turn to the implications of these findings for theories of ME. The literature contains a large number of proposals for the mechanisms supporting ME, and many of these overlap or differ only in subtle ways. Here we briefly describe several influential proposals, highlighting the commonalities and differences across theoretical views and considering the ways they could accommodate our findings. To summarise our conclusion, developmental and experience-based changes in the strength of the ME inference are not *inconsistent* with many possible theoretical alternatives in the sense that there not are clear predictions that a specific ability would *not* develop. Instead, most theories simply have not discussed the predicted developmental course of the ME inference explicitly; developmental and experience-based change are auxiliary to the theory. In contrast, computational models of word learning -- as learning models -- make clear and explicit predictions about the role of experience. Given this, our work here suggests that such models may provide a more parsimonious framework for thinking about ME. 
+We next turn to the implications of these findings for theories of ME. The literature contains a large number of proposals for the mechanisms supporting ME, and many of these overlap or differ only in subtle ways. Here we briefly describe several influential proposals, highlighting the commonalities and differences across theoretical views and considering the ways they could accommodate our findings. To summarise our conclusion, developmental and experience-based changes in the strength of the ME inference are not *inconsistent* with many possible theoretical alternatives in the sense that there are not clear predictions that a specific ability would *not* develop. Instead, most theories simply have not discussed the predicted developmental course of the ME inference explicitly; developmental and experience-based change are auxiliary to the theory. In contrast, computational models of word learning -- as learning models -- make clear and explicit predictions about the role of experience. Given this, our work here suggests that such models may provide a more parsimonious framework for thinking about ME. 
 
 ### Constraint and bias accounts
 

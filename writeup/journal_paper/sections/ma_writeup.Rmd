@@ -334,7 +334,7 @@ ml_a_pval <- ifelse(round(mono_vs_multi_model$pval[2],2)  < .0001, "<.0001", pas
 ml_l_pval <- ifelse(round(mono_vs_multi_model$pval[3],2)  < .0001, "<.0001", paste0(" = ", round(mono_vs_multi_model$pval[3],2)))
 ```
 
-Children learning multiple languages reliably showed the ME effect (*d* = `r filter(mod_print, condition_type == "NT", !age_moderated)$estimate_print_full`). We next fit a model with both monolingual (typically-developing)  and multilingual participants, predicting effect size with language status (monolingual vs. multilingual), while controlling for age.  Language status was not a reliable predictor of effect size ($\beta$ = `r ml_lt_beta`, *Z* = `r ml_l_zval`,  *p* `r ml_l_pval`), but age was ($\beta$ = `r ml_a_beta`, *Z* = `r ml_a_zval`,  *p* `r ml_a_pval`).
+Children learning multiple languages reliably showed the ME effect (*d* = `r filter(mod_print, condition_type == "multilingual", !age_moderated)$estimate_print_full`). We next fit a model with both monolingual (typically-developing)  and multilingual participants, predicting effect size with language status (monolingual vs. multilingual), while controlling for age.  Language status was not a reliable predictor of effect size ($\beta$ = `r ml_lt_beta`, *Z* = `r ml_l_zval`,  *p* `r ml_l_pval`), but age was ($\beta$ = `r ml_a_beta`, *Z* = `r ml_a_zval`,  *p* `r ml_a_pval`).
 
 In sum, these data do not provide strong evidence that language-specific knowledge influences effect size. However, the small sample size of studies from this population limit the power of this model to detect a difference if one existed. 
 

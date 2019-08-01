@@ -172,23 +172,21 @@ y4est
 
 
 
-####graham2010
-y=4.61
+####graham2010 (v2)
+y=3.05
 n=22
 
-#no gaze
-yse = .25
+#no cues
+yse = .16
 sd = sqrt(n) *(yse/y)
 #*or*
-(sqrt(n) *((yse/y)*6))/6 # all 6 trials
+round((sqrt(n) *((yse/y)*6))/6,2) # all 6 trials
+round(1.85/y,2)
 
 #consistent 
-yse= .15
-sqrt(n) *(yse/y)
-
-#inconsistent
-yse = .23
-sqrt(n) *(yse/y)
+yse= .12
+round(sqrt(n) *(yse/y),2)
+round(2.7/y,2)
 
 ####grassmann2010
 #2s
@@ -249,6 +247,41 @@ n=32
 yse=.23
 se = yse/yten
 se*sqrt(n)
+
+####mather2009V2
+y_ten = .61
+y_one = y_ten/10
+
+#young/no repeats
+n = 35
+yse = .19
+
+se = yse/y_one 
+(se*sqrt(n))/100
+
+.03*sqrt(n)
+
+y_m = .04
+(100 - (50 + .04/y_one))/100
+
+#old/no repeats
+n=32
+yse=.26
+se = yse/yten
+se*sqrt(n)
+
+#young/ repeats
+n = 35
+yse=.26
+se = yse/yten
+se*sqrt(n)
+
+#old/ repeats
+n=32
+yse=.23
+se = yse/yten
+se*sqrt(n)
+
 
 ####horst2008
 y=2.16

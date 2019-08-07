@@ -31,7 +31,7 @@ c_vocab
 
 
 ### kalashnikova1996a
-# data from page 87 (for noth exps)
+# data from page 87 (for both exps)
 n = 46
 w = (.968-.874)/2
 w = 1.96*s/sqrt(n)

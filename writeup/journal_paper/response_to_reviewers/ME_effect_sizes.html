@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2019-08-01" />
+<meta name="date" content="2019-08-07" />
 
 <title>Checking ME effects sizes from Merrriman</title>
 
@@ -451,7 +451,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Checking ME effects sizes from Merrriman</h1>
-<h4 class="date">2019-08-01</h4>
+<h4 class="date">2019-08-07</h4>
 
 </div>
 
@@ -853,7 +853,7 @@ ma_c &lt;- ma_raw %&gt;%
 <blockquote>
 <p>“Three effect sizes are listed in the meta-data, but there were only two tests of the disambiguation effect in the paper. These were conducted in Exps. 1A and 1B. It looks like one of the effect sizes in meta-analysis is for the condition in Exp. 2 in which three novel objects were presented and the experimenter gazed at one of them while asking for the referent of a novel label. This is not a test of the disambiguation effect.”&quot;</p>
 </blockquote>
-<p>We included two conditions in Experiment 1A (“no cues/gaze” and “consistent”).</p>
+<p>We included two conditions from Experiment 1A (“no cues/gaze” and “consistent”).</p>
 <pre class="r"><code>ma_c %&gt;%
   filter(study_ID == &quot;graham2010&quot;) %&gt;%
   select(study_ID, short_cite, expt_num, infant_type,group_name_1, mean_age_1, n_1, x_1, x_2, SD_1, t, d_calc, data_source) %&gt;%
@@ -1009,7 +1009,7 @@ ma_c &lt;- ma_raw %&gt;%
 <p>“An effect size could not be calculated for two conditions in which the test of the disambiguation effect had only one trial. Would it be kosher to consider the proportion who chose correctly the M correct and then impute an SD from other studies that obtained a similar M correct in the same paradigm? For example, in one condition, .69 answered correctly in a three-choice procedure. There are a good number of studies in the meta-data that used a three-choice procedure, got a mean close to ..69, and report an SD. Use the average SD in these studies? If so, other one-trial tests of the disambiguation effect could be added to the meta-analysis (e.g., Au &amp; Glusman, 1990).”</p>
 </blockquote>
 <p>This seems reasonable, and has especial merit bcause these trials have productive vocabulary of participants included. I’ve added these two conditions. We did not include Au and Glusman (1990) because the procedure was more complicated than the basic ME procedure (i.e. multiple experimenters, lag between N1 and N2).</p>
-<p>[need to figure out sd]</p>
+<p>[need to figure out sd through imputation]</p>
 <pre class="r"><code>ma_c %&gt;%
   filter(study_ID == &quot;horst2008&quot;) %&gt;%
   select(study_ID, short_cite, expt_num, infant_type,group_name_1, mean_age_1, n_1, x_1, x_2, SD_1, t, d_calc, data_source) %&gt;%
@@ -1116,7 +1116,7 @@ ma_c &lt;- ma_raw %&gt;%
 <blockquote>
 <p>“There is a second paper by Lederberg on the disambiguation effect (Lederberg &amp; Spencer, 2008 J Deaf Studies &amp; Deaf Educ) that should be included in the meta-analysis. Like the 2000 study it examined the disambiguation effect in deaf/hard of hearing children using the Novel-Novel paradigm. It involved a much larger and more diverse sample than the 2000 paper.”</p>
 </blockquote>
-<p>This paper unfortunately does not report raw mean and standard deviations of proportion novel object selections in an form in either the text or the figure. I’ve emailed the first author in the hopes of obtaining this information.</p>
+<p>This paper unfortunately does not report raw mean and standard deviations of proportion novel object selections in any form in either the text or the figure. I’ve emailed the first author in the hopes of obtaining this information.</p>
 </div>
 <div id="markman-wasow-hansen-2003" class="section level3">
 <h3>Markman, Wasow, &amp; Hansen (2003)</h3>
@@ -1277,8 +1277,7 @@ ma_c &lt;- ma_raw %&gt;%
 <blockquote>
 <p>“There are two other papers by Mervis that should be added to the meta-analysis. Mervis &amp; Bertrand (1994 CD Study 1) used a 5-choice version of the Novel-Novel paradigm with 15- to 20-month-olds. They did not report overall Ms and SDs because groups were bimodal. Sixteen children got .90 correct (SD = .13) and 16 got .11 correct (SD = .13). So the overall M was .555, with chance = .20. If you can’t get the SD for the overall data from Mervis, you could probably get a reasonable estimate of it. Create two normally distributed sets of 16 random cases, where one set has M = .90 and SD = .13 and the other M = .11 and SD = .13, then calculate the overall SD of the combined sets. The other paper is Mervis &amp; Bertrand (1995 JCL Vol 22 461-468). It reports a longitudinal study of 3 late talkers that includes assessment of the disambiguation effect with the Novel-Novel paradigm.”</p>
 </blockquote>
-<p>Thank you for this suggestion. We have simulated the distribution for the Mervis and Bertrand, Study 1 paper and included this condition in the database (estimate SD = .42).</p>
-<p>[Early lexical acquisition and the vocabulary spurt: A response to Goldfield &amp; Reznick. - need to find this]</p>
+<p>Thank you for this suggestion. We have simulated the distribution for the Mervis and Bertrand, Study 1 paper and included this condition in the database (estimate SD = .42). Unfortunately, Mervis &amp; Bertrand (1995) does not include descriptive statistics for the three children’s performance on the disambiguation task.</p>
 <pre class="r"><code>ma_c %&gt;%
   filter(study_ID == &quot;mervis1994b&quot;) %&gt;%
   select(study_ID, short_cite, expt_num, infant_type,group_name_1, mean_age_1, n_1, x_1, x_2, SD_1, t, data_source, d_calc) %&gt;%
@@ -1304,10 +1303,10 @@ ma_c &lt;- ma_raw %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">mervis1994b</td>
-<td align="left">Mervis, C. B., &amp; Bertrand, J. (1994). Acquisition of the novel name-nameless category (N3C) principle. Child development, 65(6), 1646-1662.</td>
+<td align="left">Mervis, C. B., &amp; Bertrand, J. (1994)</td>
 <td align="left">1</td>
 <td align="left">typical</td>
-<td align="left">monolingual</td>
+<td align="left">experimental</td>
 <td align="right">524.1231</td>
 <td align="right">32</td>
 <td align="right">0.55</td>
@@ -1389,7 +1388,7 @@ ma_c &lt;- ma_raw %&gt;%
 <p>“The meta-analysis included the effect size for the autistic children, but not the effect size for the typically developing children. I assume that Preissler and/or Carey supplied the SD for the autistic children. If they cannot supply it for the typically developing, could it be imputed by the method discussed earlier?”</p>
 </blockquote>
 <p>The SD for the group with autism was estimated based on the raw counts reported in the text. No such raw counts were reported for the typically developing group, unfortuntately.</p>
-<p>[we could consider imputaiton here from other conditions]</p>
+<p>[we could consider imputation here from other conditions]</p>
 </div>
 <div id="scofield-williams-2009" class="section level2">
 <h2>Scofield &amp; Williams (2009)</h2>
@@ -1403,48 +1402,249 @@ ma_c &lt;- ma_raw %&gt;%
 <blockquote>
 <p>“This paper is listed at metalab, but is not listed in the References section of the manuscript. Was it included in the meta-analysis?”</p>
 </blockquote>
+<p>Thank you for catching this. This paper was included in the meta-analysis, and we have added these paper to the citation list. [check this once renders]</p>
 </div>
 <div id="sugimura-sato-1996" class="section level2">
 <h2>Sugimura &amp; Sato (1996)</h2>
 <blockquote>
 <p>“No d is listed for this study in the meta-data because there was no variance. Apparently, all 48 children chose the novel object on every trial in a four-choice paradigm. This result is a case of the ceiling problem in extremis. It does not seem like a good idea to exclude the study, however. The mean age was among the highest in the meta-data and so dropping it may reduce the model’s estimate of the the effect size at that age. Perhaps it would be kosher to assign an SD of .10 to every study that has an SD of .10 or less. Or replace every effect size that is more than 3 SDs greater than the mean of the effect sizes in the meta-data to a value that equals 3 SDs greater than this mean. Perhaps some of the ideas in the chapter in Tabachnick and Fidell’s multivariate statistics text on handling outliers in ordinary data would be applicable here.”</p>
 </blockquote>
+<p>[no variability…what to do here?]</p>
 </div>
 <div id="vincent-smith-et-al.-1974" class="section level2">
 <h2>Vincent-Smith et al. (1974)</h2>
 <blockquote>
 <p>“The d’s for the two age groups in this report were not included in the meta-data. I assume that it was not possible to get the SDs from the authors of this old report. Perhaps these could be imputed using the method I described earlier.”</p>
 </blockquote>
+<p>[no sd…impute?]</p>
 </div>
 <div id="williams-2009" class="section level2">
 <h2>Williams (2009)</h2>
 <blockquote>
 <p>“The citation for this dissertation was omitted from the References section of the manuscript. One weird thing about this investigation is that the two groups of typically- developing children overlapped. The group that matched the ASD (autism spec disord) group on age had 16 children and the group that matched the ASD group on language ability had 16 children. However, 6 children belonged to both groups. There were only 28 typically-developing children in all. Not sure how to handle this problem.”</p>
 </blockquote>
+<p>We have added this missing citation. We agree that the overlap in participants here is problematic [could drop age group?].</p>
 </div>
 <div id="kalashnikova-et-al.-2016-first-lang" class="section level2">
 <h2>Kalashnikova et al. (2016 First Lang)</h2>
 <blockquote>
 <p>“Metalab lists the M in this study as .04 with SD = .054. It computes d as .04/.054 = .738. This is unusual because in the other two-choice eyetracking studies in metalab, M is the proportion of time looking at the novel object (which is usually greater than .50), chance is .50, and d is calculated as the difference between these two proportions/SD. If this method were adopted here, M = .58, SD = .27, and so d = .08/.27 = .296. (The .04 that metalab lists as the M might represent the change in looking at the novel object from baseline to test, but no SD is reported in the article for this difference score.)”</p>
 </blockquote>
+<p>There are actually 10 2-AFC studies in the database. As noted, there are two ways one could compute an effect size from eye-tracking data: (1) proportion looks to target (analgous to pointing task), or (2) difference in looking relative to baseline. We indicated which of these two approaches we took in coding the effect size in the “dependent measure” column (“target_selection” vs. “looking_time_change”). Seven were coded using the second approach; Four, including the Kalashnikova (2016b) paper, were coded using the first approach.</p>
+<p>We agree that the first approach is more similiar to the measure used in the pointing task. On the other hand, there are demands particular to the eyetracking task that make it important to take into account baseline differences in saliency between the items. However, regardless of these motivations, in most cases information was only reported for one type of measure. There were a few cases where the data were available for either measure to be used. In these cases, we used the measure originally reported by the authors.</p>
+<p>[note that in Houston-Price you get opposite effect for monolinguals depending on the measure you use].</p>
+<p>[Kalashnikova (2016b), Houston-Price et al (2010), Mather and Plunket (2009), bion could go either way but would require measuring plots in many cases….I wonder if we should do this so all are looking_time_change, and it’s consistent?]</p>
+<pre class="r"><code>ma_c %&gt;%
+  filter(response_mode == &quot;eye-tracking&quot;) %&gt;%
+  select(study_ID, short_cite, response_mode, dependent_measure, N_AFC) %&gt;%
+  distinct(study_ID, response_mode, dependent_measure, N_AFC) %&gt;%
+  arrange(dependent_measure) %&gt;%
+  mutate(n = 1:n()) %&gt;%
+  select(n, everything()) %&gt;%
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+<th align="left">study_ID</th>
+<th align="left">response_mode</th>
+<th align="left">dependent_measure</th>
+<th align="left">N_AFC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">byers2009</td>
+<td align="left">eye-tracking</td>
+<td align="left">looking_time_change</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">byers2013</td>
+<td align="left">eye-tracking</td>
+<td align="left">looking_time_change</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">halberda2003</td>
+<td align="left">eye-tracking</td>
+<td align="left">looking_time_change</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">halberda2006</td>
+<td align="left">eye-tracking</td>
+<td align="left">looking_time_change</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">houstonprice2010</td>
+<td align="left">eye-tracking</td>
+<td align="left">looking_time_change</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">kalashnikova2016b</td>
+<td align="left">eye-tracking</td>
+<td align="left">looking_time_change</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="odd">
+<td align="right">7</td>
+<td align="left">white2008</td>
+<td align="left">eye-tracking</td>
+<td align="left">looking_time_change</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">bion2013</td>
+<td align="left">eye-tracking</td>
+<td align="left">target_selection</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">frank2016</td>
+<td align="left">eye-tracking</td>
+<td align="left">target_selection</td>
+<td align="left">N_AFC-2</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">mather2009</td>
+<td align="left">eye-tracking</td>
+<td align="left">target_selection</td>
+<td align="left">N_AFC-2</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="kalashnikova-et-al.-2016-lang-learn-dev" class="section level2">
 <h2>Kalashnikova et al. (2016 Lang Learn Dev)</h2>
 <blockquote>
-<p>“Metalab lists this as an eyetracking study, but it is a pointing study. Metalab combines the results for two experiments. The rule for combining experiments is not clear. The mean ages of the groups in each experiment are very close, and the methods differed in only one respect – whether the videos just presented objects and an audio, or whether they also included the face of a speaker (synch’d with the audio). Results were nearly identical in the two experiments. There are three other papers by Kalashnikova and colleagues that should be added to the meta-analysis: Kalashnikova, M., Mattock, K., &amp; Monaghan, P. (2014). Disambiguation of novel labels and referential facts: A developmental perspective. First Language, 34(2), 125-135. Kalashnikova, M., Mattock, K., &amp; Monaghan, P. (2015). The effects of linguistic experience on the flexible use of mutual exclusivity in word learning. Bilingualism: Language and Cognition, 18(4), 626-638. Kalashnikova, M., Escudero, P., &amp; Kidd, E. (2018). The development of fast‐mapping and novel word retention strategies in monolingual and bilingual infants. Developmental science, 21(6), e12674.”&quot;</p>
+<p>“Metalab lists this as an eyetracking study, but it is a pointing study. Metalab combines the results for two experiments. The rule for combining experiments is not clear. The mean ages of the groups in each experiment are very close, and the methods differed in only one respect – whether the videos just presented objects and an audio, or whether they also included the face of a speaker (synch’d with the audio). Results were nearly identical in the two experiments. There are three other papers by Kalashnikova and colleagues that should be added to the meta-analysis: [1] Kalashnikova, M., Mattock, K., &amp; Monaghan, P. (2014). Disambiguation of novel labels and referential facts: A developmental perspective. First Language, 34(2), 125-135. [2] Kalashnikova, M., Mattock, K., &amp; Monaghan, P. (2015). The effects of linguistic experience on the flexible use of mutual exclusivity in word learning. Bilingualism: Language and Cognition, 18(4), 626-638. [3] Kalashnikova, M., Escudero, P., &amp; Kidd, E. (2018). The development of fast‐mapping and novel word retention strategies in monolingual and bilingual infants. Developmental science, 21(6), e12674.”</p>
 </blockquote>
+<p>Thank you - we have corrected the response_model coding for this study. Our general rule was to keep conditions and studies separate where possible. However, in this case, descriptive statistics (mean and standard deviations) were only reported for the combined data from Experiment 1 and 2, and so we calculated a single effect size from these data.</p>
+<p>We have added Kalashnikova et al. (2014). We have not included Kalashnikova et al. (2018) since we have restricted our study to include only papers up to November 2017 (in addition to this paper there are a handful of additional studies that have been publsihed since we finished our meta-analysis).</p>
+<p>[Do we want to include Kalashnikova 2015? - it has weird properties (FFNN and multiple selections per trial)]</p>
 </div>
 <div id="wall-merriman-scofield-2015" class="section level2">
 <h2>Wall, Merriman, &amp; Scofield (2015)</h2>
 <blockquote>
 <p>“The first two lines in the list for this article in metalab represent the results for the two age groups in Exp. 1. I already explained why I think this experiment involved incongruent cue conditions (where the cue was “discovery status”). The next lines represent the results for two age groups in Exp. 2. Actually, each age group in that experiment was in one of two conditions, but the results are pooled in metalab. Again, it is not clear what the rule for combining conditions is. Finally, metalab omitted the results of Exp. 3 from the article. The stats for Exp. 3 were M age = 54 mos., n = 24, M correct = .915, SD = .24, d = 1.73. If Exp. 1 is not considered an incongruent cue condition, then the meta-analysis ought to also include the results of the experiments reported in Scofield, J., Hernandez-Reif, M., &amp; Keith, A. B. (2009). Preschool children’s multimodal word learning. Journal of Cognition and Development, 10(3), 06–333. Wall et al. (2015) was a follow-up to this article. Recently, Scofield, Wall, and I published experiments analogous to those in Wall et al. (2015), but involving the opposite direction of cross-modal transfer. We trained a label for an object the child could touch, but not see, then asked the child to pick the referent of a novel label from a pair of objects they could see, but not touch. One choice was the cross-modal match and the other was a novel object. The citation is: Scofield, J., Merriman, W. E., &amp; Wall, J. L. (2018). The effect of a tactile-to-visual shift on young children’s tendency to map novel labels onto novel objects. Journal of Experimental Child Psychology, 172, 1-12.&quot;</p>
 </blockquote>
+<p>[LOOK AT THIS PAPER]</p>
 </div>
 <div id="law-edwards-2014-lang-learn-dev" class="section level2">
 <h2>Law &amp; Edwards (2014 Lang Learn &amp; Dev)</h2>
 <blockquote>
 <p>“This study is not listed in the meta-data. Although its primary focus was children’s referent selections for mispronounced familiar labels, it did include novel word conditions. Their analyses are quite unique – fitting to growth curves and examining the Akaike Information Criterion and the Bayesian Information Criterion. However, they do report a t test of the slope of the decline in proportion of looking at the familiar object (rather than the novel object) after onset and processing of the novel word. Could an estimate of d be derived from this t value? Alternatively, a figure in the paper shows that proportion of looking at the novel object reached an asymptote of .25 or so. Could an SD for this value be imputed from the other eyetracking studies?”</p>
 </blockquote>
+<pre class="r"><code>ma_c %&gt;%
+  filter(!is.na(d_notes)) %&gt;%
+  select(1, d_notes) %&gt;%
+  data.frame()</code></pre>
+<pre><code>##             study_ID
+## 1          byers2009
+## 2          byers2009
+## 3          byers2009
+## 4          byers2013
+## 5       davidson1997
+## 6       davidson1997
+## 7       davidson1997
+## 8          frank1999
+## 9          frank1999
+## 10         frank1999
+## 11         frank1999
+## 12      halberda2003
+## 13      halberda2003
+## 14      halberda2003
+## 15      halberda2006
+## 16       hollich2000
+## 17       hollich2000
+## 18         horst2008
+## 19         horst2008
+## 20  houstonprice2010
+## 21  houstonprice2010
+## 22  kalashnikova2015
+## 23  kalashnikova2015
+## 24  kalashnikova2015
+## 25  kalashnikova2015
+## 26 kalashnikova2016a
+## 27 kalashnikova2016b
+## 28      merriman1993
+## 29       mervis1994b
+## 30       mervis1995a
+## 31     preissler2005
+## 32     preissler2005
+## 33      scofield2007
+## 34      scofield2009
+## 35       suanda2013b
+## 36      sugimura1997
+## 37 vincent-smith1974
+## 38 vincent-smith1974
+## 39         white2008
+## 40         white2008
+## 41         white2008
+## 42      williams2009
+## 43      williams2009
+## 44          yow2017b
+## 45          yow2017b
+## 46          yow2017b
+##                                                                                                                                                                                                                             d_notes
+## 1                                                                                                                                                                             proportion increased looking to target above baseline
+## 2                                                                                                                                                                             proportion increased looking to target above baseline
+## 3                                                                                                                                                                             proportion increased looking to target above baseline
+## 4                                                                                                                                                                             proportion increased looking to target above baseline
+## 5                                                                                                                                                                                 sd imputed based on 3-4 greek bilinguals (from t)
+## 6                                                                                                                                                                                 sd imputed based on 3-4 greek bilinguals (from t)
+## 7                                                                                                                                                                                 sd imputed based on 3-4 greek bilinguals (from t)
+## 8                                                                                                                                                                                                                      dissertation
+## 9                                                                                                                                                                                                                      dissertation
+## 10                                                                                                                                                                                                                     dissertation
+## 11                                                                                                                                                                                                                     dissertation
+## 12                                                                                                                                                                            proportion increased looking to target above baseline
+## 13                                                                                                                                                                            proportion increased looking to target above baseline
+## 14                                                                                                                                                                            proportion increased looking to target above baseline
+## 15                                                                                                                                                                            proportion increased looking to target above baseline
+## 16                                                                                                                                                                                                                            no_sd
+## 17                                                                                                                                                                                                                            no_sd
+## 18                                                                                                                                                                            note this is a single trial - would need to impute sd
+## 19                                                                                                                                                                            note this is a single trial - would need to impute sd
+## 20 this is tricky - it&#39;s currently coded as proportion change, but in principle could be coded with respect to chance (data are from fig). For monolinguals, there&#39;s an effect if you look at difference, not othwerise (UK trials)
+## 21 this is tricky - it&#39;s currently coded as proportion change, but in principle could be coded with respect to chance (data are from fig). For monolinguals, there&#39;s an effect if you look at difference, not othwerise (UK trials)
+## 22                                                                                                                                                                                        this is actually FFNN - categorize as NN?
+## 23                                                                                                                                                                                        this is actually FFNN - categorize as NN?
+## 24                                                                                                                                                                                        this is actually FFNN - categorize as NN?
+## 25                                                                                                                                                                                        this is actually FFNN - categorize as NN?
+## 26                                                                                                    SD calculated from Cis; Data are combined ehre from two studies because only aggregated descriptive statistics are presented.
+## 27                                                                                                                                                                                                  sd computed from for difference
+## 28                                                                                                                                 this is for the trials in which no cue opposed the disambiguation effect  (provided by merriman)
+## 29                                                                                                                                                          SD is estimated based on description of 2 distribution (simulated data)
+## 30                                                                                                                                                                                                      took mean across two groups
+## 31                                                                                                               m and sd imputed based on raw counts (overall mean is reported by not participant-wise mean); ASD: half non-verbal
+## 32                                                                                                                                                                                                                            no_sd
+## 33                                                                                                                                                                                                      no_sd  because only 1 trial
+## 34                                                                                                                                                                                                                            no_sd
+## 35                                                                                                                                                                        SE reported as SD -&gt; use t to calculate d; percentile CDI
+## 36                                                                                                                                                                                                                   no variability
+## 37                                                                                                                                                                                                                            no_sd
+## 38                                                                                                                                                                                                                            no_sd
+## 39                                                                                                                                                                            proportion increased looking to target above baseline
+## 40                                                                                                                                                                            proportion increased looking to target above baseline
+## 41                                                                                                                                                                            proportion increased looking to target above baseline
+## 42                                                                                                                                                                                         note that typical groups are overlapping
+## 43                                                                                                                                                                                         note that typical groups are overlapping
+## 44                                                                                                                                                                                         looking and pointing - I report pointing
+## 45                                                                                                                                                                                         looking and pointing - I report pointing
+## 46                                                                                                                                                                                         looking and pointing - I report pointing</code></pre>
 </div>
 
 

@@ -1,5 +1,5 @@
 ---
-title: Checking ME effects sizes from Merrriman
+title: Checking ME effects sizes based on Reviewer 1 comments
 subtitle: 
 date: "`r Sys.Date()`"
 output:
@@ -23,6 +23,18 @@ opts_chunk$set(echo = T, message = F, warning = F,
 ```
 
 NOTE: I fixed several discripancies in the 0_metaanalysis_data.csv file, and added an additional exclusions column. Need to re-run d_calc on this (pasted into online version and recache? but note that online version has fewers es.)
+
+Note discrpeancy with Metalab.
+
+Issues to deal with:
+* Wall paper - include or not?
+* Law & Edwards  include? I vote no
+* deal with repeated trials
+* deal with eyetracking measure
+* do we want to impute for 1 trial conditions?
+* do we want to impute for missing sds...I vote no, in large part because I didn't code lots of cases where it was clear that no es could be calculated.
+* lederberg data (emailed)
+
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
 ma_raw <- read_csv(ME_DATA_PATH) %>%
@@ -130,7 +142,7 @@ ma_c %>%
 
 This seems reasonable, and has especial merit bcause these trials have productive vocabulary of participants included. I've added these two conditions. We did not include Au and Glusman (1990) because the procedure was more complicated than the basic ME procedure (i.e.  multiple experimenters, lag between N1 and N2).
 
-[need to figure out sd through imputation]
+[need to figure out sd through imputation - I think we should do this - affects 3 papers (~6 conditions)] 
 
 ```{r}
 ma_c %>%
@@ -144,7 +156,6 @@ ma_c %>%
 >"There is a second paper by Lederberg on the disambiguation effect (Lederberg & Spencer, 2008 J Deaf Studies & Deaf Educ) that should be included in the meta-analysis. Like the 2000 study it examined the disambiguation effect in deaf/hard of hearing children using the Novel-Novel paradigm. It involved a much larger and more diverse sample than the 2000 paper."
 
 This paper unfortunately does not report raw mean and standard deviations of proportion novel object selections in any form in either the text or the figure. I've emailed the first author in the hopes of obtaining this information.
-
 
 ### Markman, Wasow, & Hansen (2003)
 
@@ -223,20 +234,19 @@ ma_c %>%
 
 The SD for the group with autism was estimated based on the raw counts reported in the text. No such raw counts were reported for the typically developing group, unfortuntately. 
 
-[we could consider imputation here from other conditions]
+[we could consider imputation here from other conditions, but I vote no, would affects this one and vincent-smith.]
 
 ## Scofield & Williams (2009) 
 
 >"The paper is listed at metalab, but no effect size is listed. Perhaps the authors did not supply the SD?  Could you impute?  The effect can’t be big because M correct (.56) was very close to chance (.50)."
 
-[emailed author; if not available...do we want to impute from other conditions?]
-
+This effect size was missing because we did not have a SD value. We were able to get this information from the authors via email.
 
 ## Spiegel & Halberda (2011) 
 
 >"This paper is listed at metalab, but is not listed in the References section of the manuscript.  Was it included in the meta-analysis?" 
 
-Thank you for catching this. This paper was included in the meta-analysis, and we have added these paper to the citation list. [check this once renders] 
+This paper was included in the meta-analysis, and we have added these paper to the citation list. [check this once renders] 
 
 ## Sugimura & Sato (1996) 
 
@@ -286,10 +296,7 @@ There are three other papers by Kalashnikova and colleagues that should be added
 
 Thank you - we have corrected the response_model coding for this study. Our general rule was to keep conditions and studies separate where possible. However, in this case, descriptive statistics (mean and standard deviations) were only reported for the combined data from Experiment 1 and 2, and so we calculated a single effect size from these data.
 
-We have added Kalashnikova et al. (2014). We have not included Kalashnikova et al. (2018) since we have restricted our study to include only papers up to November 2017 (in addition to this paper there are a handful of additional studies that have been publsihed since we finished our meta-analysis).
-
-[Do we want to include Kalashnikova 2015? - it has weird properties (FFNN and multiple selections per trial)]
-
+We have added Kalashnikova et al. (2014). We have not included Kalashnikova et al. (2018) since we have restricted our study to include only papers up to November 2017 (in addition to this paper there are a handful of other studies that have been publsihed since we finished our meta-analysis). We also did not include Kalashnikova et al. (2015) because it was not the standard paradigm (FFNN and multiple selections per trial).
 
 ## Wall, Merriman, & Scofield (2015) 
 >"The first two lines in the list for this article in metalab represent the results for the two age groups in Exp. 1. I already explained why I think this experiment involved incongruent cue conditions (where the cue was “discovery status”). The next lines represent the results for two age groups in Exp. 2.  Actually, each age group in that experiment was in one of two conditions, but the results are pooled in metalab.  Again, it is not clear what the rule for combining conditions is. Finally, metalab omitted the results of Exp. 3 from the article. The stats for Exp. 3 were M age = 54 mos., n = 24, M correct = .915, SD = .24, d = 1.73.
@@ -307,5 +314,4 @@ ma_c %>%
   filter(!is.na(d_notes)) %>%
   select(1, d_notes) %>%
   data.frame()
-
 ```

@@ -261,7 +261,7 @@ vocab_plot <- ggplot(plot_data, aes(x = prop_correct_vocab,
   theme_classic() +
   ggthemes::scale_color_solarized(guide = 
                                     guide_legend(title = "Trial Type")) +
-  scale_x_continuous(breaks=c(24, 27, 30, 33, 36, 39, 42, 45, 48)) +
+  scale_x_continuous(breaks = c(24, 27, 30, 33, 36, 39, 42, 45, 48)) +
   ylim(0,1) +
   xlim(0,1) +
   theme(legend.position = c(.8, .2))

@@ -1,0 +1,107 @@
+---
+title: Experiment 1 reliability
+subtitle: 
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    theme: cerulean
+    code_folding: hide
+---
+
+```{r setup, include = FALSE}
+
+library(knitr)
+library(here)
+library(tidyverse)
+library(broom)
+library(lme4)
+
+
+theme_set(theme_classic())
+opts_chunk$set(echo = T, message = F, warning = F, 
+               error = F, cache = F, tidy = F)
+```
+
+
+```{r read_in_data}
+EXP1_DATA_PATH <- here("data/1_exp_data.csv")
+exp1 <- read_csv(EXP1_DATA_PATH) %>%
+  select(sub_id, age_months, gender, english, 
+         exclude2, prop_correct_vocab, trial_type, correct, 
+         start_time, end_time, resp_start_time, object1)  
+```
+
+```{r complete_trials_from_target_kids}
+# filter to kids in target age range and completed all trials
+NUM_TRIALS <- 19
+good_counts <- exp1 %>%
+  count(sub_id) %>%
+  filter(n == NUM_TRIALS) 
+
+exp1_complete <- exp1 %>%
+  filter(age_months >= 24 & age_months <= 48,
+         sub_id %in% good_counts$sub_id) %>%
+  mutate(age_bin = as.factor(case_when(age_months >= 36 ~ "3-yo", 
+                             TRUE ~ "2-yo"))) 
+
+total_sample_size_by_age<- exp1_complete %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(sub_id %in% good_counts$sub_id) %>%
+  count(age_bin)
+```
+
+```{r do_exclusions}
+# prop_correct C-NF > .5
+good_controls <- exp1_complete %>%
+  filter(trial_type == "C-NF") %>%
+  group_by(sub_id) %>%
+  summarize(prop_correct = sum(correct) / n())  %>%
+  filter(prop_correct >= .5) 
+
+# english input >= 75
+good_language <- exp1_complete %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(english >= 75) 
+
+# final sample
+final_sub_ids <- list(good_controls$sub_id,
+                      good_language$sub_id) %>%
+  accumulate(intersect) %>%
+  last()
+
+final_sample <- exp1_complete %>%
+               filter(sub_id %in% final_sub_ids) 
+
+crit_sample <- final_sample  %>%
+    filter(trial_type != "FF") %>%
+    mutate(condition_type = ifelse(trial_type %in% c("NF", "NN"),
+                                 "N", "F"),
+           trial_type2 = ifelse(trial_type %in% c("NN", "C-NN"),
+                                 "NN", "NF"),
+           age_months = scale(age_months, 
+                              scale = FALSE, center = TRUE), # scale continuous analysis
+           prop_correct_vocab = scale(prop_correct_vocab, 
+                                      scale = FALSE, center = TRUE))
+
+
+by_subj_control_score <- crit_sample %>%
+  filter(condition_type == "F") %>%
+  group_by(sub_id) %>%
+  summarize(control_score = mean(correct))
+```
+
+
+```{r}
+crit_sample2 <- crit_sample %>%
+  left_join(by_subj_control_score)
+accuracy_model2 <- glmer(correct ~ prop_correct_vocab * trial_type2 * age_months +control_score +
+                  (trial_type2 | sub_id),
+                  family = "binomial",
+                  data = filter(crit_sample2,
+                                condition_type == "N"),
+                  control = glmerControl(optimizer = "bobyqa"))
+m2 <- summary(accuracy_model2)
+
+m2
+```

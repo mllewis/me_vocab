@@ -39,3 +39,27 @@ sampled_data <- map_df(1:10000, estimate_descriptives, trial1, trial2)
 
 mean(sampled_data$overall_mean) #0.8186575
 mean(sampled_data$overall_sd) #0.2817753
+
+
+## Lederberg data
+library(foreign)
+
+dataset = read.spss("/Users/mollylewis/Downloads/LongN3CDRpassfailT1-4.sav", to.data.frame=TRUE)
+
+lbrg2008 <- read.spss("/Users/mollylewis/Downloads/n3ct1allsubj.sav", to.data.frame=TRUE)  %>%
+  janitor::clean_names() %>%
+  filter(!is.na(drt1nc)) %>%
+  mutate(age_years  = floor(aget1/12)) %>% # this matches the data in table 2
+  select(subjno, aget1, cdit1, age_years, n3ct1nc, n3ct1pf) %>%
+  rename(age_months = aget1,
+         me_n_correct = n3ct1nc,
+         me_pass_fail= n3ct1pf)
+
+lbrg2008 %>%
+  mutate(prop_correct = me_n_correct/4) %>%
+  group_by(age_years) %>%
+  summarize(mean_age_day.99s = mean(age_months) * 30.42,
+            mean_cdi = mean(cdit1),
+            n = n(),
+            mean_prop_correct = mean(prop_correct),
+            sd_prop_correct = sd(prop_correct))

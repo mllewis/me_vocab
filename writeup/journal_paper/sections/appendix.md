@@ -1,6 +1,8 @@
 
 
-### Vocabulary Assessment Items (Exp. 1)
+### Appendix A: Experiment 1 Linguistic Stimuli
+
+##### Vocabulary Assessment Items 
 1. hatchet
 2. elephant 
 3. flamingo 
@@ -22,7 +24,7 @@
 19. beverage 
 20. goat
 
-### Familiar Words (Exp. 1)
+####  Familiar Words 
 1. bottle
 2. cup
 3. spoon
@@ -38,7 +40,7 @@
  13. guitar,
  14. bucket
  
- ###  Novel Words (Exp. 1)
+ ####  Novel Words 
 1. kettle
 2. ladle
 3. whisk
@@ -63,3 +65,18 @@
 22. okra
 23. pipette
 24. sieve
+
+### Appendix B: Task reliability 
+
+Reliability coefficients (Cronbach?s ?;  Santos, 1999) for accuracy in the ME (8 trials) and control trials (8 trials) in Experiment 1.  Age groups are given in months.
+
+|Age Group |Trial Type | Alpha|
+|:---------|:----------|-----:|
+|[24,30]   |control    |  0.40|
+|[24,30]   |ME         |  0.54|
+|(30,36]   |control    |  0.64|
+|(30,36]   |ME         |  0.57|
+|(36,42]   |control    |  0.36|
+|(36,42]   |ME         |  0.56|
+|(42,48]   |control    |  0.65|
+|(42,48]   |ME         |  0.60|

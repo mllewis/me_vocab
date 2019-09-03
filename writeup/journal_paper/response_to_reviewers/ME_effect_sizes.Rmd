@@ -22,18 +22,20 @@ opts_chunk$set(echo = T, message = F, warning = F,
                error = F, cache = F, tidy = F)
 ```
 
-NOTE: I fixed several discripancies in the 0_metaanalysis_data.csv file, and added an additional exclusions column. Need to re-run d_calc on this (pasted into online version and recache? but note that online version has fewers es.)
+```{r, include = F}
+#NOTE: I fixed several discripancies in the 0_metaanalysis_data.csv file, and added an additional exclusions column. Need to re-run d_calc on this (pasted into online version and recache? but note that online version has fewers es.)
+```
 
-Note discrpeancy with Metalab.
+Note discrepancy with Metalab.
 
 Issues to deal with:
-* Wall paper - include or not?
-* Law & Edwards  include? I vote no
+
+* Wall paper - include or not? (critical task is by touch only)
+* Law & Edwards  include? I vote no (weird analysis)
 * deal with repeated trials
-* deal with eyetracking measure
+* deal with eyetracking measure (see Kalashnikova et al. (2016 First Lang))
 * do we want to impute for 1 trial conditions?
-* do we want to impute for missing sds...I vote no, in large part because I didn't code lots of cases where it was clear that no es could be calculated.
-* lederberg data (emailed)
+* do we want to impute for missing sds...I vote no, in large part because I didn't code lots of cases where it was clear that no es could be calculated. (e.g. Vincent-Smith et al. (1974))
 
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
@@ -155,7 +157,7 @@ ma_c %>%
 
 >"There is a second paper by Lederberg on the disambiguation effect (Lederberg & Spencer, 2008 J Deaf Studies & Deaf Educ) that should be included in the meta-analysis. Like the 2000 study it examined the disambiguation effect in deaf/hard of hearing children using the Novel-Novel paradigm. It involved a much larger and more diverse sample than the 2000 paper."
 
-This paper unfortunately does not report raw mean and standard deviations of proportion novel object selections in any form in either the text or the figure. I've emailed the first author in the hopes of obtaining this information.
+Thank you for pointing me to this paper. I was able to email the author to get the raw data for this study. 
 
 ### Markman, Wasow, & Hansen (2003)
 

@@ -1,0 +1,191 @@
+---
+title: Experiment 1 and 2 reliability
+subtitle: 
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    theme: cerulean
+    code_folding: hide
+---
+
+```{r setup, include = FALSE}
+
+library(knitr)
+library(feather)
+library(here)
+library(tidyverse)
+library(broom)
+
+
+theme_set(theme_classic())
+opts_chunk$set(echo = T, message = F, warning = F, 
+               error = F, cache = F, tidy = F)
+```
+
+Cronbach's alpha (as in Frank et al. 2016) 
+
+# Experiment 1
+Here I'm calculating reliability using Cronbach alpha with the control and ME trials separately. 
+```{r read_in_data}
+EXP1_DATA_PATH <- here("data/1_exp_data.csv")
+exp1 <- read_csv(EXP1_DATA_PATH) %>%
+  select(sub_id, age_months, gender, english, 
+         exclude2, prop_correct_vocab, trial_type, correct, 
+         start_time, end_time, resp_start_time, object1)  
+```
+
+```{r complete_trials_from_target_kids}
+# filter to kids in target age range and completed all trials
+NUM_TRIALS <- 19
+good_counts <- exp1 %>%
+  count(sub_id) %>%
+  filter(n == NUM_TRIALS) 
+
+exp1_complete <- exp1 %>%
+  filter(age_months >= 24 & age_months <= 48,
+         sub_id %in% good_counts$sub_id) %>%
+  mutate(age_bin = as.factor(case_when(age_months >= 36 ~ "3-yo", 
+                             TRUE ~ "2-yo"))) 
+
+total_sample_size_by_age<- exp1_complete %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(sub_id %in% good_counts$sub_id) %>%
+  count(age_bin)
+```
+
+```{r do_exclusions}
+# prop_correct C-NF > .5
+good_controls <- exp1_complete %>%
+  filter(trial_type == "C-NF") %>%
+  group_by(sub_id) %>%
+  summarize(prop_correct = sum(correct) / n())  %>%
+  filter(prop_correct >= .5) 
+
+# english input >= 75
+good_language <- exp1_complete %>%
+  distinct(sub_id, .keep_all = T) %>%
+  filter(english >= 75) 
+
+# final sample
+final_sub_ids <- list(good_controls$sub_id,
+                      good_language$sub_id) %>%
+  accumulate(intersect) %>%
+  last()
+
+final_sample <- exp1_complete %>%
+               filter(sub_id %in% final_sub_ids) 
+
+demographics <- final_sample %>%
+  distinct(sub_id, .keep_all = T) %>%
+  select(sub_id, age_months, prop_correct_vocab) %>%
+  mutate(age_group = cut(age_months, 
+                         breaks = c(24, 30, 36, 42, 48),
+                         include.lowest = T),
+         vocab_group = ntile(prop_correct_vocab, 4))
+
+```
+
+```{r, fig.height = 4}
+
+final_sample_wide <- final_sample %>%
+  filter(trial_type != "FF") %>%
+  mutate(trial_type2 = case_when(trial_type %in% c("NF", "NN") ~ "ME",
+                                 trial_type %in% c("C-NF", "C-NN") ~ "control")) %>%
+  group_by(sub_id, trial_type2) %>%
+  arrange(resp_start_time) %>%
+  mutate(trial_type_num = 1:n()) %>%
+  select(sub_id, trial_type2, trial_type_num, correct) %>%
+  spread(trial_type_num, correct) %>% 
+  left_join(demographics) 
+
+```
+
+## Age
+```{r}
+ get.frame <- function(x) { 
+   x <- as.data.frame(x) 
+   non.null.cols <- apply(x, 2, function(x) {!all(is.na(x))}) 
+   x <- x[, non.null.cols] 
+   return(x) 
+ } 
+ 
+cronbach_values_age <- final_sample_wide  %>%
+    group_by(age_group, trial_type2,  add=FALSE) %>% 
+    summarise(n = psy::cronbach(get.frame(cbind(`1`, `2`, `3`, `4`,
+                                                       `5`, `6`, `7`, `8`)))$sample.size,  
+             chronbach_alpha = psy::cronbach(get.frame(cbind(`1`, `2`, `3`, `4`,
+                                                       `5`, `6`, `7`, `8`)))$alpha) %>%
+  mutate(chronbach_alpha = round(chronbach_alpha, 2)) %>%
+  select(-n)
+
+kable(cronbach_values_age, col.names = c("Age Group", "Trial Type", "Alpha"))
+
+ggplot(cronbach_values_age, aes(x = age_group, y = chronbach_alpha, 
+                                color = trial_type2, group = trial_type2) ) +
+  geom_point() +
+  ggtitle("Reliability as a function of age") +
+  scale_color_discrete(name = "Trial Type") +
+  ylab("Chronbach's Alpha") +
+  xlab("Age Group (months)") +
+  ylim(.25, .7) +
+  geom_line() +
+  theme_classic(base_size = 16)
+```
+
+## Vocab
+```{r}
+cronbach_values_vocab <- final_sample_wide  %>%
+   group_by(vocab_group, trial_type2,  add=FALSE) %>% 
+    summarise(n = psy::cronbach(get.frame(cbind(`1`, `2`, `3`, `4`,
+                                                       `5`, `6`, `7`, `8`)))$sample.size,  
+             chronbach_alpha = psy::cronbach(get.frame(cbind(`1`, `2`, `3`, `4`,
+                                                       `5`, `6`, `7`, `8`)))$alpha)  
+
+kable(cronbach_values_vocab)
+
+ggplot(cronbach_values_vocab, aes(x = vocab_group, y = chronbach_alpha, color = trial_type2, group = trial_type2) ) +
+  geom_point() +
+  ggtitle("Reliability as a function of vocabulary size") +
+  scale_color_discrete(name = "Trial Type") +
+  ylab("Chronbach's Alpha") +
+  xlab("Vocabulary Size Quantile") +
+  ylim(.25, .7) +
+  geom_line() +
+  theme_classic(base_size = 16)
+```
+
+(higher vocab group = more correct)
+
+# Experiment 2
+
+## Age
+
+```{r}
+EXP2_DATA_PATH <- here("data/2_exp_data.csv")
+
+exp2 <- read_csv(EXP2_DATA_PATH)  %>%
+  mutate(age_group = floor(age_mo/12),
+         err_type = ifelse(is.na(correct), "no choice", err_type), 
+         err = ifelse(is.na(correct), 1, err))
+
+exclusions <- exp2 %>%
+  filter(err == 1) %>%
+  count(err_type) 
+
+e2_clean <- filter(exp2, !err)
+
+final_sample_wide2 <- e2_clean %>%
+  select(sub_num, age_group, trial_num, correct) %>%
+  spread(trial_num, correct)
+
+cronbach_values_age2 <- final_sample_wide2 %>%
+    group_by(age_group, add=FALSE) %>% 
+    summarise(n = psy::cronbach(get.frame(cbind(`1`, `2`, `3`, `4`)))$sample.size,  
+             chronbach_alpha = psy::cronbach(get.frame(cbind(`1`, `2`, `3`, `4`)))$alpha) %>%
+  mutate(chronbach_alpha = round(chronbach_alpha, 2)) %>%
+  select(-n) 
+
+
+kable(cronbach_values_age2)
+```

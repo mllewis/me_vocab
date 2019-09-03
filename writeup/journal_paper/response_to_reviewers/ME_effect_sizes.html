@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2019-08-08" />
+<meta name="date" content="2019-08-20" />
 
 <title>Checking ME effects sizes based on Reviewer 1 comments</title>
 
@@ -451,7 +451,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Checking ME effects sizes based on Reviewer 1 comments</h1>
-<h4 class="date">2019-08-08</h4>
+<h4 class="date">2019-08-20</h4>
 
 </div>
 
@@ -484,16 +484,15 @@ $(document).ready(function () {
 </ul>
 </div>
 
-<p>NOTE: I fixed several discripancies in the 0_metaanalysis_data.csv file, and added an additional exclusions column. Need to re-run d_calc on this (pasted into online version and recache? but note that online version has fewers es.)</p>
+<p>Note discrepancy with Metalab.</p>
 <p>Issues to deal with:</p>
 <ul>
-<li>Wall paper - include or not?</li>
-<li>Law &amp; Edwards include? I vote no</li>
+<li>Wall paper - include or not? (critical task is by touch only)</li>
+<li>Law &amp; Edwards include? I vote no (weird analysis)</li>
 <li>deal with repeated trials</li>
-<li>deal with eyetracking measure</li>
+<li>deal with eyetracking measure (see Kalashnikova et al. (2016 First Lang))</li>
 <li>do we want to impute for 1 trial conditions?</li>
-<li>do we want to impute for missing sds…I vote no, in large part because I didn’t code lots of cases where it was clear that no es could be calculated.</li>
-<li>lederberg data (emailed)</li>
+<li>do we want to impute for missing sds…I vote no, in large part because I didn’t code lots of cases where it was clear that no es could be calculated. (e.g. Vincent-Smith et al. (1974))</li>
 </ul>
 <pre class="r"><code>ME_DATA_PATH &lt;- here(&quot;data/0_metaanalysis_data.csv&quot;)
 ma_raw &lt;- read_csv(ME_DATA_PATH) %&gt;%
@@ -1126,7 +1125,7 @@ ma_c &lt;- ma_raw %&gt;%
 <blockquote>
 <p>“There is a second paper by Lederberg on the disambiguation effect (Lederberg &amp; Spencer, 2008 J Deaf Studies &amp; Deaf Educ) that should be included in the meta-analysis. Like the 2000 study it examined the disambiguation effect in deaf/hard of hearing children using the Novel-Novel paradigm. It involved a much larger and more diverse sample than the 2000 paper.”</p>
 </blockquote>
-<p>This paper unfortunately does not report raw mean and standard deviations of proportion novel object selections in any form in either the text or the figure. I’ve emailed the first author in the hopes of obtaining this information.</p>
+<p>Thank you for pointing me to this paper. I was able to email the author to get the raw data for this study.</p>
 </div>
 <div id="markman-wasow-hansen-2003" class="section level3">
 <h3>Markman, Wasow, &amp; Hansen (2003)</h3>

@@ -6,8 +6,7 @@ To assess the strength of the ME effect as well moderating factors, we conducted
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
 ma_raw <- read_csv(ME_DATA_PATH) %>%
-  select(c(1:3, 6, 9, 12, 14, 15, 18, 20, 22:24, 26,
-           29:30, 49, 51:53, 95:99, 100, 102:103)) %>%
+  select(1:4, 6:8, 10:16, 18,19,21, 27:29, 31:34, 48:50, 59) %>%
   mutate_if(is.character, as.factor)
 
 AVG_MONTH <- 30.43688
@@ -18,22 +17,24 @@ ma_c <- ma_raw %>%
          condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
                                  ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
                                         as.character(infant_type))))) %>%
-  filter(mean_age < 144)   #  (12 yo), excludes MR population
+  filter(mean_age < 144)  %>% #  (12 yo), excludes MR population
+  filter(d_calc < mean(.$d_calc) + (3*(sd(d_calc))), # exclude conditions 3 sd from mean
+         d_calc > mean(.$d_calc) - (3*(sd(d_calc))))
   # filter(!(study_ID %in% c("williams2009", "frank1999"))) # for checking that holds when exclude dissertations [it does]
 ```
 
 ## Methods
 
 ### Search strategy
-We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017).\footnote{Data and analysis code for this and subsequent studies are available in an online repository at: \url{https://github.com/mllewis/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that used more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age),\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.} (b) referents were objects or pictures (not facts or object parts), and (c) no incongruent cues (e.g. eye gaze at familiar object). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain qualitatively the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size. Papers included in the meta-analysis are marked with an asterick in the bibliography.
+We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017).\footnote{Data and analysis code for this and subsequent studies are available in an online repository at: \url{https://github.com/mllewis/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that used more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age),\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.} (b) referents were objects or pictures (not facts or object parts), (c) no incongruent cues (e.g. eye gaze at familiar object) and (d) children had visual access to the objects (versus exclusively touch). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain qualitatively the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size. Papers included in the meta-analysis are marked with an asterick in the bibliography.
 
 ### Coding
 For each paper, we coded separately each relevant condition with each age group entered as a separate condition. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: mean age of infants, estimates of mean vocabulary size of the sample population from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability;@fenson2007macarthur], and participant population type.\footnote{We also coded a number of other moderating variables not included here: method (eyetracking or pointing), number of alternatives in the forced choice task, and task modality (paper vs. object). See http://metalab.stanford.edu/ for these analyses.} We used production vocabulary as our estimate of vocabulary size since it was available for more studies in our sample. We coded participant population as one of three subpopulations that have been studied in the literature: (a) typically-developing monolingual children, (b) multilingual children (including both bilingual and trilingual children), and (c) non-typically developing children. Non-typically developing conditions included children with selective language impairment, language delays, hearing impairment, autism spectrum disorder, and down-syndrome.
 
-In order to estimate effect size for each condition, we also coded sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), standard deviations for novel object selections, *t*-statistic, and Cohen's *d*, where available. For several conditions, there was insufficient data reported in the main text to calculate an effect size (no means and standard deviations, *t*-statistics, or Cohen's *d*s), but we were able to estimate the means and standard deviations though measurement of plots (*N* = `r count(ma_c, data_source) %>% filter(data_source == "figure") %>% select(n) %>% as.numeric()`), imputation from other data within the paper (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper - some imputation") %>% select(n) %>% as.numeric()`), or through contacting authors (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper/author") %>% select(n) %>% as.numeric()`). Our final sample included `r length(ma_c$d_calc)` effect sizes (*N*~typical-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "typical") %>% select(n) %>% as.numeric()`; *N*~multilingual~ = `r count(ma_c, infant_type) %>% filter(infant_type == "multilingual") %>% select(n) %>% as.numeric()`;  *N*~non-typically-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "NT") %>% select(n) %>% as.numeric()`).
+In order to estimate effect size for each condition, we also coded sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), standard deviations for novel object selections, *t*-statistic, and Cohen's *d*, where available. For several conditions, there was insufficient data reported in the main text to calculate an effect size (no means and standard deviations, *t*-statistics, or Cohen's *d*s), but we were able to estimate the means and standard deviations though measurement of plots (*N* = `r count(ma_c, data_source) %>% filter(data_source == "figure") %>% select(n) %>% as.numeric()`), imputation from other data within the paper (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper - some calculations") %>% select(n) %>% as.numeric()`), or through contacting authors (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper/author") %>% select(n) %>% as.numeric()`). Our final sample included `r length(ma_c$d_calc)` effect sizes (*N*~typical-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "typical") %>% select(n) %>% as.numeric()`; *N*~multilingual~ = `r count(ma_c, infant_type) %>% filter(infant_type == "multilingual") %>% select(n) %>% as.numeric()`;  *N*~non-typically-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "NT") %>% select(n) %>% as.numeric()`).
 
 ### Statistical approach
-We calculated effect sizes (Cohen's *d*) from reported means and standard deviations where available, otherwise we relied on reported test-statistics (*t* or *d*). Effect sizes were computed by a script, `compute_es.R`, available in the Github repository. All analyses were conducted with the metafor package in R [@Rmetafor] using mixed-effect models with grouping by paper.\footnote{The exact model specification was as follows: \texttt{metafor::rma.mv(yi = effect\_size, V = effect\_size\_var, random =  $\sim$ 1 | paper)}.} In models with moderators, moderators variables were included as additive fixed effects. All estimate ranges are 95% confidence intervals.
+We calculated effect sizes (Cohen's *d*) from reported means and standard deviations where available, otherwise we relied on reported test-statistics (*t* or *d*). Effect sizes were computed by a script, `compute_es.R`, available in the Github repository. All analyses were conducted with the metafor package in R [@Rmetafor] using multi-level random effect model with grouping by paper and participant group (for non-independent conditions).\footnote{The exact model specification was as follows: \texttt{metafor::rma.mv(yi = effect\_size, V = effect\_size\_var, random =  $\sim$ 1 | participant_group_/_paper)}.} In models with moderators, moderators variables were included as additive fixed effects. All estimate ranges are 95% confidence intervals.
 
 ## Analyses
 
@@ -57,7 +58,7 @@ get_MA_params <- function(this_condition_type, age_moderated, df) {
   
   if (age_moderated){
       model <- rma.mv(d_calc ~ mean_age, V = d_var_calc,
-                      random = ~ 1 | short_cite,
+                      random = ~ 1 | same_infant/short_cite,
                       method = "REML",
                       data = this_data)
       
@@ -69,7 +70,7 @@ get_MA_params <- function(this_condition_type, age_moderated, df) {
 
   } else {
       model <- rma.mv(d_calc, V = d_var_calc,
-                      random = ~ 1 | short_cite,
+                      random = ~ 1 | same_infant/short_cite,
                       method = "REML",
                       data = this_data)
       
@@ -259,7 +260,7 @@ num_vocab_conditions <- ma_c %>%
 
 age_vocab_model <- rma.mv(d_calc ~ mean_age + mean_production_vocab, 
                           V = d_var_calc,
-                      random = ~ 1 | short_cite,
+                      random = ~ 1 | same_infant/short_cite,
                       method = "REML",
                        data = filter(ma_c, condition_type == 'TFN'))
 
@@ -297,7 +298,7 @@ For conditions with the Novel-Novel trial design, the overall effect size was `r
 
 ```{r age_and_TFN_vs_TNN}
 TFN_NNN_model <- rma.mv(d_calc ~ mean_age + ME_trial_type, V = d_var_calc,
-                      random = ~ 1 | short_cite,
+                      random = ~ 1 | same_infant/short_cite,
                       method = "REML",
                       data = filter(ma_c,infant_type == 'typical'))
 
@@ -321,7 +322,7 @@ We next turn to a different population of participants: Children who are simulta
 
 ```{r mono_vs_multi}
 mono_vs_multi_model <- rma.mv(d_calc ~ mean_age + infant_type, V = d_var_calc,
-                      random = ~ 1 | short_cite,
+                      random = ~ 1 | same_infant/short_cite,
                       method = "REML",
                       data = filter(ma_c, infant_type != 'NT'))
 
@@ -346,7 +347,7 @@ Overall, non-typically developing children succeeded on the ME task  (*d* = `r f
 
 ```{r typical_vs_non_typical}
 T_vs_NT_model <- rma.mv(d_calc ~ mean_age + infant_type, V = d_var_calc,
-                      random = ~ 1 | short_cite,
+                      random = ~ 1 | same_infant/short_cite,
                       method = "REML",
                       data = filter(ma_c, infant_type != 'multilingual'))
 
@@ -465,7 +466,6 @@ typical_only <- ma_plotting %>%
 ```
 
 ```{r longtidinal_vocab_studies_from_meta}
-
 ma_c <- ma_raw %>%
   filter(!is.na(d_calc)) %>%
   mutate(mean_age = mean_age_1/AVG_MONTH,

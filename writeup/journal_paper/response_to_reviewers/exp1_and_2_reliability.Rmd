@@ -117,9 +117,10 @@ cronbach_values_age <- final_sample_wide  %>%
              chronbach_alpha = psy::cronbach(get.frame(cbind(`1`, `2`, `3`, `4`,
                                                        `5`, `6`, `7`, `8`)))$alpha) %>%
   mutate(chronbach_alpha = round(chronbach_alpha, 2)) %>%
-  select(-n)
+  select(-n) %>%
+  spread(trial_type2, chronbach_alpha)
 
-kable(cronbach_values_age, col.names = c("Age Group", "Trial Type", "Alpha"))
+kable(cronbach_values_age, col.names = c("Age Group", "Control", "ME"))
 
 ggplot(cronbach_values_age, aes(x = age_group, y = chronbach_alpha, 
                                 color = trial_type2, group = trial_type2) ) +

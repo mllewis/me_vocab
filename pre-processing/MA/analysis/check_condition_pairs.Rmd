@@ -1,0 +1,217 @@
+---
+title: Typical-atypical condition pairs only
+subtitle: 
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    theme: cerulean
+    code_folding: hide
+---
+
+
+```{r setup, message = FALSE, echo = FALSE, warning = FALSE}
+library(tidyverse)
+library(knitr)
+library(metafor)
+library(here)
+
+opts_chunk$set(echo = T, message = F, warning = F, 
+               error = F, cache = F, tidy = F)
+
+theme_set(theme_minimal())
+```
+
+In response to reviewer 2. 
+```{r}
+ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
+ma_raw <- read_csv(ME_DATA_PATH) %>%
+  select(1:4, 6:8, 10:16, 18,19,21, 27:29, 31:34, 48:50, 59) %>%
+  mutate_if(is.character, as.factor)
+
+AVG_MONTH <- 30.43688
+ma_c <- ma_raw %>%
+  filter(!is.na(d_calc)) %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH,
+         year = as.numeric(str_sub(short_cite, -5, -2)),
+         condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
+                                 ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
+                                        as.character(infant_type))))) %>%
+  filter(mean_age < 144)   #  (12 yo), excludes MR population
+  # filter(!(study_ID %in% c("williams2009", "frank1999"))) # for checking that holds when exclude dissertations [it does]
+```
+
+```{r}
+atypical_studyid <- ma_c %>%
+  filter(infant_type != "typical") %>%
+  select(1,2,5,9, 10, 26, 27, 29) %>%
+  pull(study_ID)
+
+ma_c_paired <- ma_c %>%
+  filter(study_ID %in% atypical_studyid) %>%
+    select(1,2,5,8,9, 10,12, 13, 21,26, 27, 29, 31)  %>%
+  data.frame() %>%
+  arrange(study_ID)
+```
+
+
+```{r}
+# conditions missing pairs: byers2013; lederberg2008, mervis1995a
+get_MA_params <- function(this_condition_type, age_moderated, df) {
+  
+  if (this_condition_type == "grand"){
+    this_data <- df
+  } else {
+      this_data  <- filter(df, condition_type == this_condition_type)
+  }
+  
+  n = nrow(this_data)
+  
+  if (age_moderated){
+      model <- rma.mv(d_calc ~ mean_age, V = d_var_calc,
+                      random = ~ 1 | same_infant/short_cite,
+                      method = "REML",
+                      data = this_data)
+      
+      this_age_estimate <- model$b[2]
+      this_age_estimate.cil <- model$ci.lb[2]
+      this_age_estimate.cih <- model$ci.ub[2]
+      this_age_z <- model$zval[2]
+      this_age_p <- model$pval[2]
+
+  } else {
+      model <- rma.mv(d_calc, V = d_var_calc,
+                      random = ~ 1 | same_infant/short_cite,
+                      method = "REML",
+                      data = this_data)
+      
+      this_age_estimate <- NA
+      this_age_estimate.cil <- NA
+      this_age_estimate.cih <- NA
+      this_age_z <- NA
+      this_age_p <- NA
+    
+  }
+  
+  params <- data.frame(condition_type = this_condition_type,
+                       age_moderated = age_moderated,
+                       n = n,
+                       estimate = model$b[1],
+                       estimate.cil = model$ci.lb[1],
+                       estimate.cih = model$ci.ub[1],
+                       z = model$zval[1],
+                       p = model$pval[1],
+                       age_estimate = this_age_estimate,
+                       age_estimate.cil = this_age_estimate.cil, 
+                       age_estimate.cih = this_age_estimate.cih,
+                       age_z = this_age_z,
+                       age_p = this_age_p,
+                       Q = model$QE,
+                       Qp = model$QEp)
+}
+
+model_pairs <- expand.grid(condition_type = c("grand",
+as.character(unique(ma_c_paired$condition_type))), 
+                           age_moderated = c(TRUE, FALSE),
+                           stringsAsFactors = F )
+
+all_models <- map2_df(model_pairs$condition_type, 
+                      model_pairs$age_moderated, 
+                      get_MA_params, ma_c_paired) 
+
+# tidy variables for printing in ms
+mod_print <- all_models %>%
+             mutate(esimate_print = round(estimate, 2),
+                    CI_print = paste0(" [", 
+                                      round(estimate.cil, 2),
+                                     ", ",
+                                     round(estimate.cih, 2),
+                                     "]"),
+                   estimate_print_full = paste(esimate_print, CI_print),
+                   z_print = round(z, 2),
+                   p_print = round(p, 2),
+                   p_print = ifelse(p_print <.001, "<.001", paste0("= ", p_print)),
+                   age_estimate_print = round(age_estimate, 2),
+                   age_CI_print = paste0(" [", 
+                                      round(age_estimate.cil, 2),
+                                     ", ",
+                                     round(age_estimate.cih, 2),
+                                     "]"),
+                   age_estimate_print_full = paste(age_estimate_print, age_CI_print),
+
+                   age_z_print =  round(age_z, 2),
+                   age_p_print =  round(age_p, 2),
+                   age_p_print = ifelse(age_p_print <.001, "<.001", 
+                                        paste0("= ", age_p_print)),
+                   Q_print = round(Q, 2),
+                   Qp_print = round(Qp, 2),
+                   Qp_print = ifelse(Qp_print <.001, "<.001", paste0("= ", Qp_print)))
+
+
+forest_model_data <- mod_print %>%
+                          filter(!age_moderated) %>%
+                          rename(model_name = condition_type) %>%
+                          mutate(model_type = ifelse(model_name == "grand",
+                                 "grand", "sub"),
+                                 model_name = fct_relevel(model_name,
+                                                          "TFN", 
+                                                          "TNN", 
+                                                          "multilingual", 
+                                                          "NT", 
+                                                          "grand"),
+                                 model_name = fct_rev(model_name))
+
+ breaks <- seq(-.25, 2.5, .25)
+ labels <- as.character(breaks)
+ labels[!(breaks%%1==0)] <- ''
+ tick.sizes <- rep(.5, length(breaks))
+ tick.sizes[(breaks%%1==0)] <- 1
+ 
+p1 <- ggplot(forest_model_data, 
+             aes(x = model_name, 
+                 y = estimate, 
+                 color = model_type)) +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_point(aes(size = n)) +
+  geom_linerange(aes(ymin = estimate.cil, 
+                     ymax = estimate.cih)) +
+  geom_text(aes(label = estimate_print_full, x = model_name, y = 3.25), 
+            size = 4) +
+  coord_flip() 
+
+p1 <- p1 + scale_shape_manual(values = c(16, 15)) +
+  scale_color_manual(values = c( '#FF0000', "#000000")) +
+  scale_size_continuous(guide = FALSE) +
+  scale_y_continuous(breaks = breaks, 
+                     labels = labels,
+                     limits = c(-.25, 3.75),
+                     name = "Effect Size") +
+  scale_x_discrete(labels = c("NT" = "Non-Typically-Developing populations (FN/NN)", 
+                              "grand" = "Overall estimate",
+                              "TFN" = "Typically-Developing populations (FN trials)",
+                              "TNN" = "Typically-Developing populations (NN trials)",
+                              "multilingual" = "Multilingual populations (FN/NN)"),
+                   name = "") + 
+  ggtitle("Mixed-effect estimates of overall effect size") 
+
+p1 <- p1 + 
+  theme_bw() +
+  theme(axis.line.y = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.position = "none",
+        axis.ticks.x = element_line(size = tick.sizes),
+        axis.ticks.y = element_blank(),
+        axis.text.x = element_text(size = 11), 
+        axis.text.y = element_text(size = 11, 
+                                   colour = c('red', rep('black', 4)),
+                                   face = c("bold", rep("plain", 4))),
+        plot.title = element_text(size = 12, face = "bold"),
+        axis.title = element_text(size = 12))
+p1
+
+
+```

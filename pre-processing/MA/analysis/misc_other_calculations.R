@@ -63,3 +63,20 @@ lbrg2008 %>%
             n = n(),
             mean_prop_correct = mean(prop_correct),
             sd_prop_correct = sd(prop_correct))
+
+# Scofield 2007 SD calculation
+scofield2007_data <- c(rep(1,41), rep(0, 8))
+
+sd(scofield2007_data) %>%
+  round(2)
+
+# Horst 2008, Exp 1b
+horst2008_data1b <- c(rep(1,22), rep(0, 10))
+sd(horst2008_data1b) %>%
+  round(2)
+
+
+# Horst 2008, Exp 1c
+horst2008_data1c <- c(rep(1,12), rep(0, 8))
+sd(horst2008_data1c) %>%
+  round(2)

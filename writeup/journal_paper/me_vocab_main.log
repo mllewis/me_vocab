@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2016.5.22)  5 SEP 2019 16:36
+This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2016.5.22)  5 SEP 2019 18:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1096,10 +1096,7 @@ File: me_vocab_main_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type
  QTm)
 <use  "me_vocab_main_files/figure-latex/unnamed-chunk-8-1.pdf" >
 
-LaTeX Warning: Float too large for page by 16.38486pt on input line 266.
-
-
-Underfull \vbox (badness 5359) has occurred while \output is active []
+LaTeX Warning: Float too large for page by 64.37982pt on input line 266.
 
 [18] [19]
 File: figs/fendle_fig1.png Graphic file (type QTm)
@@ -1118,10 +1115,7 @@ accuracy $\OMS/lmsy/m/n/10 ^^X$ \EU1/lmtt/m/n/10 target.type $\OMS/lmsy/m/n/10
 [22]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (typ
 e QTm)
-<use  "me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf" >
-Underfull \vbox (badness 1082) has occurred while \output is active []
-
-[23]
+<use  "me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf" > [23]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (typ
 e QTm)
 <use  "me_vocab_main_files/figure-latex/unnamed-chunk-14-1.pdf" > [24]
@@ -1171,7 +1165,7 @@ Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1007.
 Here is how much of TeX's memory you used:
  27432 strings out of 493591
  483900 string characters out of 6143546
- 555381 words of memory out of 5000000
+ 555526 words of memory out of 5000000
  30472 multiletter control sequences out of 15000+600000
  60647 words of font info for 94 fonts, out of 8000000 for 9000
  1347 hyphenation exceptions out of 8191

@@ -1,5 +1,5 @@
 ---
-title: Participant nested models
+title: Typical-atypical condition pairs only
 subtitle: 
 date: "`r Sys.Date()`"
 output:
@@ -15,7 +15,6 @@ library(tidyverse)
 library(knitr)
 library(metafor)
 library(here)
-library(broom)
 
 opts_chunk$set(echo = T, message = F, warning = F, 
                error = F, cache = F, tidy = F)
@@ -23,6 +22,7 @@ opts_chunk$set(echo = T, message = F, warning = F,
 theme_set(theme_minimal())
 ```
 
+In response to reviewer 1. 
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
 ma_raw <- read_csv(ME_DATA_PATH) %>%
@@ -37,34 +37,19 @@ ma_c <- ma_raw %>%
          condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
                                  ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
                                         as.character(infant_type))))) %>%
-  filter(mean_age < 144)   
+  filter(mean_age < 144)   #  (12 yo), excludes MR population
+  # filter(!(study_ID %in% c("williams2009", "frank1999"))) # for checking that holds when exclude dissertations [it does]
 ```
 
-multilingual data
 ```{r}
-test_data <- filter(ma_c, infant_type == "multilingual")  %>%
-  select(2,8,9,10,11,12,13, 26, 27, 29)
-DT::datatable(test_data)
+overall_mean <- mean(ma_c$d_calc)
+overall_sd <- sd(ma_c$d_calc)
+
+overall_mean + (2*(overall_sd))
+overall_mean - (2*(overall_sd))
+
+summary(ma_c$d_calc)
+
+overall_mean %>%
+  filter(d_calc > 4.78)
 ```
-
-
-No grouping by infant
-```{r}
-model1 <- mono_vs_multi_model <- rma.mv(d_calc ~ mean_age + infant_type, V = d_var_calc,
-                      random = ~ 1 | short_cite,
-                      method = "REML",
-                      data = filter(ma_c, infant_type != 'NT'))
-
-summary(model1)
-```
-
-Grouping by infant
-```{r}
-
-model2 <- mono_vs_multi_model <- rma.mv(d_calc ~ mean_age + infant_type, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
-                      method = "REML",
-                      data = filter(ma_c, infant_type != 'NT'))
-summary(model2)
-```
-

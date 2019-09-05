@@ -6,7 +6,7 @@ To assess the strength of the ME effect as well moderating factors, we conducted
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
 ma_raw <- read_csv(ME_DATA_PATH) %>%
-  select(1:4, 6:8, 10:16, 18,19,21, 27:29, 31:34, 48:50, 59) %>%
+  select(1:4, 6:16, 18,19,21, 27:29, 31:34, 48:50, 59) %>%
   mutate_if(is.character, as.factor)
 
 AVG_MONTH <- 30.43688
@@ -344,7 +344,7 @@ ml_a_pval <- ifelse(round(mono_vs_multi_model$pval[2],2)  < .0001, "<.0001", pas
 ml_l_pval <- ifelse(round(mono_vs_multi_model$pval[3],2)  < .0001, "<.0001", paste0(" = ", round(mono_vs_multi_model$pval[3],2)))
 ```
 
-Children learning multiple languages reliably showed the ME effect (*d* = `r filter(mod_print, condition_type == "multilingual", !age_moderated)$estimate_print_full`). We next fit a model with both monolingual (typically-developing)  and multilingual participants, predicting effect size with language status (monolingual vs. multilingual), while controlling for age.  Both language status ($\beta$ = `r ml_lt_beta`, *Z* = `r ml_l_zval`,  *p* `r ml_l_pval`) and age ($\beta$ = `r ml_a_beta`, *Z* = `r ml_a_zval`,  *p* `r ml_a_pval`) were reliable predictors of effect size .
+Children learning multiple languages reliably showed the ME effect (*d* = `r filter(mod_print, condition_type == "multilingual", !age_moderated)$estimate_print_full`). We next fit a model with both monolingual (typically-developing)  and multilingual participants, predicting effect size with language status (monolingual vs. multilingual), while controlling for age.  Both language status ($\beta$ = `r ml_lt_beta`, *Z* = `r ml_l_zval`,  *p* `r ml_l_pval`) and age ($\beta$ = `r ml_a_beta`, *Z* = `r ml_a_zval`,  *p* `r ml_a_pval`) were reliable predictors of effect size: Being monolingual and older were each predictive of a larger effect size. 
 
 These data provide evidence that language-specific knowledge influences the magnitdue of the ME bias, consistent with the experimental work with multilinguals. 
 
@@ -375,11 +375,11 @@ This analysis suggests that non-typically developing children succeed in the ME 
 
 ## Discussion
 
-To summarize our meta-analytic findings, we find a robust ME effect in each of the three populations we examined, as well as  evidence that the magnitude of this effect increases across development. We also find that the effect is larger in the canonical Familiar-Novel paradigm compared to the Novel-Novel paradigm, but both designs show roughly the same developmental trajectory.
+To summarize our meta-analytic findings, we find a robust ME effect in each of the three populations we examined, as well as  evidence that the magnitude of this effect increases across development. We also identified several factors that moderated the effect. Specifically, we  we find that the ME effect is larger (1) for children with larger vocabularies, (2) in the canonical Familiar-Novel paradigm compared to the Novel-Novel paradigm, though both designs show roughly the same developmental trajectory, and (3) for monolinguals relative to monolinguals.
 
 Taken together, these analyses provide several theoretical constraints with respect to the mechanism underlying the ME effect. First, the strength of the bias increases across development, independent of the strength of the learners knowledge of the "familiar" word. This constraint comes from the fact that the bias strengthens across development in the Novel-Novel conditions, and from the fact that there is not a significant impairment to the effect in multilingual children (who presumably have less language experience with any particular language). Second, developmental change in the strength of the ME effect is observed for children across a variety of populations, suggesting that developmental change is a robust pattern and is related to the the mechanism underlying the ME effect for different populations. 
 
-```{r, fig.height = 7, fig.pos = '!t', fig.cap = "Developmental trajectory of ME effect as a function of four moderators tested in the meta-analysis.  For reference, the model fit for familiar-novel trials in typical populations is shown on each moderator plot (blue dash). Ranges correspond to 95% confidence intervals. Model fits shown here are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that the x-axis scale varies by facet. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = down syndrome; SLI = selective language impairement; DHH = deaf/heard-of-hearing."}
+```{r, fig.height = 7, fig.pos = '!t', fig.cap = "Developmental trajectory of ME effect as a function of four moderators tested in the meta-analysis.  For reference, the model fit for familiar-novel trials in typical populations is shown on each moderator plot (blue dash). Ranges correspond to 95% confidence intervals. Model fits shown here are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that two points are omitted from plotting from the typical populations to maximize similarity of the x-axis, but that x-axis scale differs for the non-typical populations facet. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = down syndrome; SLI = selective language impairement; DHH = deaf/heard-of-hearing."}
 
 ma_plotting <- ma_c %>%
   mutate(es_type = ifelse(infant_type2 != "typical",
@@ -410,7 +410,7 @@ ma_plotting <- ma_c %>%
                qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2),
          effects.cih = d_calc2 +
                qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2)) %>%
-        filter(mean_age < 75 | es_type == "Non-Typical Populations")
+         filter(mean_age < 75 | es_type == "Non-Typical Populations")
 
 NF_only <- ma_plotting %>%
   filter(infant_type2 == "typical",
@@ -466,12 +466,12 @@ ma_plotting %>%
     theme(legend.position = "bottom")
 
 # save typical only for ES size calculation for Exp 1
-typical_only <- ma_plotting %>%
-  filter(infant_type2 == "typical") %>%
+typical_only <- ma_c %>%
+  filter(infant_type == "typical") %>%
    rename(age_months = mean_age,
           trial_type = ME_trial_type) %>%
   select(d_calc, age_months, trial_type, mean_production_vocab)
-#write_csv(typical_only, "../../MA/data/typical_ES.csv")
+#write_csv(typical_only, here("data/0_metaanalysis_data_typical_only.csv"))
 ```
 
 ```{r longtidinal_vocab_studies_from_meta}
@@ -501,6 +501,7 @@ vocab_studies <- ma_c %>%
 vocab_studies_by_age <- ma_c %>%
   filter(infant_type == "typical")%>%
   filter(!is.na(mean_production_vocab) ) %>% 
+  mutate(mean_age = round(mean_age,0)) %>%
   distinct(study_ID, mean_age, expt_num) %>%
   count(study_ID, expt_num) %>%
   distinct(study_ID, .keep_all = T) %>%
@@ -512,8 +513,8 @@ vocab_studies_by_age <- ma_c %>%
 #5 williams2009             2
 ```
 
-There is also some evidence that language experience accounts for developmental change on the basis of the fact that we see a larger effect size in Familiar-Novel trials compared to Novel-Novel trials. Nevertheless, the meta-analytic approach is limited in its ability to measure the relationship between linguistic experience and developmental change since few studies in our sample measure vocabulary size (*N* = `r nrow(vocab_studies)`), and even fewer measure vocabulary size at multiple ages within the same study (*N* = `r nrow(vocab_studies_by_age)`; Horst, Scott, & Pollard, 2010a; Markman et al., 2003; Mather & Plunkett, 2009a; A.\ Williams, 2009). In the next section,  we use experimental methods to more directly examine the relationship between linguistic experience and the ME effect.
+There is also some evidence that language experience accounts for developmental change on the basis of the fact that we see that vocabulary size is a small but reliable moderator of effect size, a larger effect size in Familiar-Novel trials compared to Novel-Novel trials, and a larger effect size in monolinguals relative to multilinguals. Nevertheless, the meta-analytic approach is limited in its ability to measure the relationship between linguistic experience and developmental change since few studies in our sample measure vocabulary size (*N* = `r nrow(vocab_studies)`), and even fewer measure vocabulary size at multiple ages within the same study (*N* = `r nrow(vocab_studies_by_age)`; Horst, Scott, & Pollard, 2010a; Mather & Plunkett, 2009a; A.\ Williams, 2009). In the next section,  we use experimental methods to more directly examine the relationship between linguistic experience and the ME effect.
 
 ```{r, eval = F}
-#  [*N* = `r nrow(vocab_studies_by_age)`, @mather2009learning; @markman2003; @williams2009; @horst2010role]
+#  [*N* = `r nrow(vocab_studies_by_age)`, @mather2009learning;  @williams2009; @horst2010role]
 ```

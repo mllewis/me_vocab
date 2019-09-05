@@ -65,12 +65,14 @@
 22. okra
 23. pipette
 24. sieve
+
  \pagebreak
+ 
 ### Appendix B: Task reliability 
 
 Reliability coefficients (Cronbach’s $\alpha$;  Santos, 1999) for accuracy in the ME (8 trials) and control trials (8 trials) in Experiment 1.  Age groups are given in months.
 
-|Age Group | $\alpha$<sub>control <sub>|  $\alpha$<sub>ME <sub>|
+|Age Group | $\alpha$~control~ |  $\alpha$~ME~|
 |:---------|-------:|----:|
 |[24,30]   |    0.40| 0.54|
 |(30,36]   |    0.64| 0.57|

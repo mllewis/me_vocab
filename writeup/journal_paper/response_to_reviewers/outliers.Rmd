@@ -1,8 +1,29 @@
+---
+title: ME MA outliers
+subtitle: 
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    theme: cerulean
+    code_folding: hide
+---
 
-# Meta-analysis
 
-To assess the strength of the ME effect as well moderating factors, we conducted a meta-analysis on the existing body of literature  investigating the ME effect.
+```{r setup, message = FALSE, echo = FALSE, warning = FALSE}
+library(tidyverse)
+library(knitr)
+library(metafor)
+library(here)
+library(broom)
 
+opts_chunk$set(echo = T, message = F, warning = F, 
+               error = F, cache = F, tidy = F)
+
+theme_set(theme_minimal())
+```
+
+In response to reviewer 1. 
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
 ma_raw <- read_csv(ME_DATA_PATH) %>%
@@ -17,28 +38,78 @@ ma_c <- ma_raw %>%
          condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
                                  ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
                                         as.character(infant_type))))) %>%
-  filter(mean_age < 144)  #  (12 yo), excludes MR population
+  filter(mean_age < 144)   #  (12 yo), excludes MR population
   # filter(!(study_ID %in% c("williams2009", "frank1999"))) # for checking that holds when exclude dissertations [it does]
-
-# see outliers.Rmd for analysis excluding outliers
 ```
 
-## Methods
+# Outliers
+```{r}
+overall_mean <- mean(ma_c$d_calc)
+overall_sd <- sd(ma_c$d_calc)
 
-### Search strategy
-We conducted a forward search based on citations of Markman and Wachtel (1988) in Google Scholar, and by using the keyword combination 'mutual exclusivity' in Google Scholar (September 2013; November 2017).\footnote{Data and analysis code for this and subsequent studies are available in an online repository at: \url{https://github.com/mllewis/me_vocab}} Additional papers were identified through citations and by consulting experts in the field. We then narrowed our sample to the subset of studies that used one of two different paradigms: (a) an experimenter says a novel word in the context of a familiar object and a novel object and the child guesses the intended referent (the canonical paradigm; "Familiar-Novel"), or (b) experimenter first provides the child with an unambiguous mapping of a novel label to a novel object, and then introduces a second novel object and asks the child to identify the referent of a second novel label ("Novel-Novel"). For Familiar-Novel conditions, we included conditions that used more than one familiar object (e.g. Familiar-Familiar-Novel). From these conditions, we restricted our sample to only those that satisfied the following criteria: (a) participants were children (less than 12 years of age),\footnote{This cutoff was arbitrary but allowed us to include conditions from older children from non-typically-developing populations.} (b) referents were objects or pictures (not facts or object parts), (c) no incongruent cues (e.g. eye gaze at familiar object) and (d) children had visual access to the objects (versus exclusively touch). All papers used either forced-choice pointing or eye-tracking methodology. All papers were peer-reviewed with the exception of two dissertations (Williams, 2009; Frank, I., 1999), but all  main results reported below remain qualitatively the same when these papers are excluded. In total, we identified `r length(unique(ma_c$study_ID))` papers that satisfied our selection criteria and had sufficient information to calculate an effect size. Papers included in the meta-analysis are marked with an asterick in the bibliography.
+plus2 <- overall_mean + (2*(overall_sd))
+minus2 <- overall_mean - (2*(overall_sd))
 
-### Coding
-For each paper, we coded separately each relevant condition with each age group entered as a separate condition. For each condition, we coded the paper metadata (citation) as well as several potential moderator variables: mean age of infants, estimates of mean vocabulary size of the sample population from the Words and Gestures form of the MacArthur-Bates Communicative Development Inventory when available [MCDI; @fenson1994variability;@fenson2007macarthur], and participant population type.\footnote{We also coded a number of other moderating variables not included here: method (eyetracking or pointing), number of alternatives in the forced choice task, and task modality (paper vs. object). See http://metalab.stanford.edu/ for these analyses.} We used production vocabulary as our estimate of vocabulary size since it was available for more studies in our sample. We coded participant population as one of three subpopulations that have been studied in the literature: (a) typically-developing monolingual children, (b) multilingual children (including both bilingual and trilingual children), and (c) non-typically developing children. Non-typically developing conditions included children with selective language impairment, language delays, hearing impairment, autism spectrum disorder, and down-syndrome.
+plus3 <- overall_mean + (3*(overall_sd))
+minus3 <- overall_mean - (3*(overall_sd))
 
-In order to estimate effect size for each condition, we also coded sample size, proportion novel-object selections, baseline (e.g., .5 in a 2-AFC paradigm), standard deviations for novel object selections, *t*-statistic, and Cohen's *d*, where available. For several conditions, there was insufficient data reported in the main text to calculate an effect size (no means and standard deviations, *t*-statistics, or Cohen's *d*s), but we were able to estimate the means and standard deviations though measurement of plots (*N* = `r count(ma_c, data_source) %>% filter(data_source == "figure") %>% select(n) %>% as.numeric()`), imputation from other data within the paper (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper - some calculations") %>% select(n) %>% as.numeric()`), or through contacting authors (*N* = `r count(ma_c, data_source) %>% filter(data_source == "paper/author") %>% select(n) %>% as.numeric()`). Our final sample included `r length(ma_c$d_calc)` effect sizes (*N*~typical-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "typical") %>% select(n) %>% as.numeric()`; *N*~multilingual~ = `r count(ma_c, infant_type) %>% filter(infant_type == "multilingual") %>% select(n) %>% as.numeric()`;  *N*~non-typically-developing~ = `r count(ma_c, infant_type) %>% filter(infant_type == "NT") %>% select(n) %>% as.numeric()`).
+twosd_outliers <- ma_c %>%
+  filter(d_calc > plus2 | d_calc < minus2) %>%
+  data.frame()
 
-### Statistical approach
-We calculated effect sizes (Cohen's *d*) from reported means and standard deviations where available, otherwise we relied on reported test-statistics (*t* or *d*). Effect sizes were computed by a script, `compute_es.R`, available in the Github repository. All analyses were conducted with the metafor package in R [@Rmetafor] using multi-level random effect model with grouping by paper and participant group (for conditions with the same or overlapping participant samples).\footnote{The exact model specification was as follows: \texttt{metafor::rma.mv(y = effect\_size, V = effect\_size\_var, random =  $\sim$ 1 | participant\_group\textbackslash paper)}.} In models with moderators, moderators variables were included as additive fixed effects. All estimate ranges are 95% confidence intervals.
+threesd_outliers <- ma_c %>%
+  filter(d_calc > plus3 | d_calc < minus3) %>%
+  data.frame()
 
-## Results
+```
+
+There are 8 conditions that are 2sds beyond the mean; There are 3 conditions that are 3sds beyond the mean: 
+
+```{r}
+kable(threesd_outliers)
+```
 
 
+# Testing for heteroskedasticity{.tabset}
+
+There's heteroskedasticity if we include the outliers; it goes away if you exclude them. 
+
+## Including outliers:
+```{r}
+model <- lm(d_calc ~ mean_age, data = ma_c, weights = n_1)
+olsrr::ols_test_breusch_pagan(model)
+olsrr::ols_test_f(model)
+```
+
+## Excluding outliers (3sd beyond mean):
+```{r}
+model <- lm(d_calc ~ mean_age, data = ma_c  %>% filter(d_calc > plus3 | d_calc < minus3), weights = n_1)
+olsrr::ols_test_breusch_pagan(model)
+olsrr::ols_test_f(model)
+```
+
+
+# Main analysis excluding outliers
+```{r}
+ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
+ma_raw <- read_csv(ME_DATA_PATH) %>%
+  select(1:4, 6:8, 10:16, 18,19,21, 27:29, 31:34, 48:50, 59) %>%
+  mutate_if(is.character, as.factor)
+
+AVG_MONTH <- 30.43688
+ma_c <- ma_raw %>%
+  filter(!is.na(d_calc)) %>%
+  mutate(mean_age = mean_age_1/AVG_MONTH,
+         year = as.numeric(str_sub(short_cite, -5, -2)),
+         condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
+                                 ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
+                                        as.character(infant_type))))) %>%
+  filter(mean_age < 144)  %>% #  (12 yo), excludes MR population
+  filter(d_calc < mean(.$d_calc) + (3*(sd(d_calc))), # exclude conditions 3 sd from mean
+         d_calc > mean(.$d_calc) - (3*(sd(d_calc))))
+  # filter(!(study_ID %in% c("williams2009", "frank1999"))) # for checking that holds when exclude dissertations [it does]
+```
+      
 ```{r get_MA_models}
 get_MA_params <- function(this_condition_type, age_moderated, df) {
   
@@ -130,15 +201,6 @@ mod_print <- all_models %>%
                    Qp_print = round(Qp, 2),
                    Qp_print = ifelse(Qp_print <.001, "<.001", paste0("= ", Qp_print)))
 ```
-
-
-In a model with all conditions in our sample, we estimated the overall ME effect size to be `r filter(mod_print, condition_type == "grand", !age_moderated)$estimate_print`, and reliably greater than zero (*p* `r filter(mod_print, condition_type == "grand", !age_moderated)$p_print`; Figure 1).\footnote{Three conditions were more than three standard deviations beyond the overall mean effect size (two typically developing FN conditions and one non-typically developing condition). These outliers contributed to heteroskedasticity in our sample (Breusch Pagan test: $\chi^2$(1)= 11.95, {\it p} < .001). With these  outliers excluded (Lipsey \& Wilson, 2001), the heteroskedasticity was reduced ($\chi^2$(1)= .13, {\it p} = .72) and the overall effect size (1.22 [1.01, 1.43]) was slightly smaller, but qualitatively the same. Given that we have no theoretical reason to exclude these conditions, we have included all conditions in the analyses presented here.}
-
-We next conducted a separate meta-analysis for four theoretically-relevant conditions: Familiar-Novel trials with typically developing participants, Novel-Novel trials with typically developing participants, conditions with multilingual participants, and conditions with non-typically developing participants. 
-
-
-### Typically-Developing Population: Familiar-Novel Trials
-We first examined effect sizes of ME for typically-developing children in the canonical familiar-novel paradigm. This is the central data point that theories of ME must explain.
 
 ```{r, forest_prep}
 forest_model_data <- mod_print %>%
@@ -246,8 +308,8 @@ print_age_table_data <- print_age_table_data[c(1,2,7,8,9,10,3,4,5,6),]
 colnames(print_age_table_data) <- c("Model", "n", "term", "estimate [CI]", "Z", "p")
 ```
 
-```{r, results = "asis"}
-apa_table(print_age_table_data, caption = "Meta-analytic model parameters for model including age as a fixed effect. The first model (top) estimates effect sizes for all studies in our sample. The four subsequent models present separate models parameters for four separate conditions. Ranges are 95 percent confidence intervals.", small = T, note = "n = sample size (number of studies); FN = Familiar-Novel; NN = Novel-Novel.")
+```{r}
+kable(print_age_table_data, caption = "Meta-analytic model parameters for model including age as a fixed effect. The first model (top) estimates effect sizes for all studies in our sample. The four subsequent models present separate models parameters for four separate conditions. Ranges are 95 percent confidence intervals.", small = T, note = "n = sample size (number of studies); FN = Familiar-Novel; NN = Novel-Novel.")
 ```
 
 
@@ -367,147 +429,3 @@ We also asked whether the effect size for non-typically developing children diff
 
 This analysis suggests that non-typically developing children succeed in the ME paradigm just as typically developing children do, albeit at lower rates, and show the same broad developmental trajectory. Theoretical accounts of ME will need to account for how non-typically developing children are able to develop the ability to make the ME inference,  despite a range of different cognitive impairments. 
 
-## Discussion
-
-To summarize our meta-analytic findings, we find a robust ME effect in each of the three populations we examined, as well as  evidence that the magnitude of this effect increases across development. We also find that the effect is larger in the canonical Familiar-Novel paradigm compared to the Novel-Novel paradigm, but both designs show roughly the same developmental trajectory.
-
-Taken together, these analyses provide several theoretical constraints with respect to the mechanism underlying the ME effect. First, the strength of the bias increases across development, independent of the strength of the learners knowledge of the "familiar" word. This constraint comes from the fact that the bias strengthens across development in the Novel-Novel conditions, and from the fact that there is not a significant impairment to the effect in multilingual children (who presumably have less language experience with any particular language). Second, developmental change in the strength of the ME effect is observed for children across a variety of populations, suggesting that developmental change is a robust pattern and is related to the the mechanism underlying the ME effect for different populations. 
-
-```{r, fig.height = 7, fig.pos = '!t', fig.cap = "Developmental trajectory of ME effect as a function of four moderators tested in the meta-analysis.  For reference, the model fit for familiar-novel trials in typical populations is shown on each moderator plot (blue dash). Ranges correspond to 95% confidence intervals. Model fits shown here are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that the x-axis scale varies by facet. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = down syndrome; SLI = selective language impairement; DHH = deaf/heard-of-hearing."}
-
-ma_plotting <- ma_c %>%
-  mutate(es_type = ifelse(infant_type2 != "typical",
-                          "Non-Typical Populations",
-                          ifelse(ME_trial_type == "NN", 
-                                 "Novel-Novel", "Familiar-Novel")),
-         es_type = ifelse(es_type == "Non-Typical Populations" &  
-                            infant_type2 %in% c("bilingual", "trilingual"), "Multi-Lingual", 
-                          ifelse(es_type == "Non-Typical Populations", "Non-Typical Populations",
-                                 es_type)),
-        es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"),
-
-         infant_type2_label = ifelse(infant_type2 == "typical",
-                                     "", as.character(infant_type2)),
-         infant_type2_label = fct_recode(infant_type2_label, 
-                                         LT = "late_talkers", 
-                                         DHH = "deaf/hard-of-hearing", 
-                                         B = "bilingual", 
-                                         `T` = "trilingual",
-                                         MR = "youth with mental retardation"),
-         d_var_calc2 = ifelse(es_type == "Non-Typical Populations", 
-                                d_var_calc, 0),
-         d_calc2 = ifelse(es_type == "Non-Typical Populations", 
-                                d_calc, 0),
-         d_var_calc2 = d_var_calc,
-         d_calc2 = d_calc,
-         effects.cil = d_calc2 -
-               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2),
-         effects.cih = d_calc2 +
-               qnorm(.05 / 2, lower.tail = FALSE) * sqrt(d_var_calc2)) %>%
-        filter(mean_age < 75 | es_type == "Non-Typical Populations")
-
-NF_only <- ma_plotting %>%
-  filter(infant_type2 == "typical",
-         ME_trial_type == "FN") %>%
-  select(d_calc, mean_age)
-
-all_FN <- mutate(NF_only, 
-                 es_type = "Familiar-Novel", 
-                 line_group = 1) %>%
-          bind_rows(mutate(NF_only, 
-                           es_type = "Novel-Novel",
-                           line_group = 2)) %>%
-          bind_rows(mutate(NF_only, 
-                           es_type = "Non-Typical Populations",
-                           line_group = 2)) %>%
-          bind_rows(mutate(NF_only, 
-                           es_type = "Multi-Lingual",
-                           line_group = 2)) %>%
-          mutate(es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel"))
-
-NN_NT_only <- ma_plotting %>%
-  mutate(d_calc = ifelse(infant_type2 == "typical" & 
-                            ME_trial_type  == "FN", NA, d_calc),
-         mean_age = ifelse(infant_type2 == "typical" & 
-                            ME_trial_type  == "FN", NA, mean_age),
-         es_type = fct_relevel(es_type, "Familiar-Novel", "Novel-Novel")) %>%
-  select(study_ID, d_calc, mean_age, infant_type2, ME_trial_type, es_type) 
-
-ma_plotting %>%
-  ggplot(aes(x = mean_age, y = d_calc)) +
-    facet_wrap( ~ es_type, scale = "free_x", 2) +
-    geom_hline(aes(yintercept = 0)) +
-    geom_linerange(aes(ymin = effects.cil, ymax = effects.cih), 
-                   alpha = .5, size = .3) +
-    geom_point(aes(size = n_1, shape = ME_trial_type), alpha = .5) +
-    geom_smooth(aes(linetype = as.factor(line_group)), 
-                method = "lm", formula = y ~ log(x), color = "#268bd2",
-                data = all_FN, se = FALSE, size = 1.1) +
-    geom_smooth(aes(y = d_calc, x = mean_age, color = es_type), 
-                method = "lm", formula = y ~ log(x), 
-                data = NN_NT_only, se = FALSE, size = 1.1) +
-    scale_color_manual(values= c("#b58900", "#d33682", "#6c71c4"), guide = FALSE) +
-    ggrepel::geom_text_repel(aes(label = infant_type2_label), box.padding = .5) +
-    scale_shape_discrete(name = "Trial Type",
-                         labels = c("Familiar-Novel", "Novel-Novel")) +
-    scale_size_continuous(name="Sample size") +
-    guides(linetype = FALSE,
-           shape = guide_legend(override.aes = list(size = 4))) +
-    xlab("Mean age (months)") +
-    ylab("Effect size (d)") +
-    ggtitle("Mutual Exclusivity across Development from Meta-Analytic Data") +
-    theme_classic()  +
-    theme(legend.position = "bottom")
-
-# save typical only for ES size calculation for Exp 1
-typical_only <- ma_plotting %>%
-  filter(infant_type2 == "typical") %>%
-   rename(age_months = mean_age,
-          trial_type = ME_trial_type) %>%
-  select(d_calc, age_months, trial_type, mean_production_vocab)
-#write_csv(typical_only, "../../MA/data/typical_ES.csv")
-```
-
-```{r longtidinal_vocab_studies_from_meta}
-ma_c <- ma_raw %>%
-  filter(!is.na(d_calc)) %>%
-  mutate(mean_age = mean_age_1/AVG_MONTH,
-         year = as.numeric(str_sub(short_cite, -5, -2)),
-         condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
-                                 ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
-                                        as.character(infant_type))))) %>%
-  filter(mean_age < 150) 
-
-vocab_studies <- ma_c %>%
-  filter(infant_type == "typical")%>%
-  filter(!is.na(mean_production_vocab) ) %>% 
-  count(study_ID)  
-
-#1 bion2013         1
-#2 byers2009        1
-#3 graham1998       1
-#4 horst2008        3
-#5 horst2010        3
-#6 markman2003      8
-#7 mather2009       4
-#8 williams2009     2
-
-vocab_studies_by_age <- ma_c %>%
-  filter(infant_type == "typical")%>%
-  filter(!is.na(mean_production_vocab) ) %>% 
-  distinct(study_ID, mean_age, expt_num) %>%
-  count(study_ID, expt_num) %>%
-  distinct(study_ID, .keep_all = T) %>%
-  filter(n > 1)
-
-#1 horst2010                3
-#2 markman2003              2
-#4 mather2009               2
-#5 williams2009             2
-```
-
-There is also some evidence that language experience accounts for developmental change on the basis of the fact that we see a larger effect size in Familiar-Novel trials compared to Novel-Novel trials. Nevertheless, the meta-analytic approach is limited in its ability to measure the relationship between linguistic experience and developmental change since few studies in our sample measure vocabulary size (*N* = `r nrow(vocab_studies)`), and even fewer measure vocabulary size at multiple ages within the same study (*N* = `r nrow(vocab_studies_by_age)`; Horst, Scott, & Pollard, 2010a; Markman et al., 2003; Mather & Plunkett, 2009a; A.\ Williams, 2009). In the next section,  we use experimental methods to more directly examine the relationship between linguistic experience and the ME effect.
-
-```{r, eval = F}
-#  [*N* = `r nrow(vocab_studies_by_age)`, @mather2009learning; @markman2003; @williams2009; @horst2010role]
-```

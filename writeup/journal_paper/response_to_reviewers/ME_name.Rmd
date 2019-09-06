@@ -50,6 +50,7 @@ ME_NAMES_PATH <- here("writeup/journal_paper/response_to_reviewers/ME_names.csv"
 #  distinct(long_cite) %>%
 #  write_csv(ME_NAMES_PATH)
 read_csv(ME_NAMES_PATH) %>%
+  filter(include != "x" | is.na(include)) %>%
   count(name) %>%
-  filter(name == "disambiguation"|name ==  "me")
+  filter(name == "disambiguation"| name ==  "me")
 ```

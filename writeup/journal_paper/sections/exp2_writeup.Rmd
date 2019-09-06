@@ -47,11 +47,11 @@ We planned a total sample of 108 children, 12 per between-subjects labeling cond
 
 ### Stimuli
 
-The referent objects were the set of 8 novel objects used in @de2011mutual, consisting of unusual household items (e.g., a yellow plastic drain catcher) or other small, lab-constructed stimuli (e.g., a plastic lid glued to a popsicle stick). All items were distinct in color and shape. The novel words were 8 single syllable  labels (e.g., "dax," "zot," and "gup").
+The referent objects were the set of 8 novel objects used in @de_Marchena_2011, consisting of unusual household items (e.g., a yellow plastic drain catcher) or other small, lab-constructed stimuli (e.g., a plastic lid glued to a popsicle stick). All items were distinct in color and shape. The novel words were 8 single syllable  labels (e.g., "dax," "zot," and "gup").
 
 ### Design and Procedure
 
-Each child completed four trials. Each trial consisted of a training and a test phase in a "novel-novel" ME task [@de2011mutual]. In the training phase, the experimenter presented the child with a novel object, and explicitly labeled the object with a novel label 1, 2, or 3 times ("Look at the *dax*"), and contrasted it with a second novel object ("And this one is cool too") to ensure equal familiarity. In the test phase, the child was asked to point to the object referred to by a second novel label ("Can you show me the *zot*?"). Number of labels used in the training phase was manipulated between subjects. Object presentation side, object, and word were counterbalanced across children. 
+Each child completed four trials. Each trial consisted of a training and a test phase in a "novel-novel" ME task [@de_Marchena_2011]. In the training phase, the experimenter presented the child with a novel object, and explicitly labeled the object with a novel label 1, 2, or 3 times ("Look at the *dax*"), and contrasted it with a second novel object ("And this one is cool too") to ensure equal familiarity. In the test phase, the child was asked to point to the object referred to by a second novel label ("Can you show me the *zot*?"). Number of labels used in the training phase was manipulated between subjects. Object presentation side, object, and word were counterbalanced across children. 
 
 ### Data analysis
 

@@ -1,5 +1,5 @@
 ---
-title: Checking ME effects sizes based on Reviewer 1 comments
+title: Reviewer 1 comments by MA effect size
 subtitle: 
 date: "`r Sys.Date()`"
 output:
@@ -22,46 +22,30 @@ opts_chunk$set(echo = T, message = F, warning = F,
                error = F, cache = F, tidy = F)
 ```
 
-```{r, include = F}
-#NOTE: I fixed several discripancies in the 0_metaanalysis_data.csv file, and added an additional exclusions column. Need to re-run d_calc on this (pasted into online version and recache? but note that online version has fewers es.)
-```
-
-Note discrepancy with Metalab.
-
-Issues to deal with:
-
-* Wall paper - include or not? (critical task is by touch only)
-* Law & Edwards  include? I vote no (weird analysis)
-* deal with repeated trials
-* deal with eyetracking measure (see Kalashnikova et al. (2016 First Lang))
-* do we want to impute for 1 trial conditions?
-* do we want to impute for missing sds...I vote no, in large part because I didn't code lots of cases where it was clear that no es could be calculated. (e.g. Vincent-Smith et al. (1974))
 
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
+
 ma_raw <- read_csv(ME_DATA_PATH) %>%
-  select(c(1:3, 6, 9, 12, 14, 15:16, 18, 20, 22:24, 26,
-           29:30, 49, 51:53, 95:99, 100, 102:103)) %>%
+  select(1:4, 6:18,19,21, 27:29, 31:34, 48:50, 59) %>%
   mutate_if(is.character, as.factor)
 
 AVG_MONTH <- 30.43688
 ma_c <- ma_raw %>%
-  #filter(!is.na(d_calc)) %>%
+  filter(!is.na(d_calc)) %>%
   mutate(mean_age = mean_age_1/AVG_MONTH,
          year = as.numeric(str_sub(short_cite, -5, -2)),
          condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
                                  ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
                                         as.character(infant_type))))) %>%
-  filter(mean_age < 144)    %>%
-  arrange(study_ID, expt_num) %>%
-  mutate(d_calc = NA)
+  filter(mean_age < 144) 
 ```
 
 ### Bedford et al. (2013)
 
 > "Bedford et al. (2013) - I think the SEs reported in the paper, rather than SDs, were used to calculate the d’s in metalab.  So instead of d = 4 and 3, it should be d = .7 and .64, respectively"
 
-We agree on this (wrong in Metalab).
+Thank you, we agree on this. There were a few instances where errors had been corrected in the paper data, but not updated in Metalab, and this was one of them. We apologize for this confusion.
 
 ```{r}
 ma_c %>%
@@ -73,14 +57,17 @@ ma_c %>%
 ### Beverly and Estis (2003)
 > "Beverly & Estis (2003) – The Ms and SDs reported in the paper itself do not jive with those that can be computed from the plots of the actual data, which are also in the paper.  Instead of d = 2.58, 4.5, and 4.88, I got d = 1.34, 4.94, and 2.25, respectively."
 
-I'm not sure where the discrepancy is. I think my calcuations are correct. 
+Wer're not sure of the source of the discrepancy here. The effect sizes are calculated from the ata in Table 2 (reproduced below), and appear to be correct.
 
 ```{r, fig.height = 2}
 ma_c %>%
   filter(study_ID == "beverly2003") %>%
   select(study_ID, short_cite, infant_type, x_1, x_2, SD_1, t, d_calc) %>%
   kable()
+```
 
+Table from Beverly & Estis (2003):
+```{r}
 include_graphics('paper_pics/beverly2003.png', dpi = NA)
 ```
 
@@ -88,7 +75,7 @@ include_graphics('paper_pics/beverly2003.png', dpi = NA)
 ### Davidson et al. (1997) 
 > "The effect sizes for the tests of the bilingual children were included in the meta-data set, but those for the tests of monolingual children were excluded. (Davidson et al. did not report SDs for any of the groups in their paper. I assume they supplied the SDs for the bilingual children upon request.)"
 
-The effect sizes for the bilingual group were calculated by estimates the SD based on the t-test reported in the paper for the 3-4 yo Greek-English bilingual group. The same estimate of SD was used for all the bilingual groups. We did not include the monolinguals here because we did not have an estimate of the SD for any of the monolingual groups. 
+The effect sizes for the bilingual group were calculated by estimates the SD based on the t-test reported in the paper for the 3-4 yo Greek-English bilingual group. The same estimate of SD was used for all the bilingual groups. We did not include the monolinguals here previously because we did not have an estimate of the SD for any of the monolingual groups. We have now imputed SDs for all conditions where an estimate was available for another condition in the paper, and so the monolinguals are now included in the dataset.
 
 ```{r}
 ma_c %>%
@@ -113,7 +100,7 @@ ma_c %>%
 
 > "Three effect sizes are listed in the meta-data, but there were only two tests of the disambiguation effect in the paper. These were conducted in Exps. 1A and 1B.  It looks like one of the effect sizes in meta-analysis is for the condition in Exp. 2 in which three novel objects were presented and the experimenter gazed at one of them while asking for the referent of a novel label. This is not a test of the disambiguation effect.""
 
-We included two conditions from Experiment 1A ("no cues/gaze" and "consistent").
+We included two conditions from Experiment 1A ("no cues/gaze" and "consistent"). Experiment 2 data was not included.
 
 ```{r}
 ma_c %>%
@@ -126,9 +113,7 @@ ma_c %>%
 
 > "The effect sizes used from this study were based on the Ms and SDs when data from the High Familiarity condition were averaged with those from the Low Familiarity condition.  However, many of the trials in the Low Familiarity condition involved familiar objects that the children were unable to produce a label for. Perhaps it would be better to just use the Ms and SDs from the High Familiarity cond. For 2s: M= .791 (.393) [d= .74]; 3s: M= .840 (.572) [d=.594]; 4s: M = .98 (.01) [d = astronomical].  (4s’ effect size here has the ceiling effect problem I described earlier.]"
 
-Thank you, this is a reasonable suggestion, however, in the interest of not introducing selection bias into the analysis, we've opted to report the average effect reported in the paper, as we've reported elsewhere. 
-
-[it's not clear what's being talked about here.]
+Thank you, this is a reasonable suggestion. However, as elsewhere, we've opted to report the data in a way that reflects the analytical decisions of the original researchers in the interest of not introducing selection bias into the analysis.
 
 ```{r}
 ma_c %>%
@@ -142,14 +127,14 @@ ma_c %>%
 
 >"An effect size could not be calculated for two conditions in which the test of the disambiguation effect had only one trial. Would it be kosher to consider the proportion who chose correctly the M correct and then impute an SD from other studies that obtained a similar M correct in the same paradigm?  For example, in one condition, .69 answered correctly in a three-choice procedure. There are a good number of studies in the meta-data that used a three-choice procedure, got a mean close to ..69, and report an SD.  Use the average SD in these studies?  If so, other one-trial tests of the disambiguation effect could be added to the meta-analysis (e.g., Au & Glusman, 1990)."
 
-This seems reasonable, and has especial merit bcause these trials have productive vocabulary of participants included. I've added these two conditions. We did not include Au and Glusman (1990) because the procedure was more complicated than the basic ME procedure (i.e.  multiple experimenters, lag between N1 and N2).
+Thank you for these conditions - We have added these two conditions. We did not include Au and Glusman (1990) because the procedure was more complicated than the basic ME procedure (i.e.  multiple experimenters, lag between N1 and N2).
 
-[need to figure out sd through imputation - I think we should do this - affects 3 papers (~6 conditions)] 
+
 
 ```{r}
 ma_c %>%
   filter(study_ID == "horst2008") %>%
-  select(study_ID, short_cite, expt_num, infant_type,group_name_1, mean_age_1, n_1, x_1, x_2, SD_1, t, d_calc, data_source) %>%
+  select(study_ID, short_cite, expt_num, infant_type,group_name_1, num_trials, mean_age_1, n_1, x_1, x_2, SD_1, d, t, d_calc, data_source) %>%
   kable()
 ```
 
@@ -157,7 +142,7 @@ ma_c %>%
 
 >"There is a second paper by Lederberg on the disambiguation effect (Lederberg & Spencer, 2008 J Deaf Studies & Deaf Educ) that should be included in the meta-analysis. Like the 2000 study it examined the disambiguation effect in deaf/hard of hearing children using the Novel-Novel paradigm. It involved a much larger and more diverse sample than the 2000 paper."
 
-Thank you for pointing me to this paper. I was able to email the author to get the raw data for this study. 
+Thank you for pointing us to this paper. We were able to email the author to get the raw data for the Lederberg and Spencer (2008) study. 
 
 ### Markman, Wasow, & Hansen (2003)
 
@@ -173,13 +158,13 @@ Thank you. Upon reconsideration, we agree - the additional cues present in these
         	The SDs I derived from the paper are about one-tenth the size of those listed in the meta-data, and so the d’s I calculated are about ten times larger. I believe there is a decimal error in the meta-data. In the entire meta-data set, no other SDs come close to the ones listed for this report.
         	Calculating d for this study is a bit complicated because not only are initial trials separated from repeat trials in the report, but proportion of looking at the novel object is presented separately for the 1.5 sec that immediately followed presentation and processing of the label and for the 1.5 sec after that. I recommend just including an estimation of the disambiguation effect for the first 1.5 sec because it was stronger in this period (and on trials in which familiar labels were tested, proportion of looking to the familiar object was also stronger during this period). I believe that this is what the authors of the meta-analysis did.  Based on the figures presented in the paper, I got: for the 19-month-olds, M = .49, SD =.226, d = - .044 for initial trials and M = .51, SD =.226, d = .044 for repeat trials; for the 22-month-olds, M = .53, SD =.198, d = .152 for initial trials and M = .58, SD =.177, d = .452 for repeat trials."
 
-Thank you for catching this. There was indeed an error here; the SDs have now been corrected.
+Thank you for catching this. There was indeed an error here; the SDs have now been corrected. The multi-level modeling approach we have now adopted addresses the issue of non-independence between conditions.
 
-[what to do about repeated trials for same participants?]
+
 ```{r}
 ma_c %>%
   filter(study_ID == "mather2009") %>%
-  select(study_ID, short_cite, expt_num, infant_type,group_name_1, mean_age_1, n_1, x_1, x_2, SD_1, t, d_calc, data_source) %>%
+  select(study_ID, short_cite, expt_num, infant_type, same_infant, group_name_1, mean_age_1, n_1, x_1, x_2, SD_1, t, d_calc, data_source) %>%
   kable()
 ```
         	
@@ -234,9 +219,7 @@ ma_c %>%
 
 >"The meta-analysis included the effect size for the autistic children, but not the effect size for the typically developing children. I assume that Preissler and/or Carey supplied the SD for the autistic children. If they cannot supply it for the typically developing, could it be imputed by the method discussed earlier?"
 
-The SD for the group with autism was estimated based on the raw counts reported in the text. No such raw counts were reported for the typically developing group, unfortuntately. 
-
-[we could consider imputation here from other conditions, but I vote no, would affects this one and vincent-smith.]
+The SD for the group with autism was estimated based on the raw counts reported in the text. No such raw counts were reported for the typically developing group, but we have now imputed a value, as elsewhere, and this group is included.
 
 ## Scofield & Williams (2009) 
 
@@ -248,38 +231,34 @@ This effect size was missing because we did not have a SD value. We were able to
 
 >"This paper is listed at metalab, but is not listed in the References section of the manuscript.  Was it included in the meta-analysis?" 
 
-This paper was included in the meta-analysis, and we have added these paper to the citation list. [check this once renders] 
+This paper was included in the meta-analysis, and we have added these paper to the citation list. 
 
 ## Sugimura & Sato (1996) 
 
 >"No d is listed for this study in the meta-data because there was no variance.  Apparently, all 48 children chose the novel object on every trial in a four-choice paradigm. This result is a case of the ceiling problem in extremis. 
         	It does not seem like a good idea to exclude the study, however.  The mean age was among the highest in the meta-data and so dropping it may reduce the model’s estimate of the the effect size at that age. Perhaps it would be kosher to assign an SD of .10 to every study that has an SD of .10 or less. Or replace every effect size that is more than 3 SDs greater than the mean of the effect sizes in the meta-data to a value that equals 3 SDs greater than this mean. Perhaps some of the ideas in the chapter in Tabachnick and Fidell’s multivariate statistics text on handling outliers in ordinary data would be applicable here."
         	
-[no variability...what to do here?]
+We have made the analytical decision to only input SDs from data available within a paper. 
 
 ## Vincent-Smith et al. (1974)
 >"The d’s for the two age groups in this report were not included in the meta-data. I assume that it was not possible to get the SDs from the authors of this old report.  Perhaps these could be imputed using the method I described earlier."
 
-[no sd...impute?]
+As above, we have made the analytical decision to only input SDs from data available within a paper. The SDs for this paper would be particularly difficult to estimate since there are drastically more trials per participant (50) than in other conditions in our dataset.
 
 ## Williams (2009) 
 
 >"The citation for this dissertation was omitted from the References section of the manuscript. One weird thing about this investigation is that the two groups of typically- developing children overlapped.  The group that matched the ASD (autism spec disord) group on age had 16 children and the group that matched the ASD group on language ability had 16 children. However, 6 children belonged to both groups. There were only 28 typically-developing children in all.  Not sure how to handle this problem."
 
-We have added this missing citation. We agree that the overlap in participants here is problematic [could drop age group?].
+We have added this missing citation. The overlapp in children across groups is now dealt with by the participant group random effect structure in the multi-level model.
 
 ## Kalashnikova et al. (2016 First Lang) 
 >"Metalab lists the M in this study as .04 with SD = .054. It computes d as .04/.054 = .738. This is unusual because in the other two-choice eyetracking studies in metalab, M is the proportion of time looking at the novel object (which is usually greater than .50), chance is .50, and d is calculated as the difference between these two proportions/SD. If this method were adopted here, M = .58, SD = .27, and so d = .08/.27 = .296. (The .04 that metalab lists as the M might represent the change in looking at the novel object from baseline to test, but no SD is reported in the article for this difference score.)"
 
-There are actually 10 2-AFC studies in the database. As noted, there are two ways one could compute an effect size from eye-tracking data: (1) proportion looks to target (analgous to pointing task), or (2) difference in looking relative to baseline. We indicated which of these two approaches we took in coding the effect size in the "dependent measure" column ("target_selection" vs. "looking_time_change"). Seven were coded using the second approach; Four, including the Kalashnikova (2016b) paper, were coded using the first approach.
+There are actually 10 2-AFC eyetracking studies in the database. As noted, there are two ways one could compute an effect size from eye-tracking data: (1) proportion looks to target (analgous to pointing task), or (2) difference in looking relative to baseline. We indicated which of these two approaches we took in coding the effect size in the "dependent measure" column ("target_selection" vs. "looking_time_change"). Seven were coded using the second approach; Four, including the Kalashnikova (2016b) paper, were coded using the first approach.
 
-We agree that the first approach is more similiar to the measure used in the pointing task. On the other hand, there are demands particular to the eyetracking task that make it important to take into account baseline differences in saliency between the items. However, regardless of these motivations, in most cases information was only reported for one type of measure. There were a few cases where the data were available for either measure to be used. In these cases, we used the measure originally reported by the authors.
+We agree that the first approach is more similiar to the measure used in the pointing task. On the other hand, there are demands particular to the eyetracking task that make it important to take into account baseline differences in saliency between the items. However, regardless of these motivations, in most cases information was only reported for one type of measure. There were a few cases where the data were available for either measure to be used. In these cases, we used the measure originally reported by the authors. 
 
-[note that in Houston-Price you get opposite effect for monolinguals depending on the measure you use].
-
-[Kalashnikova (2016b), Houston-Price et al (2010), Mather and Plunket (2009), bion could go either way but would require measuring plots in many cases....I wonder if we should do this so all are looking_time_change, and it's consistent?]
-
-```{r}
+```{r, include = F}
 ma_c %>%
   filter(response_mode == "eye-tracking") %>%
   select(study_ID, short_cite, response_mode, dependent_measure, N_AFC) %>%
@@ -306,14 +285,9 @@ If Exp. 1 is not considered an incongruent cue condition, then the meta-analysis
 Recently, Scofield, Wall, and I published experiments analogous to those in Wall et al. (2015), but involving the opposite direction of cross-modal transfer. We trained a label for an object the child could touch, but not see, then asked the child to pick the referent of a novel label from a pair of objects they could see, but not touch. One choice was the cross-modal match and the other was a novel object. The citation is:
 Scofield, J., Merriman, W. E., & Wall, J. L. (2018). The effect of a tactile-to-visual shift on young children’s tendency to map novel labels onto novel objects. Journal of Experimental Child Psychology, 172, 1-12."
 
-[LOOK AT THIS PAPER]
+We have now omitted this study because it was an atypical learning task (i.e. children did not have visual access to the objects).
 
 ## Law & Edwards (2014 Lang Learn & Dev)
 > "This study is not listed in the meta-data. Although its primary focus was children’s referent selections for mispronounced familiar labels, it did include novel word conditions. Their analyses are quite unique -- fitting to growth curves and examining the Akaike Information Criterion and the Bayesian Information Criterion. However, they do report a t test of the slope of the decline in proportion of looking at the familiar object (rather than the novel object) after onset and processing of the novel word. Could an estimate of d be derived from this t value? Alternatively, a figure in the paper shows that proportion of looking at the novel object reached an asymptote of .25 or so. Could an SD for this value be imputed from the other eyetracking studies?"
 
-```{r, eval = F}
-ma_c %>%
-  filter(!is.na(d_notes)) %>%
-  select(1, d_notes) %>%
-  data.frame()
-```
+Thank you for pointing us to this paper. Unfortunately, it is not clear how to extract an effect size from these data in a way that would be meaningfully comprable to the AFC measures used in all other conditions in the meta-analysis. And, as elsewhere, we have not included papers that have no reported estimate of SD.

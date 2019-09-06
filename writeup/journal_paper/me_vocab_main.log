@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2016.5.22)  5 SEP 2019 20:39
+This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2016.5.22)  6 SEP 2019 11:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1071,7 +1071,7 @@ File: eu1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 Underfull \hbox (badness 1540) in paragraph at lines 168--168
 [][][]\EU1/lmr/m/n/10 The exact model specification was as follows: \EU1/lmtt/m
-/n/10 metafor::rma.mv(y = effect_size, V =
+/n/10 metafor::rma.mv(y = effect.size, V =
  []
 
 
@@ -1098,9 +1098,15 @@ File: me_vocab_main_files/figure-latex/unnamed-chunk-8-1.pdf Graphic file (type
 
 LaTeX Warning: Float too large for page by 64.37982pt on input line 266.
 
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 [18] [19]
+Underfull \vbox (badness 1360) has occurred while \output is active []
+
+[20]
 File: figs/fendle_fig1.png Graphic file (type QTm)
-<use  "figs/fendle_fig1.png" > [20]
+<use  "figs/fendle_fig1.png" >
 
 LaTeX Warning: No positions in optional float specifier.
                Default added (so using `htb') on input line 317.
@@ -1115,13 +1121,19 @@ accuracy $\OMS/lmsy/m/n/10 ^^X$ \EU1/lmtt/m/n/10 target.type $\OMS/lmsy/m/n/10
 [22]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (typ
 e QTm)
-<use  "me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf" > [23]
+<use  "me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf" >
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[23]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (typ
 e QTm)
 <use  "me_vocab_main_files/figure-latex/unnamed-chunk-14-1.pdf" > [24]
 Underfull \vbox (badness 4752) has occurred while \output is active []
 
-[25] [26] [27]
+[25] [26]
+Underfull \vbox (badness 2762) has occurred while \output is active []
+
+[27]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-19-1.pdf Graphic file (typ
 e QTm)
 <use  "me_vocab_main_files/figure-latex/unnamed-chunk-19-1.pdf" >
@@ -1131,13 +1143,10 @@ accuracy $\OMS/lmsy/m/n/10 ^^X$ \EU1/lmtt/m/n/10 times.labeled $\OMS/lmsy/m/n/1
 0 ^^C$ \EU1/lmtt/m/n/10 age +
  []
 
-[28]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+[28] [29] [30]
+Underfull \vbox (badness 4752) has occurred while \output is active []
 
-[29] [30] [31]
-Underfull \vbox (badness 2384) has occurred while \output is active []
-
-[32] [33]
+[31] [32] [33]
 Underfull \vbox (badness 4752) has occurred while \output is active []
 
 [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48] [49]

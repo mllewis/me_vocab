@@ -88,7 +88,7 @@ ggplot(ms, aes(x = factor(age_group), y = mean, col = cond)) +
   ylab("Proportion correct") + 
   scale_color_solarized(name = "Condition", 
                         labels = c("1 label", "2 label", "3 label")) + 
-  theme_classic() +
+  theme_classic(base_size = 13) +
   ggtitle("Experiment 2")
 
 ```

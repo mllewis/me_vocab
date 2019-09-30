@@ -6,12 +6,11 @@ To assess the strength of the ME effect as well moderating factors, we conducted
 ```{r}
 ME_DATA_PATH <- here("data/0_metaanalysis_data.csv")
 ma_raw <- read_csv(ME_DATA_PATH) %>%
-  select(1:4, 6:16, 18,19,21, 27:29, 31:34, 48:50, 59) %>%
+  select(1:4, 6:16, 18, 19, 21, 27:29, 31:34, 48:50, 59) %>%
   mutate_if(is.character, as.factor)
 
 AVG_MONTH <- 30.43688
 ma_c <- ma_raw %>%
-  filter(!is.na(d_calc)) %>%
   mutate(mean_age = mean_age_1/AVG_MONTH,
          year = as.numeric(str_sub(short_cite, -5, -2)),
          condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
@@ -379,7 +378,7 @@ To summarize our meta-analytic findings, we find a robust ME effect in each of t
 
 Taken together, these analyses provide several theoretical constraints with respect to the mechanism underlying the ME effect. First, the strength of the bias increases across development, independent of the strength of the learners knowledge of the "familiar" word. This constraint comes from the fact that the bias strengthens across development in the Novel-Novel conditions, and from the fact that there is not a significant impairment to the effect in multilingual children (who presumably have less language experience with any particular language). Second, developmental change in the strength of the ME effect is observed for children across a variety of populations, suggesting that developmental change is a robust pattern and is related to the mechanism underlying the ME effect for different populations. 
 
-```{r, fig.height = 7, fig.pos = '!t', fig.cap = "Developmental trajectory of ME effect as a function of four moderators tested in the meta-analysis.  For reference, the model fit for familiar-novel trials in typical populations is shown on each moderator plot (blue dash). Ranges correspond to 95% confidence intervals. Model fits shown here are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that two points are omitted from plotting from the typical populations to maximize similarity of the x-axis, but the x-axis scale differs for the non-typical populations facet. Upper tick marks show year milestones. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = Down Syndrome; SLI = selective language impairment; DHH = deaf/heard-of-hearing."}
+```{r, fig.height = 7, fig.pos = '!t', fig.cap = "Developmental trajectory of ME effect as a function of four moderators tested in the meta-analysis.  For reference, the model fit for familiar-novel trials in typical populations is shown on each moderator plot (blue dash). Ranges correspond to 95% confidence intervals. Model fits shown here are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that two points are omitted from plotting from the typical populations to maximize similarity of the x-axis, but the x-axis scale differs for the non-typical populations facet. Upper tick marks show year milestones. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = Down Syndrome; SLI = selective language impairment; DHH = deaf/hard-of-hearing."}
 
 ma_plotting <- ma_c %>%
   mutate(es_type = ifelse(infant_type2 != "typical",

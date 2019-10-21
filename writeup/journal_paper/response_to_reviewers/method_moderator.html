@@ -7,10 +7,11 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-09-06" />
+<meta name="date" content="2019-10-21" />
 
 <title>Method moderator</title>
 
@@ -269,7 +270,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -343,18 +343,6 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -375,7 +363,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Method moderator</h1>
-<h4 class="date">2019-09-06</h4>
+<h4 class="date">2019-10-21</h4>
 
 </div>
 
@@ -383,60 +371,60 @@ $(document).ready(function () {
 <pre><code>## 
 ## Multivariate Meta-Analysis Model (k = 119; method: REML)
 ## 
-##    logLik   Deviance        AIC        BIC       AICc  
-## -218.4817   436.9633   444.9633   456.0120   445.3205  
+##    logLik   Deviance        AIC        BIC       AICc 
+## -215.5349   431.0698   439.0698   450.1184   439.4269   
 ## 
-## Variance Components: 
+## Variance Components:
 ## 
-##             estim    sqrt  nlvls  fixed                  factor
-## sigma^2.1  0.7318  0.8554     96     no             same_infant
-## sigma^2.2  0.7318  0.8554     96     no  same_infant/short_cite
+##             estim    sqrt  nlvls  fixed                  factor 
+## sigma^2.1  0.3884  0.6232     44     no              short_cite 
+## sigma^2.2  1.0726  1.0357     96     no  short_cite/same_infant 
 ## 
-## Test for Residual Heterogeneity: 
+## Test for Residual Heterogeneity:
 ## QE(df = 117) = 965.3911, p-val &lt; .0001
 ## 
-## Test of Moderators (coefficient(s) 2): 
-## QM(df = 1) = 6.6705, p-val = 0.0098
+## Test of Moderators (coefficient 2):
+## QM(df = 1) = 6.4927, p-val = 0.0108
 ## 
 ## Model Results:
 ## 
-##                            estimate      se     zval    pval    ci.lb
-## intrcpt                      1.5787  0.1473  10.7165  &lt;.0001   1.2900
-## response_modeeye-tracking   -0.8300  0.3214  -2.5827  0.0098  -1.4598
-##                              ci.ub     
-## intrcpt                     1.8674  ***
-## response_modeeye-tracking  -0.2001   **
+##                            estimate      se     zval    pval    ci.lb 
+## intrcpt                      1.5322  0.1713   8.9445  &lt;.0001   1.1964 
+## response_modeeye-tracking   -0.8893  0.3490  -2.5481  0.0108  -1.5733 
+##                              ci.ub 
+## intrcpt                     1.8679  *** 
+## response_modeeye-tracking  -0.2052    * 
 ## 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre><code>## 
 ## Multivariate Meta-Analysis Model (k = 119; method: REML)
 ## 
-##    logLik   Deviance        AIC        BIC       AICc  
-## -205.6133   411.2267   421.2267   434.9946   421.7721  
+##    logLik   Deviance        AIC        BIC       AICc 
+## -202.6804   405.3609   415.3609   429.1288   415.9063   
 ## 
-## Variance Components: 
+## Variance Components:
 ## 
-##             estim    sqrt  nlvls  fixed                  factor
-## sigma^2.1  0.5415  0.7359     96     no             same_infant
-## sigma^2.2  0.5415  0.7359     96     no  same_infant/short_cite
+##             estim    sqrt  nlvls  fixed                  factor 
+## sigma^2.1  0.3106  0.5573     44     no              short_cite 
+## sigma^2.2  0.7656  0.8750     96     no  short_cite/same_infant 
 ## 
-## Test for Residual Heterogeneity: 
+## Test for Residual Heterogeneity:
 ## QE(df = 116) = 801.0724, p-val &lt; .0001
 ## 
-## Test of Moderators (coefficient(s) 2:3): 
-## QM(df = 2) = 33.8857, p-val &lt; .0001
+## Test of Moderators (coefficients 2:3):
+## QM(df = 2) = 33.7245, p-val &lt; .0001
 ## 
 ## Model Results:
 ## 
-##                            estimate      se     zval    pval    ci.lb
-## intrcpt                      0.1850  0.2939   0.6297  0.5289  -0.3909
-## mean_age                     0.0367  0.0072   5.0899  &lt;.0001   0.0226
-## response_modeeye-tracking   -0.3318  0.2935  -1.1303  0.2584  -0.9071
-##                             ci.ub     
-## intrcpt                    0.7610     
-## mean_age                   0.0509  ***
-## response_modeeye-tracking  0.2436     
+##                            estimate      se     zval    pval    ci.lb 
+## intrcpt                      0.1250  0.3065   0.4078  0.6834  -0.4757 
+## mean_age                     0.0369  0.0072   5.1068  &lt;.0001   0.0228 
+## response_modeeye-tracking   -0.4224  0.3149  -1.3415  0.1797  -1.0395 
+##                             ci.ub 
+## intrcpt                    0.7256      
+## mean_age                   0.0511  *** 
+## response_modeeye-tracking  0.1947      
 ## 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
@@ -458,6 +446,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

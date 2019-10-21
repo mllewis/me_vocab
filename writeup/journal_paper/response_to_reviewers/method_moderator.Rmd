@@ -45,13 +45,13 @@ typical_data <- ma_c %>%
   filter(infant_type == "typical")
 
 rma.mv(d_calc ~ response_mode, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = typical_data) %>%
             summary()
  
 rma.mv(d_calc ~ mean_age  + response_mode, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = typical_data) %>%
   summary()

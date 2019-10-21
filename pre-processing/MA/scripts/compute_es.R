@@ -23,8 +23,8 @@ compute_es <- function(participant_design, x_1 = NA, x_2 = NA, x_dif = NA,
                        special_cases_measures = NA, contrast_sampa = NA) {
 
   assert_that(participant_design %in% c("between", "within_two", "within_one"))
-  
-  # we introduce variables calles d_calc and d_var_calc to distiguish them from the fields d and d_var, 
+
+  # we introduce variables calles d_calc and d_var_calc to distiguish them from the fields d and d_var,
   # which are fields where effect sizes were already available from the source of the data
   d_calc <- NA
   d_var_calc <- NA
@@ -33,7 +33,7 @@ compute_es <- function(participant_design, x_1 = NA, x_2 = NA, x_dif = NA,
   # start of decision tree where effect sizes are calculated differently based on participant design
   # depending on which data is available, effect sizes are calculated differently
   # switches on participant_design = "between", "within_two", or "within_one"
-  
+
   ####### BETWEEN ########
   if (participant_design == "between") {
     es_method  <- "between"
@@ -66,7 +66,7 @@ compute_es <- function(participant_design, x_1 = NA, x_2 = NA, x_dif = NA,
       corr <- corr_imputed
     }
     #effect size calculation
-    if (complete(x_1, x_2, SD_1, SD_2)) { 
+    if (complete(x_1, x_2, SD_1, SD_2)) {
       pooled_SD <- sqrt((SD_1 ^ 2 + SD_2 ^ 2) / 2) # Lipsey & Wilson (2001)
       d_calc <- (x_1 - x_2) / pooled_SD # Lipsey & Wilson (2001)
       es_method  <- "group_means_two"
@@ -122,29 +122,29 @@ compute_es <- function(participant_design, x_1 = NA, x_2 = NA, x_dif = NA,
     if (complete(n_1, d_calc)) {
       #d_var_calc <- (2/n_1) + (d_calc ^ 2 / (4 * n_1)) # we used this until 4/7/2017
       d_var_calc <- (1 / n_1) + (d_calc ^ 2 / (2 * n_1)) # this models what is done in metafor package, escalc(measure="SMCR"() (Viechtbauer, 2010)
-      
-    } else if (complete(r, n_1)){ 
-      # this deals with pointing and vocabulary 
+
+    } else if (complete(r, n_1)){
+      # this deals with pointing and vocabulary
       # Get variance of transformed r (z; fisher's tranformation)
       SE_z = 1 / sqrt(n_1 - 3) # from Howell (2010; "Statistical methods for Psychology", pg 275)
       var_z = SE_z ^ 2
-      
+
       # Transform z variance to r variance
       var_r = tanh(var_z)  # from wikipedia (https://en.wikipedia.org/wiki/Fisher_transformation) for convert z -> r, consistent with Howell
-      
+
       # Transform r to d
       d_calc = 2 * r / (sqrt(1 - r ^ 2)) # from (Hunter and Schmidt, pg. 279)
       d_var_calc = (4 * var_r)/(1 - r ^ 2) ^ 3 # from https://www.meta-analysis.com/downloads/Meta-analysis%20Converting%20among%20effect%20sizes.pdf (pg. 4)
-      
+
       es_method  <- "r_one"
-      
+
     } else if (complete(r)) {
       #if r instead of d is reported, transform for standardization
       d_calc <- 2 * r / sqrt(1 - r ^ 2)
       d_var_calc <- 4 * r_var / ((1 - r ^ 2) ^ 3)
-     
+
        es_method  <- "r_one"
-      
+
     } else  if (complete(d)) {
       #if d and d_var were already reported, use those values
       d_calc <- d
@@ -156,7 +156,7 @@ compute_es <- function(participant_design, x_1 = NA, x_2 = NA, x_dif = NA,
   ####### SPECIAL CASES ######## (for which an unusual subset of measures was reported)
   if (!complete(d_calc, d_var_calc)) {
     es_method <- "special_case"
-    
+
     special <- special_cases_measures %>% as.character() %>% strsplit(";") %>%
       unlist() %>% as.numeric()
     pooled_SD <- NA

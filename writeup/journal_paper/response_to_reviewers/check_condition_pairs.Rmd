@@ -55,7 +55,7 @@ ma_c_paired <- ma_c %>%
 ```
 
 
-```{r}
+```{r, fig.height = 3, fig.width = 8}
 # conditions missing pairs: byers2013; lederberg2008, mervis1995a
 get_MA_params <- function(this_condition_type, age_moderated, df) {
   
@@ -69,7 +69,7 @@ get_MA_params <- function(this_condition_type, age_moderated, df) {
   
   if (age_moderated){
       model <- rma.mv(d_calc ~ mean_age, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = this_data)
       
@@ -81,7 +81,7 @@ get_MA_params <- function(this_condition_type, age_moderated, df) {
 
   } else {
       model <- rma.mv(d_calc, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = this_data)
       

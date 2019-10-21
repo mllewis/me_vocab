@@ -123,7 +123,7 @@ get_MA_params <- function(this_condition_type, age_moderated, df) {
   
   if (age_moderated){
       model <- rma.mv(d_calc ~ mean_age, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = this_data)
       
@@ -135,7 +135,7 @@ get_MA_params <- function(this_condition_type, age_moderated, df) {
 
   } else {
       model <- rma.mv(d_calc, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = this_data)
       
@@ -325,7 +325,7 @@ num_vocab_conditions <- ma_c %>%
 
 age_vocab_model <- rma.mv(d_calc ~ mean_age + mean_production_vocab, 
                           V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                        data = filter(ma_c, condition_type == 'TFN'))
 
@@ -363,7 +363,7 @@ For conditions with the Novel-Novel trial design, the overall effect size was `r
 
 ```{r age_and_TFN_vs_TNN}
 TFN_NNN_model <- rma.mv(d_calc ~ mean_age + ME_trial_type, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = filter(ma_c,infant_type == 'typical'))
 
@@ -387,7 +387,7 @@ We next turn to a different population of participants: Children who are simulta
 
 ```{r mono_vs_multi}
 mono_vs_multi_model <- rma.mv(d_calc ~ mean_age + infant_type, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = filter(ma_c, infant_type != 'NT'))
 
@@ -412,7 +412,7 @@ Overall, non-typically developing children succeeded on the ME task  (*d* = `r f
 
 ```{r typical_vs_non_typical}
 T_vs_NT_model <- rma.mv(d_calc ~ mean_age + infant_type, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = filter(ma_c, infant_type != 'multilingual'))
 

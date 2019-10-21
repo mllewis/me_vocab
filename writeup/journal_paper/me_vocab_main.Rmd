@@ -29,7 +29,7 @@ affiliation:
   - id            : "5"
     institution   : "Stanford University"
     
-author_note: |
+author_note: | 
   We would like to thank support from Cognitive ToyBox, and note that BML and TK are co-founders of Cognitive ToyBox which developed the two tablet applications in Experiment 1. We gratefully acknowledge Jesse Snedeker for the suggestion that led to Experiment 2, as well as for providing materials from de Marchena et al. (2011). Data from Experiment 2 were previously presented in the Proceedings of the Cognitive Science Society Conference in Lewis & Frank (2013).
   
 abstract: |
@@ -69,19 +69,22 @@ output:
 knitr::opts_chunk$set(cache = FALSE, echo = FALSE, message = FALSE,
                       warning = FALSE,  fig.pos = "t!", sanitize = TRUE)
 
-library(papaja)
-library(tidyverse)
-library(langcog)
-library(ggthemes)
-library(lme4)
 library(knitr)
-library(feather)
+library(papaja)
 library(kableExtra)
-library(metafor)
-library(broom)
-library(grid)
 library(citr)
+library(tidyverse)
 library(here)
+library(langcog)
+library(ggrepel)
+library(ggthemes)
+library(grid)
+library(lme4)
+library(metafor)
+library(compute.es)
+library(feather)
+library(broom)
+
 source(here("writeup/journal_paper/helpers.R"))
 ```
 

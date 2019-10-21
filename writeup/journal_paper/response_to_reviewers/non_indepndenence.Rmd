@@ -62,7 +62,7 @@ Grouping by infant
 ```{r}
 
 model2 <- mono_vs_multi_model <- rma.mv(d_calc ~ mean_age + infant_type, V = d_var_calc,
-                      random = ~ 1 | same_infant/short_cite,
+                      random = ~ 1 | short_cite/same_infant,
                       method = "REML",
                       data = filter(ma_c, infant_type != 'NT'))
 summary(model2)

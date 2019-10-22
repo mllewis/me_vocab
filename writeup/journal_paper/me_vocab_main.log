@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.999991 (TeX Live 2019) (preloaded format=xelatex 2019.5.8)  21 OCT 2019 15:48
+This is XeTeX, Version 3.14159265-2.6-0.999991 (TeX Live 2019) (preloaded format=xelatex 2019.5.8)  22 OCT 2019 11:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -972,39 +972,33 @@ File: mt-eur.cfg 2006/07/31 v1.1 microtype config. file: AMS Euler Roman (RS)
 Underfull \vbox (badness 4752) has occurred while \output is active []
 
 [5]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 131.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 131.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 131.
+[6] [7]
 Underfull \vbox (badness 4752) has occurred while \output is active []
 
-[6]
-Underfull \vbox (badness 4752) has occurred while \output is active []
-
-[7]
-Underfull \vbox (badness 4752) has occurred while \output is active []
-
-[8] [9]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 163.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 163.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 163.
-[10] [11] [12]
+[8] [9] [10] [11] [12]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (type
  pdf)
 <use me_vocab_main_files/figure-latex/unnamed-chunk-6-1.pdf>
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <10.95> on input line 202.
 
-Overfull \hbox (25.76907pt too wide) in paragraph at lines 200--224
+Overfull \hbox (27.59772pt too wide) in paragraph at lines 200--224
  [] 
  []
-
-
-Underfull \vbox (badness 2376) has occurred while \output is active []
 
 [13]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-[14] [15]
+[14]
+Underfull \vbox (badness 2384) has occurred while \output is active []
+
+[15]
 Underfull \vbox (badness 1360) has occurred while \output is active []
 
 [16]
@@ -1036,14 +1030,23 @@ File: me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (typ
 e pdf)
 <use me_vocab_main_files/figure-latex/unnamed-chunk-12-1.pdf>
 [24]
+Underfull \vbox (badness 7869) has occurred while \output is active []
+
+[25]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (typ
 e pdf)
 <use me_vocab_main_files/figure-latex/unnamed-chunk-14-1.pdf>
-[25] [26] [27] [28] [29]
+[26]
+Underfull \vbox (badness 1939) has occurred while \output is active []
+
+[27] [28] [29]
 File: me_vocab_main_files/figure-latex/unnamed-chunk-19-1.pdf Graphic file (typ
 e pdf)
 <use me_vocab_main_files/figure-latex/unnamed-chunk-19-1.pdf>
-[30] [31] [32] [33] [34] [35]
+[30]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+[31] [32] [33] [34] [35]
 Underfull \vbox (badness 4752) has occurred while \output is active []
 
 [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46] [47] [48] [49]
@@ -1070,10 +1073,10 @@ Package rerunfilecheck Info: File `me_vocab_main.out' has not changed.
 Here is how much of TeX's memory you used:
  26941 strings out of 492916
  499870 string characters out of 6133346
- 647142 words of memory out of 5000000
+ 647258 words of memory out of 5000000
  30645 multiletter control sequences out of 15000+600000
  591266 words of font info for 101 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 46i,11n,61p,2104b,645s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 46i,11n,61p,2065b,645s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 Output written on me_vocab_main.pdf (53 pages).

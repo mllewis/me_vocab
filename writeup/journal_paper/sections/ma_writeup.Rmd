@@ -15,7 +15,8 @@ ma_c <- ma_raw %>%
          condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
                                  ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
                                         as.character(infant_type)))),
-         row_id = 1:n()) 
+         row_id = 1:n())  %>%
+  filter(study_ID != "gollek2016")
    #filter(!(study_ID %in% c("williams2009", "frank1999"))) # for checking that holds when exclude dissertations 
 
 # see outliers.Rmd for analysis excluding outliers
@@ -94,7 +95,7 @@ get_MA_params <- function(this_condition_type, age_moderated, df) {
 model_pairs <- expand.grid(condition_type = c("grand",
                             as.character(unique(ma_c$condition_type))), 
                            age_moderated = c(TRUE, FALSE),
-                           stringsAsFactors = F )
+                           stringsAsFactors = F)
 
 all_models <- map2_df(model_pairs$condition_type, 
                       model_pairs$age_moderated, 
@@ -245,7 +246,7 @@ colnames(print_age_table_data) <- c("Model", "n", "term", "estimate [CI]", "Z", 
 ```
 
 ```{r, results = "asis"}
-apa_table(print_age_table_data, caption = "Meta-analytic model parameters for model including age as a fixed effect. The first model (top) estimates effect sizes for all studies in our sample. The four subsequent models present separate models parameters for four separate conditions. Ranges are 95 percent confidence intervals.", small = T, note = "n = sample size (number of studies); FN = Familiar-Novel; NN = Novel-Novel.")
+apa_table(print_age_table_data, caption = "Meta-analytic model parameters for model including age as a fixed effect. Beta weights for the age term indicate the amount of change in effect size for an additional month of age. The first model (top) estimates effect sizes for all studies in our sample. The four subsequent models present separate models parameters for four separate conditions. Ranges are 95 percent confidence intervals.", small = T, note = "n = sample size (number of studies); FN = Familiar-Novel; NN = Novel-Novel.")
 ```
 
 
@@ -290,9 +291,30 @@ av_a_pval <- ifelse(round(age_vocab_model$pval[2],2)  < .0001,
                     "<.0001", paste0(" = ", round(age_vocab_model$pval[2],2)))
 av_v_pval <- ifelse(round(age_vocab_model$pval[3],2)  < .0001,
                     "<.0001", paste0(" = ", round(age_vocab_model$pval[3],2)))
+
+# vocab model
+vocab_data <- ma_c %>%
+  filter(condition_type == 'TFN') 
+
+vocab_model <- rma.mv(d_calc ~ mean_production_vocab, V = d_var_calc,
+                      random = ~ 1 | short_cite/same_infant,
+                      method = "REML",
+                      data = vocab_data)
+
+vocab_model_params <- data.frame(
+                       v_estimate = vocab_model$b[2],
+                       v_z = vocab_model$zval[2],
+                       v_p = vocab_model$pval[2]) %>%
+                    mutate(
+                       v_estimate_print = round(v_estimate, 3),
+                       v_z_print =  round(v_z, 2),
+                       v_p_print =  round(v_p, 2),
+                       v_p_print = ifelse(v_p_print < .001, "<.001", 
+                                            paste0("= ", v_p_print))) %>%
+                    select(v_estimate_print, v_z_print, v_p_print)
 ```
 
-We next tried to predict this heterogeneity with two moderators corresponding to developmental change: age and vocabulary size. In a model with age as a moderator, age was a reliable predictor of effect size ($\beta$ = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_estimate_print`, *Z* = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_z_print`, *p* `r filter(mod_print, condition_type == "TFN", age_moderated)$age_p_print`; see Table 1), suggesting that the ME effect becomes larger as children get older (Figure 2). Age of participants was highly correlated with vocabulary size in our sample (*r* = `r round(age_vocab_corr$estimate,2)`, *p* < .01), so next we asked whether vocabulary size predicted independent variance in the magnitude of the ME effect on the subset of conditions for which we had estimates of vocabulary size (*N* = `r num_vocab_conditions`). To test this, we fit a model with both age and vocabulary size as moderators.  In this model, neither vocabulary size ($\beta$ = `r  printnum(av_v_beta, digits = 3)`, *Z* = `r av_v_zval`,  *p* `r av_v_pval`)  nor age ($\beta$ = `r av_a_beta`, *Z* = `r av_a_zval`,  *p* `r av_a_pval`) was a reliable predictor of ME effect size, likely due in part to the high intercorrelation between the two predictors.
+We next tried to predict this heterogeneity with two moderators corresponding to developmental change: age and vocabulary size. In a model with age as a moderator, age was a reliable predictor of effect size ($\beta$ = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_estimate_print`, *Z* = `r filter(mod_print, condition_type == "TFN", age_moderated)$age_z_print`, *p* `r filter(mod_print, condition_type == "TFN", age_moderated)$age_p_print`; see Table 1), suggesting that the ME effect becomes larger as children get older (Figure 2). For the conditions for which we had estimates of vocabulary size (*N* = `r num_vocab_conditions`), age of participants was highly correlated with vocabulary size in our sample (*r* = `r round(age_vocab_corr$estimate,2)`, *p* < .01). In a model with vocabulary as a moderator, vocabulary was also a reliable predictor of effect size ($\beta$ = `r printnum(vocab_model_params$v_estimate_print, digits = 3)`, *Z* = `r vocab_model_params$v_z_print`, *p* `r vocab_model_params$v_p_print`).  Next we asked whether vocabulary size predicted independent variance in the magnitude of the ME effect. To test this, we fit a model with both age and vocabulary size as moderators.  In this model, neither vocabulary size ($\beta$ = `r  printnum(av_v_beta, digits = 3)`, *Z* = `r av_v_zval`,  *p* `r av_v_pval`)  nor age ($\beta$ = `r av_a_beta`, *Z* = `r av_a_zval`,  *p* `r av_a_pval`) was a reliable predictor of ME effect size, likely due in part to the high intercorrelation between the two predictors.
 
 These analyses confirm that the ME effect is robust, and associated with a very large effect size (*d* = `r filter(mod_print, condition_type == "TFN", !age_moderated)$estimate_print`) relative to other experimental psychology phenomena [@bosco2015correlational; @open2015estimating]. They also suggest that the magnitude of the effect strengthens over development. Vocabulary size, though correlated with age, does not predict additional effect size variance over and above age. This finding is difficult to interpret however, given the fact that estimates of vocabulary size are likely far less accurate than those of age, and we likely have less power to detect an effect of vocabulary size relative to age, since estimates of vocabulary size are available for only a minority of conditions (`r round(num_vocab_conditions/ nrow(filter(ma_c,condition_type == 'TFN')),2) * 100`%).
 
@@ -375,9 +397,9 @@ This analysis suggests that non-typically developing children succeed in the ME 
 
 To summarize our meta-analytic findings, we find a robust ME effect in each of the three populations we examined, as well as  evidence that the magnitude of this effect increases across development. We also identified several factors that moderated the effect. Specifically, we find that the ME effect is larger (1) in the canonical Familiar-Novel paradigm compared to the Novel-Novel paradigm (though both designs show roughly the same developmental trajectory), and (2) for monolinguals relative to multilinguals. The magnitude of the paradigm effect (FN vs NN) was comparable in size to the multilingual effect (monolinguals vs. multilinguals).
 
-Taken together, these analyses provide several theoretical constraints with respect to the mechanism underlying the ME effect. First, the strength of the bias increases across development, independent of the strength of the learners knowledge of the "familiar" word. This constraint comes from the fact that the bias strengthens across development in the Novel-Novel conditions, and from the fact that there is not a significant impairment to the effect in multilingual children (who presumably have less language experience with any particular language). Second, developmental change in the strength of the ME effect is observed for children across a variety of populations, suggesting that developmental change is a robust pattern and is related to the mechanism underlying the ME effect for different populations. 
+Taken together, these analyses provide several theoretical constraints with respect to the mechanism underlying the ME effect. First, the strength of the bias increases across development, independent of the strength of the learner's knowledge of the "familiar" word. This constraint comes from the fact that the bias strengthens across development in the Novel-Novel conditions. Second, developmental change in the strength of the ME effect is observed for children across a variety of populations, suggesting that developmental change is a robust pattern and is related to the mechanism underlying the ME effect for different populations. 
 
-```{r, fig.height = 7, fig.pos = '!t', fig.cap = "Developmental trajectory of ME effect as a function of four moderators tested in the meta-analysis.  For reference, the model fit for familiar-novel trials in typical populations is shown on each moderator plot (blue dash). Ranges correspond to 95% confidence intervals. Model fits shown here are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that two points are omitted from plotting from the typical populations to maximize similarity of the x-axis, but the x-axis scale differs for the non-typical populations facet. Upper tick marks show year milestones. B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = Down Syndrome; SLI = selective language impairment; DHH = deaf/hard-of-hearing."}
+```{r, fig.height = 7, fig.pos = '!t', fig.cap = "Developmental trajectory of ME effect as a function of four moderators tested in the meta-analysis.  For reference, the model fit for familiar-novel trials in typical populations is shown on each moderator plot (blue dash). Ranges correspond to 95% confidence intervals. Model fits shown here are log-linear. Point size corresponds to sample size, and point shape corresponds to trial type (Familiar-Novel vs. Novel-Novel). Note that two points are omitted from plotting from the typical populations to maximize similarity of the x-axis, but the x-axis scale differs for the non-typical populations facet. Upper tick marks show year milestones. Data can be explored interactively at http://metalab.stanford.edu/.  B = bilingual; T = trilingual; LT = late-talker; ASD = autism spectrum disorder; DS = Down Syndrome; SLI = selective language impairment; DHH = deaf/hard-of-hearing."}
 
 ma_plotting <- ma_c %>%
   mutate(es_type = ifelse(infant_type2 != "typical",
@@ -447,10 +469,13 @@ ma_faceted_plot <- ma_plotting %>%
                    alpha = .5, size = .3) +
     geom_point(aes(size = n_1, shape = ME_trial_type), alpha = .5) +
     geom_smooth(aes(linetype = as.factor(line_group)), 
-                method = "lm", formula = y ~ log(x), color = "#268bd2",
+                method = "lm", 
+                formula = y ~ log(x),
+                color = "#268bd2",
                 data = all_FN, se = FALSE, size = 1.1) +
     geom_smooth(aes(y = d_calc, x = mean_age, color = es_type), 
-                method = "lm", formula = y ~ log(x), 
+                method = "lm", 
+                formula = y ~ log(x), 
                 data = NN_NT_only, se = FALSE, size = 1.1) +
     scale_color_manual(values= c("#b58900", "#d33682", "#6c71c4"), guide = FALSE) +
     ggrepel::geom_text_repel(aes(label = infant_type2_label), box.padding = .5) +

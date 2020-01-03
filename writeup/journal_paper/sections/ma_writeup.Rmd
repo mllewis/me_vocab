@@ -15,8 +15,7 @@ ma_c <- ma_raw %>%
          condition_type = as.factor(ifelse(infant_type == "typical" & ME_trial_type == "FN", "TFN", 
                                  ifelse(infant_type == "typical" & ME_trial_type == "NN", "TNN", 
                                         as.character(infant_type)))),
-         row_id = 1:n())  %>%
-  filter(study_ID != "gollek2016")
+         row_id = 1:n()) 
    #filter(!(study_ID %in% c("williams2009", "frank1999"))) # for checking that holds when exclude dissertations 
 
 # see outliers.Rmd for analysis excluding outliers
